@@ -22,7 +22,7 @@ else
 <head>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Kohana Installation</title>
+	<title>NetMetric MoM Installation</title>
 
 	<style type="text/css">
 	body { width: 42em; margin: 0 auto; font-family: sans-serif; background: #fff; font-size: 1em; }
@@ -47,8 +47,8 @@ else
 	<h1>Environment Tests</h1>
 
 	<p>
-		The following tests have been run to determine if <a href="http://kohanaframework.org/">Kohana</a> will work in your environment.
-		If any of the tests have failed, consult the <a href="http://kohanaframework.org/guide/about.install">documentation</a>
+		The following tests have been run to determine if NetMetric MoM will work in your environment.
+		If any of the tests have failed, consult the documentation
 		for more information on how to correct the problem.
 	</p>
 
@@ -96,6 +96,30 @@ else
 			<?php endif ?>
 		</tr>
 		<tr>
+			<th>Upload Directory</th>
+			<?php if (is_dir(DATAPATH) AND is_dir(DATAPATH.'upload') AND is_writable(DATAPATH.'upload')): ?>
+				<td class="pass"><?php echo DATAPATH.'upload/' ?></td>
+			<?php else: $failed = TRUE ?>	
+				<td class="fail">The <code><?php echo DATAPATH.'upload/' ?></code> directory is not writable.</td>
+			<?php endif ?>
+		</tr>
+            	<tr>
+			<th>RRD Directory</th>
+			<?php if (is_dir(DATAPATH) AND is_dir(DATAPATH.'rrd') AND is_writable(DATAPATH.'rrd')): ?>
+				<td class="pass"><?php echo DATAPATH.'rrd/' ?></td>
+			<?php else: $failed = TRUE ?>
+				<td class="fail">The <code><?php echo DATAPATH.'rrd/' ?></code> directory is not writable.</td>
+			<?php endif ?>
+		</tr>
+                <tr>
+			<th>Session Directory</th>
+			<?php if (is_dir(DATAPATH) AND is_dir(DATAPATH.'session') AND is_writable(DATAPATH.'session')): ?>
+				<td class="pass"><?php echo DATAPATH.'session/' ?></td>
+			<?php else: $failed = TRUE ?>
+				<td class="fail">The <code><?php echo DATAPATH.'session/' ?></code> directory is not writable.</td>
+			<?php endif ?>
+		</tr>
+		<tr>
 			<th>PCRE UTF-8</th>
 			<?php if ( ! @preg_match('/^.$/u', 'ñ')): $failed = TRUE ?>
 				<td class="fail"><a href="http://php.net/pcre">PCRE</a> has not been compiled with UTF-8 support.</td>
@@ -103,6 +127,14 @@ else
 				<td class="fail"><a href="http://php.net/pcre">PCRE</a> has not been compiled with Unicode property support.</td>
 			<?php else: ?>
 				<td class="pass">Pass</td>
+			<?php endif ?>
+		</tr>
+		<tr>
+			<th>SNMP Enabled</th>
+			<?php if (function_exists('snmpwalk')): ?>
+				<td class="pass">Pass</td>
+			<?php else: $failed = TRUE ?>
+				<td class="fail">PHP <a href="http://www.php.net/snmp">SNMP</a> support is either not loaded or not compiled in.</td>
 			<?php endif ?>
 		</tr>
 		<tr>
@@ -163,6 +195,38 @@ else
 				<td class="fail">Neither <code>$_SERVER['REQUEST_URI']</code>, <code>$_SERVER['PHP_SELF']</code>, or <code>$_SERVER['PATH_INFO']</code> is available.</td>
 			<?php endif ?>
 		</tr>
+		<tr>
+			<th>mcrypt Enabled</th>
+			<?php if (extension_loaded('mcrypt')): ?>
+				<td class="pass">Pass</td>
+			<?php else: $failed = TRUE ?>
+				<td class="fail">NetMetric MoM requires <a href="http://php.net/mcrypt">mcrypt</a> for the Encrypt class.</td>
+			<?php endif ?>
+		</tr>
+		<tr>
+			<th>GD Enabled</th>
+			<?php if (function_exists('gd_info')): ?>
+				<td class="pass">Pass</td>
+			<?php else: $failed = TRUE ?>
+				<td class="fail">NetMetric MoM requires <a href="http://php.net/gd">GD</a> v2 for the Image class.</td>
+			<?php endif ?>
+		</tr>
+		<tr>
+			<th>PDO Enabled</th>
+			<?php if (class_exists('PDO')): ?>
+				<td class="pass">Pass</td>
+			<?php else: $failed = TRUE ?>
+				<td class="fail">NetMetric MoM can use <a href="http://php.net/pdo">PDO</a> to support additional databases.</td>
+			<?php endif ?>
+		</tr>
+		<tr>
+			<th>cURL Enabled</th>
+			<?php if (extension_loaded('curl')): ?>
+				<td class="pass">Pass</td>
+			<?php else: $failed = TRUE ?>
+				<td class="fail">NetMetric MoM requires <a href="http://php.net/curl">cURL</a> for the Remote class.</td>
+			<?php endif ?>
+		</tr>
 	</table>
 
 	<?php if ($failed === TRUE): ?>
@@ -171,47 +235,6 @@ else
 		<p id="results" class="pass">✔ Your environment passed all requirements.<br />
 			Remove or rename the <code>install<?php echo EXT ?></code> file now.</p>
 	<?php endif ?>
-
-	<h1>Optional Tests</h1>
-
-	<p>
-		The following extensions are not required to run the Kohana core, but if enabled can provide access to additional classes.
-	</p>
-
-	<table cellspacing="0">
-		<tr>
-			<th>cURL Enabled</th>
-			<?php if (extension_loaded('curl')): ?>
-				<td class="pass">Pass</td>
-			<?php else: ?>
-				<td class="fail">Kohana requires <a href="http://php.net/curl">cURL</a> for the Remote class.</td>
-			<?php endif ?>
-		</tr>
-		<tr>
-			<th>mcrypt Enabled</th>
-			<?php if (extension_loaded('mcrypt')): ?>
-				<td class="pass">Pass</td>
-			<?php else: ?>
-				<td class="fail">Kohana requires <a href="http://php.net/mcrypt">mcrypt</a> for the Encrypt class.</td>
-			<?php endif ?>
-		</tr>
-		<tr>
-			<th>GD Enabled</th>
-			<?php if (function_exists('gd_info')): ?>
-				<td class="pass">Pass</td>
-			<?php else: ?>
-				<td class="fail">Kohana requires <a href="http://php.net/gd">GD</a> v2 for the Image class.</td>
-			<?php endif ?>
-		</tr>
-		<tr>
-			<th>PDO Enabled</th>
-			<?php if (class_exists('PDO')): ?>
-				<td class="pass">Pass</td>
-			<?php else: ?>
-				<td class="fail">Kohana can use <a href="http://php.net/pdo">PDO</a> to support additional databases.</td>
-			<?php endif ?>
-		</tr>
-	</table>
 
 </body>
 </html>
