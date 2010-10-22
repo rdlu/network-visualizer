@@ -232,8 +232,7 @@ else
 	<?php if ($failed === TRUE): ?>
 		<p id="results" class="fail">✘ Kohana may not work correctly with your environment.</p>
 	<?php else: ?>
-		<p id="results" class="pass">✔ Your environment passed all requirements.<br />
-			Remove or rename the <code>install<?php echo EXT ?></code> file now.</p>
+		<p id="results" class="pass">✔ Your environment passed all requirements.</p>
 	<?php endif ?>
 
 </body>
