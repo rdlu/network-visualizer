@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#grupo no gentoo,archlinux,outras distros
+#group=httpd
+#No debian e ubuntu
+#group=www-data
+
+echo Configurando Permissoes dos Diretorios data/*, cache e logs...
+chmod ug+rwx data/* application/cache/ application/logs/
+chmod o-wx data/* application/cache/ application/logs/
+echo Permissoes OK
+
+if [ ! -z "$group" ]
+  then
+	echo Configurando grupos dos arquivos para o do servidor web
+	chgrp -R $group *
+fi

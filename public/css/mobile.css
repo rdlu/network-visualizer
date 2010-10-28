@@ -1,0 +1,12 @@
+/* 
+    Document   : mobile
+    Created on : Jul 23, 2010, 3:00:30 PM
+    Author     : Rodrigo
+    Description:
+        Arquivo destinado aos estilos específicos de plataformas móveis
+*/
+
+root { 
+    display: block;
+}
+

@@ -83,7 +83,7 @@ define('DATAPATH', realpath($data).DIRECTORY_SEPARATOR);
 // Clean up the configuration vars
 unset($application, $modules, $system);
 
-if (file_exists('install'.EXT))
+if (isset($_GET['check']) && file_exists('install'.EXT) )
 {
 	// Load the installation check
 	return include 'install'.EXT;

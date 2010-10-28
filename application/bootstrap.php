@@ -1,14 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 //-- Environment setup --------------------------------------------------------
-
 /**
  * Set the default time zone.
  *
  * @see  http://kohanaframework.org/guide/using.configuration
  * @see  http://php.net/timezones
  */
-date_default_timezone_set('America/Chicago');
+date_default_timezone_set('America/Sao_Paulo');
 
 /**
  * Set the default locale.
@@ -16,7 +15,7 @@ date_default_timezone_set('America/Chicago');
  * @see  http://kohanaframework.org/guide/using.configuration
  * @see  http://php.net/setlocale
  */
-setlocale(LC_ALL, 'en_US.utf-8');
+setlocale(LC_ALL, 'pt_BR.utf-8');
 
 /**
  * Enable the Kohana auto-loader.
@@ -59,7 +58,7 @@ if (getenv('KOHANA_ENV') !== FALSE)
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url'   => '/',
+	'base_url'   => getenv('BASE_URL'),
 ));
 
 /**
@@ -77,16 +76,28 @@ Kohana::$config->attach(new Kohana_Config_File);
  */
 Kohana::modules(array(
 	// 'auth'       => MODPATH.'auth',       // Basic authentication
-	// 'cache'      => MODPATH.'cache',      // Caching with multiple backends
+	 'cache'      => MODPATH.'cache',      // Caching with multiple backends
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
-	// 'database'   => MODPATH.'database',   // Database access
-	// 'image'      => MODPATH.'image',      // Image manipulation
+	 'database'   => MODPATH.'database',   // Database access
+	 'image'      => MODPATH.'image',      // Image manipulation
 	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
-	// 'pagination' => MODPATH.'pagination', // Paging of results
+	 'pagination' => MODPATH.'pagination', // Paging of results
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
-	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
+	 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
+     'sprig'  => MODPATH.'sprig',  // User guide and API documentation
+     'firephp'  => MODPATH.'firephp',  // User guide and API documentation
+
 	));
+
+/**
+ * Attach FirePHP to logging. be sure to enable firephp module
+ */
+
+// Exclude all FirePHP console logs from the file log...
+Kohana::$log->attach(new FirePHP_Log_File(APPPATH.'logs'));
+Kohana::$log->attach(new FirePHP_Log_Console());
+
 
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
@@ -97,6 +108,8 @@ Route::set('default', '(<controller>(/<action>(/<id>)))')
 		'controller' => 'welcome',
 		'action'     => 'index',
 	));
+
+
 
 if ( ! defined('SUPPRESS_REQUEST'))
 {
@@ -109,3 +122,10 @@ if ( ! defined('SUPPRESS_REQUEST'))
 		->send_headers()
 		->response;
 }
+
+FirePHP_Profiler::instance()
+	->group('NetMetric MoM Profiler Results:')
+	->superglobals() // New Superglobals method to show them all...
+	->database()
+	->benchmark()
+	->groupEnd();

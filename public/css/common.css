@@ -1,0 +1,12 @@
+/* 
+    Document   : common
+    Created on : Jul 23, 2010, 2:58:56 PM
+    Author     : Rodrigo
+    Description:
+        Arquivo que contém estilos comuns à todas as mídias
+*/
+
+root { 
+    display: block;
+}
+

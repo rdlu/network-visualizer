@@ -1,0 +1,12 @@
+/* 
+    Document   : screen
+    Created on : Jul 23, 2010, 3:01:06 PM
+    Author     : Rodrigo
+    Description:
+        Arquivo destinado aos estilos de mídia screen (monitores, TVs) e projection (projetores)
+*/
+
+root { 
+    display: block;
+}
+
