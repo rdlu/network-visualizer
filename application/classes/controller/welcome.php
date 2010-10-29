@@ -1,10 +1,16 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Welcome extends Controller {
+class Controller_Welcome extends Controller_Skeleton {
+
+    public function before() {
+        parent::before();
+        $this->template->title .= 'Início :: ';
+    }
 
 	public function action_index()
 	{
-		$this->request->response = 'hello, world!';
+        $view = View::factory('index/welcome');
+		$this->template->content = $view;
 	}
 
 } // End Welcome
