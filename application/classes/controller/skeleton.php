@@ -5,7 +5,7 @@
  
 class Controller_Skeleton extends Controller_Template {
 
-  	public $template = 'skeleton';
+  	public $template = 'templates/skeleton';
 
     /**
      * The before() method is called before your controller action.
@@ -20,7 +20,7 @@ class Controller_Skeleton extends Controller_Template {
   	    	// Initialize empty values
   	    	$this->template->title   = 'NetmetricMoM :: ';
   	    	$this->template->content = '';
-            $this->template->header = '';
+            $this->template->header = View::factory('templates/mainmenu');
             $this->template->footer = '';
 
   		$this->template->styles = array();

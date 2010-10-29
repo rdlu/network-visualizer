@@ -59,6 +59,7 @@ if (getenv('KOHANA_ENV') !== FALSE)
  */
 Kohana::init(array(
 	'base_url'   => getenv('BASE_URL'),
+    'index_file' => ''
 ));
 
 /**

@@ -25,7 +25,7 @@ class Model_Entity extends Sprig {
             /** 
              *  Descricao/Observacoes
              */
-            'description' => new Sprig_Field_Char,
+            'description' => new Sprig_Field_Text,
             'zip' => new Sprig_Field_Char(array('null' => true)),
             'address' => new Sprig_Field_Char(array('null' => true)),
             'addressnum' => new Sprig_Field_Char(array('null' => true)),

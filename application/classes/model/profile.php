@@ -9,16 +9,17 @@ class Model_Profile extends Sprig {
             'id'=>new Sprig_Field_Auto(),
             'name'=>new Sprig_Field_Char(array('max_lenght'=>32)),
             /**
-             *  Coluna que define o intervalo entre uma rajada (um trem) e outra
+             *  Coluna que define o intervalo entre uma rajada e outra
              * Unidade: segundos
              */
-            'polling'=>new Sprig_Field_Integer(),
+            'polling'=>new Sprig_Field_Integer(array('rules'=>array('polling'=>array($this)),
+                                                    'label'=>'Polling')),
             /*
-             *  Coluna que define a quantidade de vagões de um trem (rajada)
+             *  Coluna que define a quantidade de trens na rajada
              */
             'count'=>new Sprig_Field_Integer(),
             /*
-             *  Coluna que define a quantidade de probes em um vagao
+             *  Coluna que define a quantidade de probes em um trem
              */
             'probeCount'=>new Sprig_Field_Integer(),
             /*
@@ -36,12 +37,11 @@ class Model_Profile extends Sprig {
              *  0 para diffserv (dscp)
              *  1 para tos (tos-dtr+precedence) (RFC-1349)
              */
-            'qosType'=>new Sprig_Field_Integer(array('choices'=>array(0=>'DiffServ (DSCP)',1=>'TOS (RFC-1349)')
-                                               )),
+            'qosType'=>new Sprig_Field_Integer(array('choices'=>array(0=>'DiffServ (DSCP)',1=>'TOS (RFC-1349)'))),
             /*
              *  valor que vai ser preenchido no campo qos do pacote ip, de acordo com o qosType
              */
-            'qosValue'=>new Sprig_Field_Integer(array('choices'=>array(46=>"High Priority",0=>"Best Effort"))),
+            'qosValue'=>new Sprig_Field_Integer(array('choices'=>Kohana::config('qos.dscp'))),
             /*
              *  Define o estado desse perfil, valores:
              * 1, ativo normal

@@ -7,8 +7,7 @@ class Controller_Profiles extends Controller_Skeleton {
         $this->template->title .= 'Perfis de Medição :: ';
     }
 
-	public function action_index()
-	{
+	public function action_index() {
 		$profiles = Sprig::factory('profile')->load(NULL, FALSE);
         Fire::group('Models Loaded')->info($profiles)->groupEnd();
         $view = View::factory('profiles/list');
