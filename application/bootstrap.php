@@ -111,6 +111,11 @@ Route::set('default', '(<controller>(/<action>(/<id>)))')
 	));
 
 
+Route::set('process', '(<controller>(/<action>(/<source>/<destination>)))')
+	->defaults(array(
+		'controller' => 'process',
+		'action'     => 'view',
+	));
 
 if ( ! defined('SUPPRESS_REQUEST'))
 {

@@ -1,0 +1,1 @@
+<div id="error" class="success">A entidade <?=$name?> foi removida com sucesso.</div>

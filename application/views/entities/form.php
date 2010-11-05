@@ -1,4 +1,4 @@
-<h2><a href="<?=url::base()?>entities/">Voltar</a></h2>
+<h2><a href="<?=url::base().Request::instance()->controller?>">Voltar</a></h2>
 <?php if($errors): ?>
 <ul>
     <?php foreach($errors as $error): ?>
@@ -7,7 +7,7 @@
 </ul>
 <?php endif ?>
 
-<?=Form::open('entities/new',array('id'=>'newEntity'))?>
+<?=Form::open(Request::instance()->controller.'/'.Request::instance()->action.'/'.Request::instance()->param('id',0),array('id'=>'newEntity'))?>
 <dl>
 <?php foreach ($entity->inputs() as $label => $input): ?>
     <dt><?php echo $label ?></dt>

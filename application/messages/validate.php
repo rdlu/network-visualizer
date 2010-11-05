@@ -18,7 +18,7 @@ return array(
 	'min_length'    => ':field must be at least :param1 characters long',
 	'max_length'    => ':field must be less than :param1 characters long',
 	'phone'         => ':field must be a phone number',
-	'not_empty'     => ':field must not be empty',
+	'not_empty'     => ':field é obrigatório.',
 	'range'         => ':field must be within the range of :param1 to :param2',
 	'regex'         => ':field does not match the required format',
 	'url'           => ':field must be a url',

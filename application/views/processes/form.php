@@ -7,9 +7,9 @@
 </ul>
 <?php endif ?>
 
-<?=Form::open(Request::instance()->controller.'/'.Request::instance()->action.'/'.Request::instance()->param('id',0),array('id'=>'newProfile'))?>
+<?=Form::open(Request::instance()->controller.'/'.Request::instance()->action.'/'.Request::instance()->param('id',0),array('id'=>'newEntity'))?>
 <dl>
-<?php foreach ($profile->inputs() as $label => $input): ?>
+<?php foreach ($process->inputs() as $label => $input): ?>
     <dt><?php echo $label ?></dt>
     <dd><?php echo $input ?></dd>
 <?php endforeach ?>

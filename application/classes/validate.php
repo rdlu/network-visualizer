@@ -19,4 +19,9 @@ class Validate extends Kohana_Validate {
         $minWait = $count*$gap*2.2;
         return $value > $minWait;
     }
+
+    public static function isId($value) {
+        Fire::error('YES');
+        return false;
+    }
 }

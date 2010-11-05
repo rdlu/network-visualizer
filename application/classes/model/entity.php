@@ -25,16 +25,17 @@ class Model_Entity extends Sprig {
             /** 
              *  Descricao/Observacoes
              */
-            'description' => new Sprig_Field_Text,
+            'description' => new Sprig_Field_Text(array('null' => true)),
             'zip' => new Sprig_Field_Char(array('null' => true)),
             'address' => new Sprig_Field_Char(array('null' => true)),
             'addressnum' => new Sprig_Field_Char(array('null' => true)),
             'district' => new Sprig_Field_Char(array('null' => true)),
-            'state' => new Sprig_Field_Char(array('null' => true)),
+            'city' => new Sprig_Field_Char(),
+            'state' => new Sprig_Field_Char(),
             'latitude' => new Sprig_Field_Char(array('null' => true)),
             'longitude' => new Sprig_Field_Char(array('null' => true)),
-            'added' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false)),
-            'updated' => new Sprig_Field_Timestamp(array('auto_now_update' => true,'auto_now_create' => true, 'editable'=>false)),
+            'added' => new Sprig_Field_Timestamp(array('auto_now_create' => TRUE, 'editable'=>false)),
+            'updated' => new Sprig_Field_Timestamp(array('auto_now_update' => TRUE,'auto_now_create' => true, 'editable'=>false)),
             /*
              * Tipo de entidade
              * 0: Gerente Linux

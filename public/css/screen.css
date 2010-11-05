@@ -10,3 +10,42 @@ root {
     display: block;
 }
 
+ul li, ol li {
+    text-indent:0;
+}
+
+ul, ol {
+    list-style-position:outside;
+}
+
+ul#mainMenu {
+    clear:both;
+    list-style:none outside none;
+    padding: 0;
+    font-family: Corbel, "Segoe UI", "Droid Sans";
+
+}
+
+ul#mainMenu li {
+    display: inline-block;
+    padding: 15px 5px 15px 8px;
+    border-left: thin dotted;
+    font-size: 18px;
+}
+
+ul#mainMenu li#titleMainMenu {
+    border-left: none !important;
+    font-weight: bold;
+    letter-spacing: -2px;
+    font-size: 24px;
+    width: 50%;
+}
+
+ul#mainMenu li a {
+    text-decoration: none;
+}
+
+div#container {
+    margin: 0 auto;
+    width: 90%;
+}

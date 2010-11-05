@@ -7,8 +7,7 @@ class Controller_Entities extends Controller_Skeleton {
         $this->template->title .= 'Entidades :: ';
     }
 
-	public function action_index()
-	{
+	public function action_index() {
 		$entities = Sprig::factory('entity')->load(NULL, FALSE);
         Fire::group('Models Loaded')->info($entities)->groupEnd();
         $view = View::factory('entities/list');
@@ -29,7 +28,7 @@ class Controller_Entities extends Controller_Skeleton {
         if ($_POST) {
             try {
                 $entity->values($_POST)->create();
-                $this->request->redirect(Route::get('entities')->uri(array('name' => $project->name)));
+                $this->request->redirect($this->request->controller.'/edit/'.$entity->id);
             } catch (Validate_Exception $e) {
                 $errors = $e->array->errors('entities/new');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
@@ -45,4 +44,32 @@ class Controller_Entities extends Controller_Skeleton {
         $this->action_edit(0);
     }
 
+    public function action_remove($id) {
+        $entity = Sprig::factory('entity');
+        if($id!=0) {
+            $entity->id = $id;
+            $entity->load();
+        }
+
+        if($entity->loaded()) {
+            $view = View::factory('entities/remove');
+            $view->set('name',$entity->name);
+            $entity->delete();
+            $this->template->content = $view;
+        } else $this->template->content = 'Entidade não existente no MoM';
+    }
+
+    public function action_view($id) {
+        $id = (int) $id;
+        $view = View::factory('entities/view');
+
+        $entity = Sprig::factory('entity',array('id'=>$id))->load();
+
+        if($entity->loaded()) {
+            $view->bind('entity',$entity);
+            $this->template->content = $view;
+        } else {
+            $this->template->content = 'Entidade não localizada no sistema';
+        }
+    }
 } // End Welcome
