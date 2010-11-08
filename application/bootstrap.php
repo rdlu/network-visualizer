@@ -104,18 +104,7 @@ Kohana::$log->attach(new FirePHP_Log_Console());
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
-Route::set('default', '(<controller>(/<action>(/<id>)))')
-	->defaults(array(
-		'controller' => 'welcome',
-		'action'     => 'index',
-	));
-
-
-Route::set('process', '(<controller>(/<action>(/<source>/<destination>)))')
-	->defaults(array(
-		'controller' => 'process',
-		'action'     => 'view',
-	));
+require_once APPPATH.'routes.php';
 
 if ( ! defined('SUPPRESS_REQUEST'))
 {

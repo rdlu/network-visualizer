@@ -4,7 +4,7 @@ class Snmp {
 
     protected $default = '127.0.0.1';
 
-    protected $instances = array();
+    protected static $instances = array();
 
     protected $groups = array();
 
@@ -12,6 +12,12 @@ class Snmp {
 
     protected $community;
 
+    /**
+     * @static
+     * @param string $address
+     * @param string $community
+     * @return Snmp
+     */
 	public static function instance($address = NULL,$community='public') {
 		if ($address === NULL) {
 			// Use the default instance name
@@ -39,8 +45,17 @@ class Snmp {
     public function group($name) {
         $oids = Kohana::config('snmp.'.$name);
 
+        Fire::group('SNMP to be fetched from '.$this->address)->info($oids)->groupEnd();
+
         foreach($oids as $key => $oid) {
-            $return[$key] = snmp2_get($this->address,$this->community,$oid,1000,0);
+            try {
+                $return[$key] = snmp2_get($this->address,$this->community,$oid,1000,1);
+            } catch(Exception $e) {
+                $return[$key] = NULL;
+            }
+
         }
+
+        return $return;
     }
 }
