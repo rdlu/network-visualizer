@@ -9,15 +9,16 @@ class Model_Entity extends Sprig {
     protected function _init() {
         $this->_fields += array(
             'id' => new Sprig_Field_Auto,
+            'ipaddress' => new Sprig_Field_Char(array('label'=>'Endereço IPv4',
+                    'min_length'=>7,
+                    'max_length'=>15,
+                    'rules' => array('ip'=>array())
+            )),
             'name' => new Sprig_Field_Char(array('unique' => true)),
             /**
              *  Endereco IPv4
              */
-            'ipaddress' => new Sprig_Field_Char(array('label'=>'Endereço IPv4',
-                                                     'min_length'=>7,
-                                                     'max_length'=>15,
-                                                     'rules' => array('ip'=>array())
-                                                )),
+
             /**
              *  Nome de rede que possa ser resolvido via DNS (Ip Dinâmico)
              */

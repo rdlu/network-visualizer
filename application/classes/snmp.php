@@ -43,18 +43,28 @@ class Snmp {
     }
 
     public function group($name) {
-        $oids = Kohana::config('snmp.'.$name);
+        if (!isset($this->groups[$name])) {
+            $oids = Kohana::config('snmp.'.$name);
 
-        Fire::group('SNMP to be fetched from '.$this->address)->info($oids)->groupEnd();
-
-        foreach($oids as $key => $oid) {
-            try {
-                $return[$key] = snmp2_get($this->address,$this->community,$oid,1000,1);
-            } catch(Exception $e) {
-                $return[$key] = NULL;
+            if($oids === NULL) {
+                throw new Kohana_Exception("Configuration node '$name' does not exist on snmp configuration file",array($name));
             }
 
-        }
+            Fire::group('SNMP Data from '.$this->address,array('Collapsed'=>'true'))->group('To be fetched: ')->info($oids)->groupEnd();
+
+            foreach($oids as $key => $oid) {
+                try {
+                    $data = snmp2_get($this->address,$this->community,$oid,1000,2000000);
+                    $pos = strpos($data,':');
+                    $dt = substr($data,$pos+2);
+                    $return[$key] = $dt;
+                } catch(Exception $e) {
+                    $return[$key] = NULL;
+                }
+            }
+            $this->groups[$name] = $return;
+            Fire::group('Results: ')->info($return)->groupEnd()->groupEnd();
+        } else $return = $this->groups[$name];
 
         return $return;
     }

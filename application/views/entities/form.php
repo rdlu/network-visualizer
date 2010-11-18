@@ -25,7 +25,6 @@
            data: "ip="+$('input[name$="ipaddress"]').val(),
            dataType: 'json',
            success: function(data) {
-               console.warn(data.data.version);
                $('span#ipCheck').remove();
                if(data.data.version)
                     $('input[name$="ipaddress"]').after('<span id="ipCheck" class="input sucess">Host contactado com sucesso. Versão: '+data.data.version+'</span>');
@@ -33,13 +32,13 @@
                     $('input[name$="ipaddress"]').after('<span id="ipCheck" class="input error">Não houve resposta do host no IP indicado. Cheque se a instalação foi feita corretamente.</span>');
            },
            error: function(status,msg,error) {
-               console.warn('CheckIP Failed '+msg);
+               $('span#ipCheck').remove();
+               $('input[name$="ipaddress"]').after('<span id="ipCheck" class="input error">Checagem de IP falhou.</span>');
            }
          });
     }
 
     $('input[name$="ipaddress"]').blur(function() {
-        console.warn('WEEEE!');
         checkIp();
     });
 </script>

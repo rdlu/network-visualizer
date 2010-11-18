@@ -37,3 +37,6 @@
 [submodule "modules/firephp"]
 	path = modules/firephp
 	url = git://github.com/rddweb/KO3_FirePHP.git
+[submodule "modules/log"]
+	path = modules/log
+	url = git://github.com/shadowhand/kohana-log.git

@@ -10,6 +10,20 @@ root {
     display: block;
 }
 
+body {
+    background-color: #D7E8F7;
+}
+
+div#header {
+    -moz-border-radius-bottomleft:10px;
+    -moz-border-radius-bottomright:10px;
+    background-image:-moz-linear-gradient(0% 3% 270deg,#6A8BAB, #375D81);
+    background-color:#191919;
+    padding: 5px;
+    color: white;
+    text-shadow:4px 4px 3px #000000;
+}
+
 ul li, ol li {
     text-indent:0;
 }
@@ -22,15 +36,26 @@ ul#mainMenu {
     clear:both;
     list-style:none outside none;
     padding: 0;
-    font-family: Corbel, "Segoe UI", "Droid Sans";
-
+    font-family: "Segoe UI", "Droid Sans";
 }
 
 ul#mainMenu li {
     display: inline-block;
     padding: 15px 5px 15px 8px;
-    border-left: thin dotted;
-    font-size: 18px;
+    border-left: thin dotted #6A8BAB;
+    font-size: 14px;
+}
+
+li a {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #DDD;
+    text-shadow:3px 3px 2px #000000;
+}
+
+li a:hover {
+    color: #FFF;
+    text-shadow:3px 3px 2px #000000;
 }
 
 ul#mainMenu li#titleMainMenu {
@@ -48,4 +73,31 @@ ul#mainMenu li a {
 div#container {
     margin: 0 auto;
     width: 90%;
+}
+
+div#content {
+    -moz-border-radius:10px;
+    background-image:-moz-linear-gradient(0% 3% 270deg,#DDD, #EEE);
+    background-color:#191919;
+    padding: 10px;
+    color: white;
+    margin-top: 5px;
+}
+
+a.boardMenu {
+    display: block;
+    width: 98%;
+    -moz-border-radius:5px;
+    border: thin solid #999;
+    padding: 5px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    vertical-align: top;
+    font-family: Corbel, "Segoe UI";
+    color: #222;
+    text-shadow:1px 1px 1px #AAA;
+}
+
+a.boardMenu img {
+    margin: 0 10px;
 }

@@ -88,6 +88,7 @@ Kohana::modules(array(
 	 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
      'sprig'  => MODPATH.'sprig',  // User guide and API documentation
      'firephp'  => MODPATH.'firephp',  // User guide and API documentation
+     'log'  => MODPATH.'log',
 
 	));
 
@@ -119,7 +120,7 @@ if ( ! defined('SUPPRESS_REQUEST'))
 }
 
 FirePHP_Profiler::instance()
-	->group('NetMetric MoM Profiler Results:')
+	->group('NetMetric MoM Profiler Results:',array('Collapsed'=>'true'))
 	->superglobals() // New Superglobals method to show them all...
 	->database()
 	->benchmark()
