@@ -9,20 +9,17 @@ class Model_Entity extends Sprig {
     protected function _init() {
         $this->_fields += array(
             'id' => new Sprig_Field_Auto,
+            /**
+             *  Endereco IPv4
+             */
             'ipaddress' => new Sprig_Field_Char(array('label'=>'Endereço IPv4',
                     'min_length'=>7,
                     'max_length'=>15,
                     'rules' => array('ip'=>array())
             )),
-            'name' => new Sprig_Field_Char(array('unique' => true)),
-            /**
-             *  Endereco IPv4
-             */
-
-            /**
-             *  Nome de rede que possa ser resolvido via DNS (Ip Dinâmico)
-             */
-            'serverName' => new Sprig_Field_Char,
+            'name' => new Sprig_Field_Char(array('unique' => true,'label'=>'Nome da entidade')),
+            'state' => new Sprig_Field_Char(array('label'=>'Estado')),
+            'city' => new Sprig_Field_Char(array('label'=>'Cidade')),
             /** 
              *  Descricao/Observacoes
              */
@@ -31,8 +28,6 @@ class Model_Entity extends Sprig {
             'address' => new Sprig_Field_Char(array('null' => true)),
             'addressnum' => new Sprig_Field_Char(array('null' => true)),
             'district' => new Sprig_Field_Char(array('null' => true)),
-            'city' => new Sprig_Field_Char(),
-            'state' => new Sprig_Field_Char(),
             'latitude' => new Sprig_Field_Char(array('null' => true)),
             'longitude' => new Sprig_Field_Char(array('null' => true)),
             'added' => new Sprig_Field_Timestamp(array('auto_now_create' => TRUE, 'editable'=>false)),
@@ -42,14 +37,14 @@ class Model_Entity extends Sprig {
              * 0: Gerente Linux
              * 1: Agente Windows
              * 2: Agente Windows Mobile
-             */
+
             'type' => new Sprig_Field_Integer(
                 array('choices'=>array(0=>'Gerente Linux',
                                        1=>'Agente Windows',
                                        2=>'Agente Windows Mobile'),
                      'default'=>0,
                      'label'=>'Tipo de Entidade'
-                )),
+                )),*/
             /*
              *  Define o estado dessa entidade, valores:
              * 1, ativo normal, aceitando novos cadastros de processos

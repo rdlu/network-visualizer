@@ -1,14 +1,33 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Processes extends Controller {
+class Controller_Processes extends Controller_Skeleton {
 
 
-	public function action_index() {
-		$processes = Sprig::factory('process')->load(NULL, FALSE);
-        Fire::group('Models Loaded')->info($processes)->groupEnd();
-        /*$view = View::factory('processes/list');
-        $view->bind('processes',$processes);
-        $this->template->content = $view;*/
+	public function action_index($sourceAddr=0) {
+        $view = View::factory('processes/list');
+
+        if(!$sourceAddr) $sourceAddr = '127.0.0.1';
+
+        if(Validate::ip($sourceAddr)){
+            $sourceEntity = Sprig::factory('entity',array('ipaddress'=>$sourceAddr))->load();
+
+            if($sourceEntity->id) {
+                $processes = Sprig::factory('process',array('source_id',$sourceEntity->id))->load(NULL, FALSE);
+            } else {
+                $processes = null;
+            }
+
+            Fire::group('Models Loaded')->info($processes)->info($sourceEntity)->groupEnd();
+        } else {
+            $errors[] = "A origem $sourceAddr não é um IP válido.";
+        }
+
+
+        $view->bind('processes',$processes)
+                ->bind('errors',$errors)
+                ->bind('source',$sourceEntity)
+                ->bind('sourceAddr',$sourceAddr);
+        $this->template->content = $view;
 	}
 
     public function action_new($source = 0,$destination = 0) {

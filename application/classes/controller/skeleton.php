@@ -43,10 +43,12 @@ class Controller_Skeleton extends Controller_Template {
                 'css/screen.css' => 'screen, projection',
                 'css/print.css' => 'print',
                 'css/mobile.css' => 'mobile',
+                'http://tablesorter.com/themes/blue/style.css' => 'screen, projection',
             );
 
             $scripts = array(
-                'js/dev/jquery-1.4.2.js',
+                'js/dev/jquery-1.4.4.js',
+                'http://tablesorter.com/jquery.tablesorter.min.js',
             );
 
             $this->template->styles = array_merge( $this->template->styles, $styles );

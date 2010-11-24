@@ -1,10 +1,39 @@
+<table id="filterMenu">
+    <tr>
+        <td>Filtro <select id="das"></select></td>
+        <td><a href="<?=url::base()?>profiles/new/" class="filterMenu"><img src="<?=url::site('images/actions/add.png')?>" alt="Adicionar novo perfil" />&nbsp;&nbsp;&nbsp;Novo Perfil de Teste</a></td>
+    </tr>
+</table>
+<table id="entityList" class="tablesorter">
+    <thead>
+    <tr>
+        <th>Nome do perfil</th>
+        <th>Métricas cobertas</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+<tbody>
 <?php if(count($profiles) > 0): ?>
-    <ul>
     <?php foreach($profiles as $profile): ?>
-        <li><a href="<?=url::base()?>profiles/edit/<?=$profile->id?>"><?=$profile->name?></a></li>
+        <tr>
+            <td><a href="<?=Url::site('profiles/view').'/'.$entity->id?>"><?=$profile->name?></a></td>
+            <td><?=$entity->ipaddress?></td>
+            <td><?php foreach($profile->metrics as $metric): ?>
+                    <?=$metric->name?> 
+                <?php endforeach; ?>
+             </td>
+            <td><?=$entity->status?></td>
+            <td>
+                <a href="<?=url::site('profiles/edit').'/'.$entity->id?>"><img src="<?=url::site('img/actions/edit.png')?>" alt="Editar" /></a>
+                <a href="<?=url::site('profiles/remove').'/'.$entity->id?>"><img src="<?=url::site('img/actions/remove.png')?>" alt="Remover" /></a>
+            </td>
+        </tr>
     <? endforeach ?>
-    </ul>
 <?php else: ?>
-        Nenhum perfil encontrado
+<tr>
+    <td colspan="4">Nenhum perfil encontrado</td>
+</tr>
 <?php endif ?>
-<h2><a href="<?=url::base()?>profiles/new/">Novo Perfil de Medição</a></h2>
+        </tbody>
+</table>

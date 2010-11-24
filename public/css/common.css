@@ -10,3 +10,19 @@ root {
     display: block;
 }
 
+@font-face {
+	font-family: Ubuntu;
+	src: url('fonts/ubuntu/Ubuntu-R.ttf');
+}
+
+@font-face {
+	font-family: Ubuntu;
+	font-weight: bold;
+	src: url('fonts/ubuntu/Ubuntu-B.ttf');
+}
+
+@fontface {
+    font-family: Ubuntu;
+    font-style: italic;
+    src: url('fonts/ubuntu/Ubuntu-I.ttf');
+}

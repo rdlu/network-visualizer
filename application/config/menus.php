@@ -15,6 +15,9 @@ return array(
         'admin'=>array(
             'title'=>__('Administrar'),
             'submenu'=>array(
+                'processes'=>array(
+                    'title'=>__('Processos de Medição'),
+                    'href'=>'processes/'),
                 'entities'=>array(
                     'title'=>__('Sondas e Agentes'),
                     'href'=>'entities/'),
