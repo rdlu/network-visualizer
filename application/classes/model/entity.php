@@ -18,16 +18,16 @@ class Model_Entity extends Sprig {
                     'rules' => array('ip'=>array())
             )),
             'name' => new Sprig_Field_Char(array('unique' => true,'label'=>'Nome da entidade')),
-            'state' => new Sprig_Field_Char(array('label'=>'Estado')),
+            'state' => new Sprig_Field_Char(array('label'=>'Estado','choices'=>Model_Uf::toArray())),
             'city' => new Sprig_Field_Char(array('label'=>'Cidade')),
             /** 
              *  Descricao/Observacoes
              */
-            'description' => new Sprig_Field_Text(array('null' => true)),
+            'description' => new Sprig_Field_Text(array('null' => true,'label'=>'Observações')),
             'zip' => new Sprig_Field_Char(array('null' => true)),
-            'address' => new Sprig_Field_Char(array('null' => true)),
-            'addressnum' => new Sprig_Field_Char(array('null' => true)),
-            'district' => new Sprig_Field_Char(array('null' => true)),
+            'address' => new Sprig_Field_Char(array('null' => true,'label'=>'Endereço')),
+            'addressnum' => new Sprig_Field_Char(array('null' => true,'label'=>'Número')),
+            'district' => new Sprig_Field_Char(array('null' => true,'label'=>'Bairro')),
             'latitude' => new Sprig_Field_Char(array('null' => true)),
             'longitude' => new Sprig_Field_Char(array('null' => true)),
             'added' => new Sprig_Field_Timestamp(array('auto_now_create' => TRUE, 'editable'=>false)),

@@ -41,6 +41,7 @@ return array(
 		'water',
 		'weather',
 		'work',
+        'uf'
 	),
 
 	'irregular' => array(

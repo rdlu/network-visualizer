@@ -36,10 +36,10 @@
             <?php $destination = $process->destination->load();
                   $source = $process->source->load(); ?>
         <tr>
-            <td><a href="<?=Url::site('entities/view').'/'.$process->id?>"><?=$source->name.' ('.$source->ipaddress?>)</a></td>
-            <td><?=$destination->name.' ('.$destination->ipaddress?>)</td>
-            <td><?=$entity->state?> / <?=$entity->city?></td>
-            <td><?=Date("Y-m-d H:i:s",$entity->updated)?></td>
+            <td><a href="<?=Url::site('entities/view').'/'.$source->id?>"><?=$source->name.' ('.$source->ipaddress?>)</a></td>
+            <td><a href="<?=Url::site('entities/view').'/'.$destination->id?>"><?=$destination->name.' ('.$destination->ipaddress?>)</a></td>
+            <td><?=$process->profile->load()->name?></td>
+            <td><?php foreach($process->profile->load()->metrics as $metric) echo $metric->name.' '; ?></td>
             <td>
                 <a href="<?=url::site('processes/remove').'/'.$process->id?>"><img src="<?=url::site('images/actions/clock_delete.png')?>" alt="Remover" /></a>
             </td>

@@ -24,8 +24,7 @@
              </td>
             <td><?=$profile->status?></td>
             <td>
-                <a href="<?=url::site('profiles/edit').'/'.$profile->id?>"><img src="<?=url::site('images/actions/edit.png')?>" alt="Editar" /></a>
-                <a href="<?=url::site('profiles/remove').'/'.$profile->id?>"><img src="<?=url::site('images/actions/remove.png')?>" alt="Remover" /></a>
+                <a href="<?=url::site('profiles/remove').'/'.$profile->id?>"><img src="<?=url::site('images/actions/delete.png')?>" alt="Remover" /></a>
             </td>
         </tr>
     <? endforeach ?>

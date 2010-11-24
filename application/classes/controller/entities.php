@@ -21,10 +21,13 @@ class Controller_Entities extends Controller_Skeleton {
     public function action_edit($id) {
         $entity = Sprig::factory('entity');
 
+        $disabled = 'disabled';
+
         if($id!=0) {
             $entity->id = $id;
             $entity->load();
             $this->template->title .= "Editando a entidade $entity->ipaddress";
+            $disabled = 'enabled';
         }
 
         if ($_POST) {
@@ -34,11 +37,14 @@ class Controller_Entities extends Controller_Skeleton {
             } catch (Validate_Exception $e) {
                 $errors = $e->array->errors('entities/new');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
+                if(!isset($errors['ipaddress'])) {
+                    $disabled = 'enabled';
+                }
             }
         }
 
         $view = View::factory('entities/form');
-        $view->bind('entity',$entity)->bind('errors',$errors);
+        $view->bind('entity',$entity)->bind('errors',$errors)->bind('disabled',$disabled);
         if($id==0 || $entity->loaded()) $this->template->content = $view;
         else $this->template->content = 'Entidade não existente no MoM';
     }

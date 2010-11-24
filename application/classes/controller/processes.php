@@ -7,7 +7,17 @@ class Controller_Processes extends Controller_Skeleton {
         $this->template->title .= 'Processos de Medição :: ';
     }
 
-	public function action_index($sourceAddr=0) {
+	public function action_index() {
+        $view = View::factory('processes/index');
+        $this->template->title .= 'Escolha da Entidade de Origem do Tráfego';
+
+        $entities = Sprig::factory('entity')->load(NULL, FALSE);
+        $estados = Sprig::factory('uf')->load(NULL, FALSE);
+        $view->bind('entities',$entities);
+        $this->template->content = $view;
+	}
+
+    public function action_list($sourceAddr=0) {
         $view = View::factory('processes/list');
 
         if(!$sourceAddr) $sourceAddr = '127.0.0.1';
@@ -28,7 +38,7 @@ class Controller_Processes extends Controller_Skeleton {
                     ->info($entities)
                     ->groupEnd();
         } else {
-            $errors[] = "A origem $sourceAddr não é um IP válido.";
+            $errors[] = "A origem $sourceAddr não é um IP válido. Você deve informar um IP válido.";
         }
 
 

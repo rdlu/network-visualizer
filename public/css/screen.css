@@ -47,14 +47,14 @@ ul#mainMenu li {
     font-size: 14px;
 }
 
-li a {
+ul#mainMenu li a {
     text-transform: uppercase;
     font-weight: bold;
     color: #DDD;
     text-shadow:3px 3px 2px #000000;
 }
 
-li a:hover {
+ul#mainMenu li a:hover {
     color: #FFF;
     text-shadow:3px 3px 2px #000000;
 }
@@ -118,6 +118,78 @@ table#filterMenu td {
 }
 
 a.filterMenu {
+    border-bottom: dotted 1px black;
     text-decoration: none;
     color: black;
+}
+
+form.bForms fieldset {
+    -moz-border-radius:10px;
+    border: dotted thin #999;
+    padding: 10px;
+}
+
+form.bForms fieldset legend {
+    font-size: 10px;
+    font-family: Ubuntu, Arial, sans-serif;
+    font-weight: bold;
+}
+
+form.bForms label {
+    font-size: 13px;
+    font-family: Ubuntu, Arial, sans-serif;
+    font-weight: bold;
+    width: 120px;
+    display: inline-block;
+    text-align: right;
+}
+
+form.bForms label.textarea {
+    vertical-align: top;
+    padding-top: 5px;
+}
+
+form.bForms input {
+    margin: 5px 10px 5px 1px;
+}
+
+span.input {
+    -moz-border-radius:3px;
+    padding: 0 5px 0 30px;
+    font-size: 12px;
+    font-family: Ubuntu, Arial, sans-serif;
+}
+
+span.sucess {
+    background-image: url('../images/actions/tick.png');
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    background-color: #c8d8af;
+    border: dotted thin green;
+}
+
+span.error {
+    background-image: url('../images/actions/cross.png');
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    border: dotted thin #b54242;
+    background-color: #e3c0c0;
+}
+
+ul.errors {
+    margin: 10px;
+    padding: 5px;
+    display: inline-block;
+    font-family: Ubuntu, Arial, sans-serif;
+    border: dotted thin #b54242;
+    background-color: #e3c0c0;
+    -moz-border-radius:7px;
+}
+
+ul.errors li {
+    display: block;
+    padding: 5px 10px 5px 30px;
+    background-image: url('../images/actions/cross.png');
+    background-repeat: no-repeat;
+    background-position: 5px center;
 }

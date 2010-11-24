@@ -54,7 +54,7 @@ class Snmp {
 
             foreach($oids as $key => $oid) {
                 try {
-                    $data = snmp2_get($this->address,$this->community,$oid,1000,2000000);
+                    $data = snmp2_get($this->address,$this->community,$oid,100000,2);
                     $pos = strpos($data,':');
                     $dt = substr($data,$pos+2);
                     $return[$key] = $dt;
