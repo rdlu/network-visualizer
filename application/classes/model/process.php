@@ -21,7 +21,7 @@ class Model_Process extends Sprig {
                                                             'empty' => false,
                                                             'rules'=>array('isId'=>array()))),
             'profile' => new Sprig_Field_BelongsTo(array('model'=>'Profile')),
-            'description' => new Sprig_Field_Text(array('label'=>__('Observações'))),
+            'description' => new Sprig_Field_Text(array('empty'=>true,'label'=>__('Observações'))),
             /*
              *  Define o estado dessa entidade, valores:
              * 1, ativo normal, aceitando novos cadastros de processos

@@ -17,16 +17,15 @@
 <?php if(count($profiles) > 0): ?>
     <?php foreach($profiles as $profile): ?>
         <tr>
-            <td><a href="<?=Url::site('profiles/view').'/'.$entity->id?>"><?=$profile->name?></a></td>
-            <td><?=$entity->ipaddress?></td>
+            <td><a href="<?=Url::site('profiles/view').'/'.$profile->id?>"><?=$profile->name?></a></td>
             <td><?php foreach($profile->metrics as $metric): ?>
                     <?=$metric->name?> 
                 <?php endforeach; ?>
              </td>
-            <td><?=$entity->status?></td>
+            <td><?=$profile->status?></td>
             <td>
-                <a href="<?=url::site('profiles/edit').'/'.$entity->id?>"><img src="<?=url::site('img/actions/edit.png')?>" alt="Editar" /></a>
-                <a href="<?=url::site('profiles/remove').'/'.$entity->id?>"><img src="<?=url::site('img/actions/remove.png')?>" alt="Remover" /></a>
+                <a href="<?=url::site('profiles/edit').'/'.$profile->id?>"><img src="<?=url::site('images/actions/edit.png')?>" alt="Editar" /></a>
+                <a href="<?=url::site('profiles/remove').'/'.$profile->id?>"><img src="<?=url::site('images/actions/remove.png')?>" alt="Remover" /></a>
             </td>
         </tr>
     <? endforeach ?>

@@ -8,6 +8,7 @@ class Controller_Entities extends Controller_Skeleton {
     }
 
 	public function action_index() {
+        $this->template->title .= 'Listagem';
 		$entities = Sprig::factory('entity')->load(NULL, FALSE);
         Fire::group('Models Loaded')->info($entities)->groupEnd();
         $view = View::factory('entities/list');
@@ -23,6 +24,7 @@ class Controller_Entities extends Controller_Skeleton {
         if($id!=0) {
             $entity->id = $id;
             $entity->load();
+            $this->template->title .= "Editando a entidade $entity->ipaddress";
         }
 
         if ($_POST) {
@@ -34,6 +36,7 @@ class Controller_Entities extends Controller_Skeleton {
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
             }
         }
+
         $view = View::factory('entities/form');
         $view->bind('entity',$entity)->bind('errors',$errors);
         if($id==0 || $entity->loaded()) $this->template->content = $view;

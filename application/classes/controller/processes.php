@@ -2,6 +2,10 @@
 
 class Controller_Processes extends Controller_Skeleton {
 
+    public function before() {
+        parent::before();
+        $this->template->title .= 'Processos de Medição :: ';
+    }
 
 	public function action_index($sourceAddr=0) {
         $view = View::factory('processes/list');
@@ -10,6 +14,7 @@ class Controller_Processes extends Controller_Skeleton {
 
         if(Validate::ip($sourceAddr)){
             $sourceEntity = Sprig::factory('entity',array('ipaddress'=>$sourceAddr))->load();
+            $entities = Sprig::factory('entity')->load(NULL, FALSE);
 
             if($sourceEntity->id) {
                 $processes = Sprig::factory('process',array('source_id',$sourceEntity->id))->load(NULL, FALSE);
@@ -17,7 +22,11 @@ class Controller_Processes extends Controller_Skeleton {
                 $processes = null;
             }
 
-            Fire::group('Models Loaded')->info($processes)->info($sourceEntity)->groupEnd();
+            Fire::group('Models Loaded')
+                    ->info($processes)
+                    ->info($sourceEntity)
+                    ->info($entities)
+                    ->groupEnd();
         } else {
             $errors[] = "A origem $sourceAddr não é um IP válido.";
         }
@@ -26,7 +35,8 @@ class Controller_Processes extends Controller_Skeleton {
         $view->bind('processes',$processes)
                 ->bind('errors',$errors)
                 ->bind('source',$sourceEntity)
-                ->bind('sourceAddr',$sourceAddr);
+                ->bind('sourceAddr',$sourceAddr)
+                ->bind('entities',$entities);
         $this->template->content = $view;
 	}
 
@@ -47,7 +57,7 @@ class Controller_Processes extends Controller_Skeleton {
         }
         $view = View::factory('processes/form');
         $view->bind('process',$process)->bind('errors',$errors);
-        $this->request->response = $view;
+        $this->template->content = $view;
     }
     
     public function action_remove($id) {

@@ -21,7 +21,6 @@ class Validate extends Kohana_Validate {
     }
 
     public static function isId($value) {
-        Fire::error('YES');
-        return false;
+        return true;
     }
 }
