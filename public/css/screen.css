@@ -12,16 +12,23 @@ root {
 
 body {
     background-color: #D7E8F7;
+    font-family: Ubuntu, Corbel, Arial, sans-serif;
+    font-size: 13px;
 }
 
 div#header {
+    border-radius:10px;
     -moz-border-radius-bottomleft:10px;
     -moz-border-radius-bottomright:10px;
     background-image:-moz-linear-gradient(0% 3% 270deg,#6A8BAB, #375D81);
+    background-image:-webkit-gradient(linear, left top, left bottom,from(#6A8BAB), to(#375D81));
+    -pie-background: linear-gradient(#6A8BAB, #375D81); 
     background-color:#191919;
     padding: 5px;
     color: white;
     text-shadow:4px 4px 3px #000000;
+    behavior: url('/mom/pie/PIE.php');
+    margin-top: -10px;
 }
 
 ul li, ol li {
@@ -78,11 +85,14 @@ div#container {
 }
 
 div#content {
+    border-radius:10px;
     -moz-border-radius:10px;
     background-image:-moz-linear-gradient(0% 3% 270deg,#DDD, #EEE);
+    -pie-background: linear-gradient(#DDD, #EEE); 
     background-color:#191919;
     padding: 10px;
     margin-top: 5px;
+    behavior: url('/mom/pie/PIE.php');
 }
 
 a.boardMenu {
@@ -93,14 +103,14 @@ a.boardMenu {
     padding: 5px;
     margin-bottom: 5px;
     text-decoration: none;
-    vertical-align: top;
-    font-family: Corbel, "Segoe UI";
+    font-size: 1.3em;
     color: #222;
     text-shadow:1px 1px 1px #AAA;
 }
 
 a.boardMenu img {
     margin: 0 10px;
+    vertical-align: middle;
 }
 
 table#filterMenu {
@@ -110,6 +120,8 @@ table#filterMenu {
     margin:0px;
     text-align:center;
     width:100%;
+    -moz-border-radius:7px;
+    border-radius: 7px;
 }
 
 table#filterMenu td {
@@ -125,23 +137,29 @@ a.filterMenu {
 
 form.bForms fieldset {
     -moz-border-radius:10px;
-    border: dotted thin #999;
+    border-radius: 10px;
+    border: solid thin #999;
     padding: 10px;
+    margin: 5px 0;
 }
 
 form.bForms fieldset legend {
     font-size: 10px;
     font-family: Ubuntu, Arial, sans-serif;
-    font-weight: bold;
 }
 
-form.bForms label {
+form.bForms label, table.bForms td.input {
     font-size: 13px;
     font-family: Ubuntu, Arial, sans-serif;
-    font-weight: bold;
     width: 120px;
     display: inline-block;
     text-align: right;
+}
+
+table.bForms td.input {
+    margin-right: 10px;
+    padding: 5px;
+    font-style: italic;
 }
 
 form.bForms label.textarea {
@@ -150,6 +168,10 @@ form.bForms label.textarea {
 }
 
 form.bForms input {
+    margin: 5px 10px 5px 1px;
+}
+
+form.bForms select {
     margin: 5px 10px 5px 1px;
 }
 
@@ -192,4 +214,8 @@ ul.errors li {
     background-image: url('../images/actions/cross.png');
     background-repeat: no-repeat;
     background-position: 5px center;
+}
+
+form#newProfile label {
+    width: 200px;
 }

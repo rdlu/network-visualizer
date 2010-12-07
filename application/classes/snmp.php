@@ -34,6 +34,54 @@ class Snmp {
 		return Snmp::$instances[$address];
 	}
 
+    public function setGroup($name,array $values,$subst=null) {
+        Fire::info($values);
+        $oids = Kohana::config('snmp.'.$name);
+
+        if($oids === NULL) {
+            throw new Kohana_Exception("Configuration node '$name' does not exist on snmp configuration file",array($name));
+        }
+
+        Fire::group('SNMP Data on '.$this->address,array('Collapsed'=>'true'));
+
+        foreach($oids as $key => $oid) {
+            if(isset($values[$key])) $value = $values[$key];
+            elseif(isset($oid['default'])) $value = $oid['default'];
+            else continue;
+
+            foreach ($subst as $k=>$v) {
+                $oid['oid'] = str_replace($k,$v,$oid['oid']);
+            }
+                    
+            switch($oid['type']) {
+                case 'int':
+                    $type = 'i';
+                    $value = (int) $value;
+                    break;
+                default:
+                    $type = 's';
+                    $value = (string) $value;
+            }
+
+            Fire::info("$key: $value");
+
+            try {
+                $result = snmp2_set($this->address,$this->community,$oid['oid'],$type,$value,100000,2);
+            } catch (Exception $err) {
+                $code = $err->getCode();
+                $msg = $err->getMessage();                $oe = $oid['oid'];
+                Fire::error($err,"Exception on SNMP SET $code");
+                Kohana::$log->add(Kohana::ERROR,"Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
+                $data[$key] = $msg;
+            }
+
+        }
+
+        Fire::groupEnd();
+
+        return $data;
+    }
+
     public function setAddress($address) {
         if(Validate::Ip($address)) {
             $this->address = $address;

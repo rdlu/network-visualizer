@@ -16,8 +16,20 @@ Route::set('process', '(<controller>(/<action>(/<source>/<destination>)))')
 		'action'     => 'view',
 	));
 
-Route::set('processIndex', 'processes(/<source>)', array('source'=>'[0-9.]+'))
+Route::set('processIndex', 'processes/list(/<source>)', array('source'=>'[0-9.]+'))
     ->defaults(array(
                     'controller'=>'processes',
-                    'action'=>'index'
+                    'action'=>'list'
                ));
+
+Route::set('processNew', 'processes/new(/<source>)', array('source'=>'[0-9.]+'))
+    ->defaults(array(
+                    'controller'=>'processes',
+                    'action'=>'new'
+               ));
+
+Route::set('processSetup', '(<controller>(/<action>/<first>/<second>/<profile>))')
+	->defaults(array(
+		'controller' => 'process',
+		'action'     => 'setup',
+	));

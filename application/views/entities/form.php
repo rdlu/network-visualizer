@@ -9,7 +9,6 @@
     </tr>
 </table>
 
-<h2></h2>
 <?php if($errors): ?>
 <ul class="errors">
     <?php foreach($errors as $error): ?>
@@ -112,44 +111,44 @@ $(function() {
     }
 
 
-		function log( message ) {
-			console.info(message);
-		}
+	function log( message ) {
+	    console.info(message);
+	}
 
-		$( "#city" ).autocomplete({
-			source: function( request, response ) {
-				$.ajax({
-					url: "http://ws.geonames.org/searchJSON",
-					dataType: "jsonp",
-					data: {
-						featureClass: "P",
-						style: "medium",
-						maxRows: 5,
-						name_startsWith: request.term,
-                        country: 'br'
-					},
-					success: function( data ) {
-						response( $.map( data.geonames, function( item ) {
-							return {
-								label: item.name + (item.adminName1 ? ", " + item.adminName1 : ""),
-								value: item.name,
-                                state: item.adminName1,
-                                longitude: item.lng,
-                                latitude: item.lat
+	$( "#city" ).autocomplete({
+		source: function( request, response ) {
+			$.ajax({
+				url: "http://ws.geonames.org/searchJSON",
+				dataType: "jsonp",
+				data: {
+					featureClass: "P",
+					style: "medium",
+					maxRows: 5,
+					name_startsWith: request.term,
+                    country: 'br'
+			    },
+				success: function( data ) {
+					response( $.map( data.geonames, function( item ) {
+						return {
+							label: item.name + (item.adminName1 ? ", " + item.adminName1 : ""),
+							value: item.name,
+                            state: item.adminName1,
+                            longitude: item.lng,
+                            latitude: item.lat
 
-							}
-						}));
-					}
-				});
-			},
-			minLength: 2,
-			select: function( event, ui ) {
-				log( ui.item ?
-					"Selected: " + ui.item.label :
-					"Nothing selected, input was " + this.value);
-                var state = $('option:contains("'+ui.item.state+'")').val()
-                $('#state').val(state);
-                entName(ui.item,state);
+						}
+					}));
+				}
+			});
+		},
+		minLength: 2,
+		select: function( event, ui ) {
+		    log( ui.item ?
+			"Selected: " + ui.item.label :
+			"Nothing selected, input was " + this.value);
+            var state = $('option:contains("'+ui.item.state+'")').val()
+            $('#state').val(state);
+            entName(ui.item,state);
 
 			},
 			open: function() {

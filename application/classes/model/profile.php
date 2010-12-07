@@ -33,6 +33,7 @@ class Model_Profile extends Sprig {
              *  Unidade: s (segundos)
              */
             'timeout'=>new Sprig_Field_Integer(array('label'=>'Tempo de expiração (segundos)')),
+            'description'=>new Sprig_Field_Text(array('label'=>'Descrição')),
             /*
              *  0 para diffserv (dscp)
              *  1 para tos (tos-dtr+precedence) (RFC-1349)

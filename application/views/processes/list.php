@@ -1,17 +1,3 @@
-<table id="filterMenu">
-    <tr>
-        <td>Entidade de Origem:
-            <select id="filtro" name="origem">
-                <option value="0">-- Padrão</option>
-                <?php foreach($entities as $entity) {
-                    echo "<option value=\"$entity->ipaddress\"/>$entity->name ($entity->ipaddress)</option>";
-                } ?>
-            </select>
-        </td>
-        <td><a href="<?=url::base()?>processes/new/" class="filterMenu"><img src="<?=url::site('images/actions/clock_add.png')?>" alt="Adicionar nova processo de medição" />&nbsp;&nbsp;&nbsp;Agendar novo processo de medição</a></td>
-    </tr>
-</table>
-
 <?php if($errors): ?>
 <ul class="errors">
     <?php foreach($errors as $error): ?>

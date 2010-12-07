@@ -81,4 +81,16 @@ class Controller_Entities extends Controller_Skeleton {
             $this->template->content = 'Entidade não localizada no sistema';
         }
     }
+
+    public function action_byCity() {
+        $this->auto_render = false;
+        if(!isset($_POST['city'])) throw new Kohana_Exception('Compulsory data not set, must be called with post',$_POST);
+        $post = 'Port';
+        if(isset($_POST['city'])) $post = (string) $_POST['city'];
+        $query['entities'] = Db::select('city','state','name','ipaddress')->from('entities')->where('city','like',$post.'%')->order_by('name','ASC')->execute()->as_array();
+        $this->request->headers['Content-Type'] = 'application/json';
+        if(Request::$is_ajax) $this->request->response = json_encode($query);
+        else throw new Kohana_Exception('This controller only accepts AJAX requests',$query);
+    }
+
 } // End Welcome

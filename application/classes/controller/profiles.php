@@ -44,4 +44,27 @@ class Controller_Profiles extends Controller_Skeleton {
         $this->action_edit(0);
     }
 
+    public function action_info() {
+        $this->auto_render = false;
+        if(!isset($_POST['profile'])) throw new Kohana_Exception('Compulsory data not set, must be called with post',$_POST);
+        else {
+            $post = (int) $_POST['profile'];
+        }
+        $profile = Sprig::factory('profile',array('id'=>$post))->load();
+
+        $q = array(
+            'id' => $profile->id,
+            'name' => $profile->name,
+            'description' => $profile->description
+        );
+
+        foreach($profile->metrics as $metric) {
+            $q['metrics'][$metric->id] = $metric->name;
+        }
+        
+        $this->request->headers['Content-Type'] = 'application/json';
+        if(Request::$is_ajax) $this->request->response = json_encode($q);
+        else throw new Kohana_Exception('This controller only accepts AJAX requests',$_POST);
+    }
+
 } // End Welcome

@@ -1,19 +1,44 @@
-<h2><a href="<?=url::base().Request::instance()->controller?>">Voltar</a></h2>
+<table id="filterMenu">
+    <tr>
+        <td>
+            <a href="<?=url::base().Request::instance()->controller?>" class="filterMenu">Voltar</a>
+        </td>
+        <td>
+            <i>Cadastro de Novo Perfil</i>
+        </td>
+    </tr>
+</table>
 <?php if($errors): ?>
-<ul>
+<ul class="errors">
     <?php foreach($errors as $error): ?>
-    <li><?=$error?></li>
+    <li class="error"><?=$error?></li>
     <?php endforeach; ?>
 </ul>
 <?php endif ?>
 
-<?=Form::open(Request::instance()->controller.'/'.Request::instance()->action.'/'.Request::instance()->param('id',0),array('id'=>'newProfile'))?>
-<dl>
-<?php foreach ($profile->inputs() as $label => $input): ?>
-    <dt><?php echo $label ?></dt>
-    <dd><?php echo $input ?></dd>
-<?php endforeach ?>
-    <dd>&nbsp;</dd>
-    <dt><?=Form::submit('submit_'.Request::instance()->controller,'OK')?></dt>
-</dl>
+<?=Form::open(Request::instance()->controller.'/'.Request::instance()->action.'/'.Request::instance()->param('id',0),array('id'=>'newProfile','class'=>'bForms'))?>
+<fieldset title="Dados Obrigatórios">
+    <legend>Dados Obrigatórios</legend>
+    <?=$profile->label('name');?>
+    <?=$profile->input('name',array('id'=>'name'));?><br />
+    <?=$profile->label('polling');?>
+    <?=$profile->input('polling',array('id'=>'polling'));?>
+    <?=$profile->label('count');?>
+    <?=$profile->input('count',array('id'=>'count'));?><br />
+    <?=$profile->label('probeCount');?>
+    <?=$profile->input('probeCount',array('id'=>'probeCount'));?>
+    <?=$profile->label('probeSize');?>
+    <?=$profile->input('probeSize',array('id'=>'probeSize'));?><br />
+    <?=$profile->label('gap');?>
+    <?=$profile->input('gap',array('id'=>'gap'));?>
+    <?=$profile->label('timeout');?>
+    <?=$profile->input('timeout',array('id'=>'timeout'));?><br />
+    <?=$profile->label('qosType');?>
+    <?=$profile->input('qosType',array('id'=>'qosType'));?>
+    <?=$profile->label('qosValue');?>
+    <?=$profile->input('qosValue',array('id'=>'qosValue'));?><br />
+        <?=$profile->label('status');?>
+    <?=$profile->input('status',array('id'=>'status'));?>
+</fieldset>
+    <?=Form::submit('submit_'.Request::instance()->controller,'OK')?>
 <?=Form::close()?>

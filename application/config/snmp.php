@@ -60,11 +60,32 @@ return array(
         ),
         'qosValue' => array(
             'oid'=>NMMIB.'.1.0.6.id',
+            'type' => 'int'
         ),
         'metrics' => array(
             'type' => 'ssv',
             'origin' => 'name',
             'oid' => NMMIB.'.1.0.10.id'
+        )
+    ),
+    'managerTable' => array(
+        'managerEntryStatus' => array(
+            'oid'=>NMMIB.'.10.0.3.id',
+            'type'=>'string'
+        ),
+        'managerAddress' => array(
+            'oid'=>NMMIB.'.10.0.0.id',
+            'type' => 'string'
+        ),
+        'managerPort' => array(
+            'oid'=>NMMIB.'.10.0.1.id',
+            'type' => 'int',
+            'default' => 12000
+        ),
+        'managerProtocol' => array(
+            'oid'=>NMMIB.'.10.0.2.id',
+            'type'=>'int',
+            'default'=>0 //UDP
         )
     )
 );

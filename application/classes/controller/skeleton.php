@@ -57,5 +57,9 @@ class Controller_Skeleton extends Controller_Template {
             $this->template->scripts = array_merge( $this->template->scripts, $scripts );
         }
         parent::after();
-      }
+    }
+
+    public function setTemplate($temp) {
+        $this->template = $temp;
+    }
   }
