@@ -18,7 +18,7 @@ class Snmp {
      * @param string $community
      * @return Snmp
      */
-	public static function instance($address = NULL,$community='public') {
+	public static function instance($address = NULL,$community='suppublic') {
 		if ($address === NULL) {
 			// Use the default instance name
 			$address = Snmp::$default;
@@ -40,6 +40,10 @@ class Snmp {
 
         if($oids === NULL) {
             throw new Kohana_Exception("Configuration node '$name' does not exist on snmp configuration file",array($name));
+        }
+
+        if($subst===NULL) {
+            $subst = array();
         }
 
         Fire::group('SNMP Data on '.$this->address,array('Collapsed'=>'true'));

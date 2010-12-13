@@ -53,7 +53,7 @@
     <img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="float:left"/>
     <table class="bForms">
         <tr>
-            <td width="33%"><label for="profile">Perfil de Medição: </label>
+            <td width="50%"><label for="profile">Perfil de Medição: </label>
                 <select name="profile" id="profile">
                     <option value="0">-- Selecione um perfil --</option>
                     <?php foreach($profiles as $profile) {
@@ -61,8 +61,10 @@
                     }?>
                 </select>
             </td>
-            <td width="33%">Métricas cobertas: <span id="metricas">&nbsp;</span></td>
-            <td width="33%">Descrição: <span id="description">&nbsp;</span></td>
+            <td width="50%">
+                Métricas cobertas: <span id="metricas">&nbsp;</span><br />
+                Descrição: <span id="description">&nbsp;</span>
+            </td>
         </tr>
     </table>
 </fieldset>
@@ -131,7 +133,7 @@ $(function() {
                 $("#sonda").html("");
                 $("<option value='0'>-- Selecione a sonda -- </option>").appendTo("#sonda");
                 jQuery.each(data.entities,function(idx,el) {
-                    $("<option value='"+el.ipaddress+"'>"+el.name+" ("+el.ipaddress+")</option>").appendTo("#sonda");
+                    $("<option value='"+el.id+"'>"+el.name+" ("+el.ipaddress+")</option>").appendTo("#sonda");
                 });
                 $('#sonda')[0].disabled = false;
                 $('#sonda')[0].focus();

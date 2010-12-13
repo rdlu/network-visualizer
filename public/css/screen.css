@@ -88,6 +88,7 @@ div#content {
     border-radius:10px;
     -moz-border-radius:10px;
     background-image:-moz-linear-gradient(0% 3% 270deg,#DDD, #EEE);
+    background-image:-webkit-gradient(linear, left top, left bottom,from(#DDD), to(#EEE));
     -pie-background: linear-gradient(#DDD, #EEE); 
     background-color:#191919;
     padding: 10px;
@@ -198,7 +199,7 @@ span.error {
     background-color: #e3c0c0;
 }
 
-ul.errors {
+ul.errors, ul.error {
     margin: 10px;
     padding: 5px;
     display: inline-block;
@@ -208,12 +209,33 @@ ul.errors {
     -moz-border-radius:7px;
 }
 
-ul.errors li {
+ul.errors li, ul.error li {
     display: block;
     padding: 5px 10px 5px 30px;
     background-image: url('../images/actions/cross.png');
     background-repeat: no-repeat;
     background-position: 5px center;
+}
+
+ul.info {
+    margin: 10px;
+    padding: 5px;
+    display: inline-block;
+    font-family: Ubuntu, Arial, sans-serif;
+    border: dotted thin #929292;
+    background-color: #bdbdbd;
+    -moz-border-radius:7px;
+}
+
+ul.info li {
+    display: block;
+    padding: 5px 10px 5px 30px;
+    background-repeat: no-repeat;
+    background-position: 5px center;
+}
+
+ul.info li.loading {
+    background-image: url('../images/loading/16.gif');
 }
 
 form#newProfile label {

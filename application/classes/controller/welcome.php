@@ -11,6 +11,24 @@ class Controller_Welcome extends Controller_Skeleton {
 	{
         $view = View::factory('index/welcome');
 		$this->template->content = $view;
+        $this->template->extras = View::factory('index/tJS');
 	}
+
+    public function after() {
+        parent::after();
+        if ($this->auto_render) {
+            $styles = array(
+                'css/map.css' => 'all',
+            );
+
+            $scripts = array(
+                'http://maps.google.com/maps/api/js?sensor=false',
+                'js/dev/interface.js'
+            );
+
+            $this->template->styles = array_merge( $this->template->styles, $styles );
+            $this->template->scripts = array_merge( $this->template->scripts, $scripts );
+        }
+    }
 
 } // End Welcome

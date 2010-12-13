@@ -48,9 +48,10 @@ class Controller_Skeleton extends Controller_Template {
             );
 
             $scripts = array(
-                'js/dev/jquery-1.4.4.js',
+                'js/dev/jquery-1.4.2.js',
                 'js/jquery-ui-1.8.6.custom.min.js',
                 'js/jquery.tablesorter.min.js',
+                //'js/firebug-lite.js',
             );
 
             $this->template->styles = array_merge( $this->template->styles, $styles );

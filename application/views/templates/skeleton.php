@@ -20,5 +20,6 @@
                 <?php echo $footer ?>
             </div>
         </div>
+        <?php if(isset($extras)) echo $extras; ?>
     </body>
 </html>
