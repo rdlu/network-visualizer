@@ -41,10 +41,10 @@
     <div class="template" id="sondaItemBox">
         <a id="sondaLink" href="#">
                 <span id="sondaNome"></span><br />
-                <span id="sondaIp"></span>
+                <!-- <span id="sondaIp"></span> -->
         </a>
     </div>
     <!-- Aqui vai o cache com os dados das sondas e tal -->
 
-    <div class="template" id="cache" >
+    <div class="template" id="cache" ></div>
 

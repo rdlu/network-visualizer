@@ -1,6 +1,6 @@
 <!-- Index Template View -->
    <!-- Esse é o conteúdo da aba início do MoM -->
-      <div id="rightBar">
+   <div id="rightBar">
        <div id="rightBarMenu" class="contentBar">
          <a href="#">Criar</a>
          <a href="#">Deletar</a>
@@ -27,6 +27,5 @@
            </div>
        </div>
    </div>
-</div>
 
 <!-- End Index -->        

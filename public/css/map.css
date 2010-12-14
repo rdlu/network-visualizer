@@ -104,21 +104,21 @@
     margin-top: 10px;
 }
 
-#sondaLink{ /*now it hovers: flawless victory*/
+.sondaLink{ /*now it hovers: flawless victory*/
     display: block;
-    width: 110px;
-    height: 40px;
+    width: 105px;
+    height: 20px;
     padding: 5px;
     margin: 5px;
     float: left;
     background-color: #ccc;
 }
-#sondaLink:link {color:blue;}
-#sondaLink:visited {color:blue;}  /* visited link */
-#sondaLink:hover{
+.sondaLink:link {color:blue;}
+.sondaLink:visited {color:blue;}  /* visited link */
+.sondaLink:hover{
     background-color: #eee;
 }
-#sondaLink:active {
+.sondaLink:active {
     color:blue;
     background-color: #fff;
 }
@@ -184,3 +184,5 @@
     background-position: top right;
     background-repeat: no-repeat;
 }
+
+/********* AVISOS **************/

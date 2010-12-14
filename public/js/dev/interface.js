@@ -2,7 +2,8 @@
  * FALTA:
  * fazer os avisos
  * fazer funcionar o cache html
- * tirar o ip da lista da direita
+ * programar o search lá em cima, os filtros, etc
+ * ?programar a parte do transformar sonda em status cinza?
  *
 /
 
@@ -12,7 +13,9 @@
 /************************* DEFAULTS DO MOM ************************************/
 var MOM = {
     imgDir: "./",
-    serverName: 'http://hrist.inf.ufrgs.br/mom/images/markers/'
+    serverName: 'http://hrist.inf.ufrgs.br/mom/images/markers/',
+    script1: 'retornaXML.php',
+    script2: 'retornaXML2.php'
 }
 //namespace reservado para o layout e os resizes
 var DS = { //display screen :)
@@ -30,24 +33,6 @@ var DS = { //display screen :)
     },
     leftBarHgt: function(){
         return ($('#leftBar').height());
-    },
-    ////Função: init
-    //
-    //Inicia o tamanho dos elementos HTML na página inicial
-    //função utilizada para setar os valores das divs principais da tela e manter
-    //a fluidez do design
-    //pode ser usada com onResize também
-    init: function(){
-        //função abandonada por uma contrapartida em .css parecer mais webStandardista
-        //var containerWidth = $(window).width();
-        //containerWidth = (containerWidth < 1200)? 1200 : containerWidth;
-        //alert (containerWidth);
-        //var leftBarWidth = 2/3 * containerWidth; //golden rule
-        //var rightBarWidth = containerWidth - leftBarWidth;
-        //$('#leftBar').width(leftBarWidth);
-        //$('#rightBar').width(rightBarWidth).css('marginLeft', leftBarWidth);
-        //
-        //var offsetMargem = DS.leftBarWdt();
     }
 }
 /******************************************************************************/
@@ -65,7 +50,6 @@ var AVISOS = {
     }
 }
 
-
 /******************************************************************************/
 //namespace responsãvel para pegar os templates incluídos dentro do HTML e
 // combinar com as informações dadas
@@ -75,20 +59,22 @@ var Template = {
         //html        
         var st = MOM.imgDir + SONDA.statusImg(status); //concatena as strings para o nome da figura do estado da sonda
         var template = $('#sondaItemBox').clone().removeClass('template').addClass('sondaNd');        //clona o template que está no HTML
-        template.find('#sondaIp').text(ip);                                     //coloca os dados nas tags do template
+        //template.find('#sondaIp').text(ip);                                     //coloca os dados nas tags do template
         template.find('#sondaNome').text(nome);
         template.attr('id', 'sb'+id); //coloca dinâmicamente o id único para cada sonda substituindo o id do template
 
         //estilização
-        if(status == 1) template.find('#sondaLink').addClass('sondaStatus1');     //conforme o status, adiciona uma classe diferente
-        else if (status == 2) template.find('#sondaLink').addClass('sondaStatus2');
-        else if (status == 3) template.find('#sondaLink').addClass('sondaStatus3');
-        else template.find('#sondaLink').addClass('sondaStatus0');
+        var link = template.find('#sondaLink');
+        if(status == 1) link.addClass('sondaStatus1');     //conforme o status, adiciona uma classe diferente
+        else if (status == 2) link.addClass('sondaStatus2');
+        else if (status == 3) link.addClass('sondaStatus3');
+        else link.addClass('sondaStatus0');
         //tudo terminado, adiciona o template à página
-        template.find('#sondaLink').bind('click', id, function(e){
+        link.bind('click', id, function(e){
             e.preventDefault();
             RIGHTBAR.mostraDestaque(id);
-        })
+        });
+        link.attr('id', 'sblink'+id).addClass('sondaLink');
         template.appendTo('#entities');                                          //coloca o template no HTML
         //alert(template.text());       
     },
@@ -96,10 +82,8 @@ var Template = {
     sondaDestaque: function(id, ip, nome, status, endereco, localidade){
         //alert(id);
         var alvo = $('#sondaDestaque');
-        alvo.empty();
+        alvo.empty(); //limpa a div
         var template = $('#sondaItemDestaque').clone().removeClass('template').addClass('sondaDestaque');
-        //template.attr('id', 'sondaDestaqueBox');
-        //ip
         //var ip = $('#'+id).find('sondaIp').text();
         //console.log(status);
         var st = MOM.imgDir + SONDA.statusImg(status); //concatena as strings para o nome da figura do estado da sonda
@@ -115,13 +99,7 @@ var Template = {
         template.appendTo('#sondaDestaque'); 
     }
 }
-/******************************************************************************/
-//faz o parsing do XML
-var Parser = {
-    sondaDestaque: function(xml, num){
-        return (xml.find('sonda :first'));
-    }
-}
+
 /******************************************************************************/
 /* Right bar: exibe a informção das sondas na barra do lado direito ***********/
 /******************************************************************************/
@@ -131,7 +109,7 @@ var RIGHTBAR = {
         $('#entities').empty();
         $.ajax({
             type: 'get',
-            url: 'retornaXML.php',
+            url: MOM.script1,
             dataType: 'xml',
             success: function(xml){
                $(xml).find("sonda").each(function(){
@@ -162,9 +140,12 @@ var RIGHTBAR = {
         var endereco;
         var localidade;
         //pega as info restantes
+        //prepara o objeto json para passar
+        var dataString = new Object();
+
         $.ajax({
             type: 'get',
-            url: 'retornaXML2.php',
+            url: MOM.script2,
             dataType: 'json',
             data: id,            
             async: false, //necessário, ou terá problema de sincronicidade
@@ -188,7 +169,7 @@ var RIGHTBAR = {
         Template.sondaDestaque(id, ip, nome, status, endereco, localidade);
     },
     atualizaStatus: function(id, status){
-        $('#sb'+id).find('#sondaLink').removeClass().addClass('sondaStatus'+status);        
+        $('#sb'+id).find('#sblink'+id).removeClass().addClass('sondaLink').addClass('sondaStatus'+status);
     }
 }
 //essa variável foi criada em desacordo com o cache, para fim de agilizar a codificação
@@ -220,7 +201,7 @@ SONDA.getMedicoes = function(id){
     
 }
 SONDA.getFromCache = function(id){
-    var sonda = $('#cache > entities sonda:[id=s'+id+']').contents(); //CONTINUE DAQUI
+    var sonda = $('#cache > entities sonda:[id=s'+id+']'); //CONTINUE DAQUI
     //console.log(sonda);
     return (sonda);
 }
@@ -228,20 +209,20 @@ SONDA.getFromCache = function(id){
 SONDA.statusImg = function(st){
     switch(st){
         case (0): {
-            return ("cinza.png");
+            return ("icon_cinza.png");
             break; //haha
         }
         case (1): {
-            return ("verde.png");
+            return ("icon_verde.png");
             break; //haha
         }
         case (2): {
-            return ("amarelo.png");
+            return ("icon_amarelo.png");
             break; //haha
         }
         case (3): //fallthrough
-        default:
-            return ("vermelho.png");
+            return ("icon_vermelho.png");
+            break;
     }
 }
 /* Atualiza o status no cache e troca os ícones nos locais correspondentes */
@@ -266,7 +247,7 @@ CACHED.init = function(){
     
     $.ajax({
         type: 'get',
-        url: 'retornaXML.php',
+        url: MOM.script1,
         dataType: 'xml',
         async: false,
         success: function(xml){
@@ -611,117 +592,11 @@ MAPA.ultimaLinhaDesenhada = 0;
 
 $(document).ready(function(){
     //inicia os elementos na tela
-    DS.init();
-    CACHED.init();    
-    //alert(CACHED.loaded);
-/*
-    diagrama.connections = []; //matriz onde serão colocadas as conexões
-    diagrama.sondas = []; //matriz onde serão colocadas as sondas; serve para inicializá-las com atributos/drag'n'drop etc
-    diagrama.sondaInit = function(){}; //inicializa as sondas com os argumentos e tudo
-    diagrama.povoa = function(){
-    //se o cache tiver ok lê do cache, do contrário inicia o cache
-
-    //faz um loop
-    };
-*/
-    //inicia os triggers
-    $(window).resize(DS.init);
+    CACHED.init();
     //inicia os dados para povoar o lado direito com sondas em formato Box
-    RIGHTBAR.entitiesPovoa();
-    
-    /*
-    //inicia o diagrama
-    r = diagrama.initCanvas(DS.canvasWdt, DS.canvasHgt);
-
-       connections = [], //inicia um array com as ligações
-       //inicia as formas que no futuro serão as sondas
-       shapes2 = [  r.rect(190, 100, 60, 40, 2),
-                   r.rect(290, 80, 60, 40, 2),
-                   r.rect(290, 180, 60, 40, 2),
-                   r.rect(450, 100, 60, 40, 2),
-                  
-                ];
-        shapes = [
-                        r.image("1.png",  10,  10, 32, 32),
-                        r.image("2.png", 100, 100, 32, 32),
-                        r.image("2.png", 400, 200, 32, 32),
-                        r.image("1.png", 300, 400, 32, 32)
-                  ];
-       //loop que inicia as formas e seu comportamento com drag'n'drop'
-       for (var i = 0, ii = shapes.length; i < ii; i++) {
-            var color = Raphael.getColor();
-            shapes[i].attr({/*fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2,*/ //cursor: "move"});
-            //shapes[i].drag(diagramaDnG.move, diagramaDnG.dragger, diagramaDnG.up);
-            /*shapes[i].drag(sondaDnG.move, sondaDnG.dragger, sondaDnG.up);
-       }
-       
-
-        //Stuff to do when the page is done loading
-
-        //The routine to repaint the drawing area
-        //function redraw() {
-            //workspace = Raphael('workspace', "100%", "80%");
-
-            //Add a rectangle
-            var rect = r.image("1.png",  500,  610, 32, 32).attr({cursor: "move"});
-            
-            var txt =  r.text(517, 650, "208.125.10.2");
-            txt.attr({
-                "width" : 150,
-                "fill": "#fff",
-                "font-size": "12pt",
-                "font-weight": "bold"
-            });
-
-            //Create a set so we can move the text and rectangle at the same time
-            var g = r.set(rect, txt);
-            rect.idx = groups.length;   //index in our groups array,
-                                        //so we can easily find the set later
-            groups.push(g);
-
-            //set up drag/drop
-            // - This could be applied to the set as well, but the "dragged"
-            //   object ends up being the rect anyways.
-            rect.drag(dragMove, dragStart, dragStop);
-
-       connections.push(r.connection(shapes[0], shapes[1], "#fff"));
-       connections.push(r.connection(shapes[1], shapes[2], "#fff"));
-       connections.push(r.connection(shapes[2], shapes[3], "#fff"));
-       connections.push(r.connection(shapes[2], rect, "#fff"));
-*/
-/*******************************************************************************/
-/* RADICAL CHANGE TO GOOGLE MAPS *******************************************/
-/*******************************************************************************/
-    //inicia a visu do Google maps
-    MAPA.gmap = MAPA.init();
-    //alert(MAPA.gmap);
-
+    RIGHTBAR.entitiesPovoa();  
+    MAPA.gmap = MAPA.init(); 
     MAPA.povoa(MAPA.gmap);
-//    var marcadores = [];
-  //  var myLatlng = [];
-
-    //teste: seta o ponto 0
-    //MAPA.myLatlng[0] = new google.maps.LatLng(-25.363882,131.044922);
-    /*
-    marcadores[0] = new google.maps.Marker({
-      position: myLatlng[0],
-      title:"Hello World!"
-    });
-    marcadores[0].setMap(gmap);
-    */
-   //teste: seta o ponto 0 com uma label
-   /*
-    MAPA.marcadores[0] = new MarkerWithLabel({
-       position: MAPA.myLatlng[0],
-           draggable: false,
-           map: gmap,
-           labelContent: "255.255.255.255",
-           labelAnchor: new google.maps.Point(35, 0),
-           labelClass: "labels", // the CSS class for the label
-           labelStyle: {opacity: 0.70},
-           icon: 'http://localhost/teste/MomjavaScriptTests/computer.png',
-           shadow: 'http://localhost/teste/MomjavaScriptTests/computer.png'
-    }); */
    /*
     myLatlng[1] = new google.maps.LatLng(-34.397, 150.644);
     marcadores[1] = new google.maps.Marker({
@@ -741,104 +616,3 @@ $(document).ready(function(){
 
   flightPath.setMap(gmap); */
 });
-
-//variables we'll need throughout the sample code
-        
-        //set up our object for dragging
-        function dragStart() {
-            var g = null;
-            if (!isNaN(this.idx)) {
-                //find the set (if possible)
-                g = groups[this.idx];
-            }
-            if (g) {
-                var i;
-                //store the starting point for each item in the set
-                for(i=0; i < g.items.length; i++) {
-                    g.items[i].ox = g.items[i].attr("x");
-                    g.items[i].oy = g.items[i].attr("y");
-                }
-            }
-        }
-
-        //clean up after dragging
-        function dragStop() {
-            var g = null;
-            if (!isNaN(this.idx)) {
-                //find the set (if possible)
-                g = groups[this.idx];
-            }
-            if (g) {
-                var i;
-                //remove the starting point for each of the objects
-                for(i=0; i < g.items.length; i++) {
-                    delete(g.items[i].ox);
-                    delete(g.items[i].oy);
-                }
-            }
-        }
-
-        //take care of moving the objects when dragging
-        function dragMove(dx, dy) {
-            if (!isNaN(this.idx)) {
-                var g = groups[this.idx];
-            }
-
-            if (g) {
-                var x;
-                //reposition the objects relative to their start position
-                for(x = 0; x < g.items.length; x++) {
-                    var obj = g.items[x];   //shorthand
-                    obj.attr({x: obj.ox + dx, y: obj.oy + dy});
-
-                    //adendo para desenhar as conexões após trocar posições
-                    for (var i = connections.length; i--;) {
-                        r.connection(connections[i]);
-                    }
-                    r.safari();
-                    //optional:  We can do a check here to see what property
-                    //           we should be changing.
-                    // i.e. (haven't fully tested this yet):
-                    // switch (obj.type) {
-                    //     case "rect":
-                    //     case "text":
-                    //         obj.attr({ x: obj.ox + dx, y: obj.oy + dy });
-                    //         break;
-                    //     case "circle":
-                    //         obj.attr({ cx: obj.ox + dx, cy: obj.oy + dy });
-                    // }
-                }
-            }
-        }
-
-
-/*********************************** OLDIES ****************************************/
-//var c = canvas.circle(550,550,50).attr({fill: '#000'});
-    //canvas.seta(25,25,105,450,3);
-    //var d = canvas.image("1.png", 10, 10, 30, 30);
-    //var e = canvas.image("2.png", 100, 100, 30, 30);
-
-    //tentar: pega um centro, desenha uma reta em 90 graus e depois dá um rotate
-  /*
-    var targets = canvas.set();
-    targets.push(
-       canvas.circle(100, 100, 20)
-    );
-    targets.attr({fill: "#000", stroke: "#fff", "fill-opacity": 0});
-    targets[0].click(function () {
-        this.cx = this.cx || 300;
-        this.animate({cx: this.cx});
-        this.cx = this.cx == 300 ? 100 : 300;
-    });
-    */
-
-   //inicia a canvas
-       //r = Raphael("diagrama", 1800, 600),
-
-
-       /*
-        * var c = r.circle(300, 600, 10).attr({fill: "#000", stroke: "#fff", "fill-opacity": 0}),
-    re = r.rect(350, 650, 10, 10).attr({fill: "#000", stroke: "#fff", "fill-opacity": 0});
-c.animate({cx: 20, r: 20}, 2000);
-re.animateWith(c, {x: 20}, 2000);
-        */
