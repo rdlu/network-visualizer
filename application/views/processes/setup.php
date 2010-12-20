@@ -1,3 +1,4 @@
+<?php if(!isset($errors)): ?>
 <form class="bForms">
     <fieldset>
         <legend>Configuração da Sonda de Destino</legend>
@@ -113,3 +114,10 @@ $(function() {
     }
 });
 </script>
+<?php else: ?>
+<?php foreach($errors as $k => $error): ?>
+    <ul id="errors">
+        <li class="error"><?=$error?></li>
+    </ul>
+<?php endforeach ?>
+<?php endif; ?>

@@ -4,7 +4,7 @@ class Controller_Profiles extends Controller_Skeleton {
 
     public function before() {
         parent::before();
-        $this->template->title .= 'Perfis de Medição :: ';
+        $this->template->title .= 'Perfis de Teste :: ';
     }
 
 	public function action_index() {

@@ -38,8 +38,12 @@
     <?=$profile->label('qosValue');?>
     <?=$profile->input('qosValue',array('id'=>'qosValue'));?><br />
         <?=$profile->label('status');?>
+    <fieldset class="group left">
+        <legend>Métricas cobertas por este perfil</legend>
+        <?=$profile->input('metrics');?>
+    </fieldset>
     <?=$profile->input('status',array('id'=>'status'));?>
-    <?=$profile->input('metrics',array('id'=>'metrics'));?>
+
 </fieldset>
     <?=Form::submit('submit_'.Request::instance()->controller,'OK')?>
 <?=Form::close()?>

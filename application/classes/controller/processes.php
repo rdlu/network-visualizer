@@ -55,6 +55,15 @@ class Controller_Processes extends Controller_Skeleton {
         $this->request->response = $view;
 	}
 
+    /**
+     * SETUP de NOVO PROCESSO
+     * O Setup de um novo processo é feito em 3 partes
+     */
+    /**
+     * Funcao que mostra o formulario de escolha de destino, baseado na origem.
+     * @param int $source
+     * @return void
+     */
     public function action_new($source = 0) {
         $process = Sprig::factory('process');
         $profiles = Sprig::factory('profile')->load(NULL, FALSE);
@@ -68,7 +77,7 @@ class Controller_Processes extends Controller_Skeleton {
 
         if ($_POST) {
             try {
-                $process->values($_POST)->create();
+                $process->check($_POST);
             } catch (Validate_Exception $e) {
                 $errors = $e->array->errors('processes/edit');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
@@ -83,13 +92,19 @@ class Controller_Processes extends Controller_Skeleton {
         $this->template->content = $view;
     }
 
+    /**
+     * Funcao que inicializa o setup do processo, apos o formulario ser enviado
+     * @param  $id
+     * @return void
+     */
     public function action_setup($id) {
         //validando dados
-        $validado = true;
-        if(!Validate::numeric($_POST['sonda']) && ($_POST['sonda']>0)) $validado = false;
+        $validado = false;
+        if(Validate::numeric($_POST['sonda']) && ($_POST['sonda']>0))
+            if(Validate::numeric($_POST['profile']) && ($_POST['profile']>0)) $validado = true;
 
 
-        if ($_POST) {
+        if ($validado) {
             $source = $id;
             $destination = $_POST['sonda'];
             $profile = $_POST['profile'];
@@ -105,6 +120,8 @@ class Controller_Processes extends Controller_Skeleton {
                     ->bind('sModel',$sourceModel);
 
             $this->template->content = $view;
+        } else {
+
         }
     }
 

@@ -21,7 +21,8 @@ class Controller_Skeleton extends Controller_Template {
   	    	$this->template->title   = 'NetmetricMoM :: ';
   	    	$this->template->content = '';
             $this->template->header = View::factory('templates/mainmenu');
-            $this->template->footer = '';
+            $footer = View::factory('templates/footer');
+            $this->template->footer = $footer;
 
   		$this->template->styles = array();
   		$this->template->scripts = array();
