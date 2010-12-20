@@ -31,4 +31,18 @@ class Controller_Welcome extends Controller_Skeleton {
         }
     }
 
+    public function action_infoMapa() {
+        if(Request::$is_ajax) {
+            $this->auto_render = false;
+            $entidades = Sprig::factory('entity')->load(null,FALSE);
+
+            $view = View::factory('xml/infoMapa');
+
+            $view->bind('entities', $entidades);
+
+            //$this->request->headers['Content-Type'] = 'application/xml';
+            $this->request->response = $view;
+        }
+    }
+
 } // End Welcome
