@@ -48,6 +48,7 @@ class Snmp {
 
         Fire::group('SNMP Data on '.$this->address,array('Collapsed'=>'true'));
 
+        $data = array();
         foreach($oids as $key => $oid) {
             if(isset($values[$key])) $value = $values[$key];
             elseif(isset($oid['default'])) $value = $oid['default'];
@@ -64,13 +65,13 @@ class Snmp {
                     break;
                 default:
                     $type = 's';
-                    $value = (string) $value;
+                    $value = (string) utf8::transliterate_to_ascii($value);
             }
 
             Fire::info("$key: $value");
 
             try {
-                $result = snmp2_set($this->address,$this->community,$oid['oid'],$type,$value,100000,2);
+                $result = snmp2_set($this->address,$this->community,$oid['oid'],$type,$value,200000,2);
             } catch (Exception $err) {
                 $code = $err->getCode();
                 $msg = $err->getMessage();                $oe = $oid['oid'];

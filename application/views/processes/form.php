@@ -16,7 +16,7 @@
 </ul>
 <?php endif ?>
 
-<?=Form::open(Request::instance()->controller.'/new/'.$sourceEntity->ipaddress,array('id'=>'newEntity','class'=>'bForms'))?>
+<?=Form::open(Request::instance()->controller.'/setup/'.$sourceEntity->id,array('id'=>'newEntity','class'=>'bForms'))?>
 <fieldset title="Dados da Sonda de Origem">
     <legend>Dados da Sonda de Origem</legend>
     <img src="<?=url::site('images/boardMenu/source.png')?>" alt="Sonda de Origem" style="float:left"/>

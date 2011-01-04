@@ -65,31 +65,33 @@ class Controller_Processes extends Controller_Skeleton {
      * @return void
      */
     public function action_new($source = 0) {
-        $process = Sprig::factory('process');
-        $profiles = Sprig::factory('profile')->load(NULL, FALSE);
+	    $this->template->title .= 'Criando novo processo de medição';
+       $process = Sprig::factory('process');
+       $profiles = Sprig::factory('profile')->load(NULL, FALSE);
 
-        if($source!=0) {
+       if($source!=0) {
             $sourceEnt = Sprig::factory('entity',array('ipaddress'=>$source))->load();
             $process->source = $sourceEnt->id;
             $sourceEntity = $process->source->load();
             Fire::group('Models Loaded',array('Collapsed'=>'true'))->info($process)->info($sourceEntity)->groupEnd();
-        }
+       }
 
-        if ($_POST) {
+       if ($_POST) {
             try {
                 $process->check($_POST);
+                $this->request->redirect($this->request->controller.'/setup/'.$process->source->id);
             } catch (Validate_Exception $e) {
                 $errors = $e->array->errors('processes/edit');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
             }
-        }
-        $view = View::factory('processes/form');
-        $view->bind('process',$process)
+       }
+       $view = View::factory('processes/form');
+       $view->bind('process',$process)
                 ->bind('errors',$errors)
                 ->bind('source',$source)
                 ->bind('sourceEntity',$sourceEntity)
                 ->bind('profiles',$profiles);
-        $this->template->content = $view;
+       $this->template->content = $view;
     }
 
     /**
@@ -97,7 +99,8 @@ class Controller_Processes extends Controller_Skeleton {
      * @param  $id
      * @return void
      */
-    public function action_setup($id) {
+    public function action_setup($source) {
+	    $this->template->title .= 'Configurando o novo processo de medição';
         //validando dados
         $validado = false;
         if(Validate::numeric($_POST['sonda']) && ($_POST['sonda']>0))
@@ -105,7 +108,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 
         if ($validado) {
-            $source = $id;
+            $source = (int) $source;
             $destination = $_POST['sonda'];
             $profile = $_POST['profile'];
             $sourceModel = Sprig::factory('entity',array('id'=>$source))->load();
@@ -149,6 +152,7 @@ class Controller_Processes extends Controller_Skeleton {
             } else {
                 $e['errors'] = null;
                 $e['message'] = "Entidade de destino $destination->name ($destination->ipaddress) foi configurada com sucesso via SNMP.";
+                $e['class'] = 'success';
             }
 
             $this->request->headers['Content-Type'] = 'application/json';
@@ -172,37 +176,42 @@ class Controller_Processes extends Controller_Skeleton {
 
             if(!preg_match('/^No Such/',$ps)) {
                 Fire::info($ps);
+                $e['message'] = 'Sonda de origem não tem o Netmetric corretamente instalado';
+                $e['errors'][] = 'No such instance';
+                $e['class'] = 'error';
             } else {
-                $values = $profile->as_array();
-                $ptable = Snmp::instance($destination->ipaddress,'suppublic')->setGroup('profileTable',$values,array('id'=>$destination->id));
+                $values = array('entryStatus'=>6);
+                $values = array_merge($values,$profile->as_array());
+                $ptable = Snmp::instance($source->ipaddress,'suppublic')->setGroup('profileTable',$values,array('id'=>$destination->id));
 
-                $avalues = $destination->as_array();
-                $atable = Snmp::instance($destination->ipaddress,'suppublic')->setGroup('agentTable',$values,array('id'=>$destination->id));
+                $avalues = array('entryStatus'=>6);
+                $avalues = array_merge($avalues,$destination->as_array());
+                $atable = Snmp::instance($source->ipaddress,'suppublic')->setGroup('agentTable',$avalues,array('id'=>$destination->id));
 
                 if(count($ptable)) {
                     $e['errors'] = array_keys($ptable);
-                    Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $destination->ipaddress");
+                    Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $source->ipaddress (Profile Table)");
                     $e['message'] = 'Erros na transmissão dos dados via SNMP (Profile Setup)';
                     $e['class'] = 'error';
                     $ptrue = true;
                 }
 
                 if(count($atable)) {
-                    Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $destination->ipaddress");
+                    Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $source->ipaddress (Agent Table)");
                     $e['message'] = 'Erros na transmissão dos dados via SNMP (Agent Setup)';
                     $e['class'] = 'error';
                     if(isset($ptrue)) {
                         $e['message'] .= ' & (Profile Setup)';
                         $e['errors'] = array_merge($e['errors'],array_keys($ptable));
                     } else
-                        $e['errors'] = array_keys($ptable);
+                        $e['errors'] = array_keys((array) $ptable);
                     $atrue = true;
                 }
 
                 if(!isset($ptrue) && !isset($atrue)) {
                     $e['errors'] = null;
                     $e['class'] = 'success';
-                    $e['message'] = "Entidade de destino $destination->name ($destination->ipaddress) foi configurada com sucesso via SNMP.";
+                    $e['message'] = "Entidade de origem $source->name ($source->ipaddress) foi configurada com sucesso via SNMP.";
                 }
             }
 
@@ -229,14 +238,20 @@ class Controller_Processes extends Controller_Skeleton {
                     $process->source = $source;
                     $process->destination = $destination;
                     $process->profile = $profile;
-                    $process->create();
+                    $process->load();
+                    if($process->count()) {
+	                    $response['message'] = 'Processo de monitoramento já existente no banco de dados, as sondas foram apenas resetadas.';
+	                    $response['class'] = 'warn';
+                    } else $process->create();
 
                 }
             } catch (Exception $e) {
-                Fire::group('Exception')->error($e)->info($e->getCode(),'Codigo do erro')->groupEnd();
-                $response['message'] = 'Perfil não pode ser enviado para a máquina de origem, as configurações não serão salvas.';
+                Fire::error($e)->info($e->getCode(),'Codigo do erro');
+                $response['message'] = 'Exceção no banco de dados, entre em contato com o DBA';
                 $response['class'] = 'error';
             }
+            $this->request->headers['Content-Type'] = 'application/json';
+            $this->request->response = json_encode($response);
 
         }
     }

@@ -8,7 +8,12 @@
         </td>
     </tr>
 </table>
-
+<?php if($success): ?>
+<ul class="info">
+	<li class="success">Entidade registrada com sucesso!</li>
+	<li class="info"><a href="<?=url::base().Request::instance()->controller?>">Voltar para a listagem de entidades.</a></li>
+</ul>
+<?php endif ?>
 <?php if($errors): ?>
 <ul class="errors">
     <?php foreach($errors as $error): ?>

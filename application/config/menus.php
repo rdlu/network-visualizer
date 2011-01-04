@@ -15,15 +15,19 @@ return array(
         'admin'=>array(
             'title'=>__('Administrar'),
             'submenu'=>array(
-                'processes'=>array(
+	            'processes'=>array(
                     'title'=>__('Processos de Medição'),
                     'href'=>'processes/'),
-                'entities'=>array(
+               'entities'=>array(
                     'title'=>__('Sondas e Agentes'),
                     'href'=>'entities/'),
-                'profiles'=>array(
+               'profiles'=>array(
                     'title'=>__('Perfis de Teste'),
-                    'href'=>'profiles/')),
+                    'href'=>'profiles/'),
+	            'log'=>array(
+		            'title'=>__('Registro de Eventos'),
+		            'href'=>'log/'),
+	            ),
             'href'=>'admin'
         )
     )

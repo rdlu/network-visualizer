@@ -22,6 +22,7 @@ class Controller_Entities extends Controller_Skeleton {
         $entity = Sprig::factory('entity');
 
         $disabled = 'disabled';
+        $sucess = false;
 
         if($id!=0) {
             $entity->id = $id;
@@ -33,7 +34,8 @@ class Controller_Entities extends Controller_Skeleton {
         if ($_POST) {
             try {
                 $entity->values($_POST)->create();
-                $this->request->redirect($this->request->controller.'/edit/'.$entity->id);
+                //$this->request->redirect($this->request->controller.'/edit/'.$entity->id);
+                $sucess  = true;
             } catch (Validate_Exception $e) {
                 $errors = $e->array->errors('entities/new');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
@@ -44,7 +46,10 @@ class Controller_Entities extends Controller_Skeleton {
         }
 
         $view = View::factory('entities/form');
-        $view->bind('entity',$entity)->bind('errors',$errors)->bind('disabled',$disabled);
+        $view->bind('entity',$entity)
+		        ->bind('errors',$errors)
+		        ->bind('disabled',$disabled)
+		        ->bind('success',$success);
         if($id==0 || $entity->loaded()) $this->template->content = $view;
         else $this->template->content = 'Entidade não existente no MoM';
     }

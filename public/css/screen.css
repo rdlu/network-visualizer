@@ -224,43 +224,59 @@ span.error {
     background-color: #e3c0c0;
 }
 
-ul.errors, ul.error {
+ul.errors, ul.error, ul.info, ul.success, ul.warn {
     margin: 10px;
     padding: 5px;
     display: inline-block;
     font-family: Ubuntu, Arial, sans-serif;
+    -moz-border-radius:7px;
+}
+
+ul.errors, ul.error {
     border: dotted thin #b54242;
     background-color: #e3c0c0;
-    -moz-border-radius:7px;
+}
+
+ul.errors li, ul.error li, ul.info li, ul.success li, ul.warn li {
+    display: block;
+    padding: 5px 10px 5px 30px;
+    background-repeat: no-repeat;
+    background-position: 5px center;
 }
 
 ul.errors li, ul.error li {
-    display: block;
-    padding: 5px 10px 5px 30px;
     background-image: url('../images/actions/cross.png');
-    background-repeat: no-repeat;
-    background-position: 5px center;
 }
 
 ul.info {
-    margin: 10px;
-    padding: 5px;
-    display: inline-block;
-    font-family: Ubuntu, Arial, sans-serif;
     border: dotted thin #929292;
     background-color: #bdbdbd;
-    -moz-border-radius:7px;
 }
 
 ul.info li {
-    display: block;
-    padding: 5px 10px 5px 30px;
-    background-repeat: no-repeat;
-    background-position: 5px center;
+
 }
 
 ul.info li.loading {
     background-image: url('../images/loading/16.gif');
+}
+
+ul.success {
+    border: dotted thin #006600;
+    background-color: #9ed980;
+}
+
+ul.success li {
+    background-image: url('../images/actions/tick.png');
+}
+
+ul.warn {
+    border: dotted thin #996600;
+    background-color: #e2ca6d;
+}
+
+ul.warn li {
+    background-image: url('../images/actions/error.png');
 }
 
 form#newProfile label {

@@ -4,7 +4,7 @@
         <title><?php echo $title ?></title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
         <meta http-equiv="Content-Language" content="pt-BR" />
-        <link href="favicon.png" rel="icon" type="image/png" />
+        <link href="<?=url::base()?>favicon.png" rel="icon" type="image/png" />
         <?php foreach ($styles as $file => $type) echo HTML::style($file, array('media' => $type)), "\n" ?>
         <?php foreach ($scripts as $file) echo HTML::script($file), "\n" ?>
     </head>

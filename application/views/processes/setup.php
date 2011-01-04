@@ -36,10 +36,10 @@ $(function() {
                 $("#confDest").html("");
                 $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confDest');
                 $('#confDest').removeClass('info').removeClass('errors').addClass(data.class);
-                if(data.class == 'error') {
-                    setupDestinationFailed();
+                if(data.class == 'success') {
+                   setupSource(source,destination,profile);
                 } else {
-                    setupSource(source,destination,profile);
+                    setupDestinationFailed();
                 }
             },
             error: function(status,msg,error) {
@@ -60,10 +60,11 @@ $(function() {
                 $("#confSource").html("");
                 $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confSource');
                 $('#confSource').removeClass('info').removeClass('errors').addClass(data.class);
-                if(data.class == 'error') {
-                    setupSourceFailed();
+                if(data.class == 'success') {
+	                setupDB(profile,source,destination);
                 } else {
-                    setupDB(profile,source,destination);
+	                setupSourceFailed();
+
                 }
             },
             error: function(status,msg,error) {
@@ -81,20 +82,15 @@ $(function() {
 		    url: "<?=url::site('processes/SaveProfile')?>/"+profile+'/'+source+'/'+destination,
             type: 'get',
 			success: function( data ) {
-                $("#confSource").html("");
-                $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confSource');
-                $('#confSource').removeClass('info').removeClass('errors').addClass(data.class);
-                if(data.class == 'error') {
-                    setupSourceFailed();
-                } else {
-                    setupDB(profile,source,destination);
-                }
+                $("#confDB").html("");
+                $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confDB');
+                $('#confDB').removeClass('info').removeClass('errors').addClass(data.class);
             },
             error: function(status,msg,error) {
                 console.log(error);
-                $("#confSource").html("");
-                $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confSource');
-                $('#confSource').removeClass('info').removeClass('errors').addClass('error');
+                $("#confDB").html("");
+                $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDB');
+                $('#confDB').removeClass('info').removeClass('errors').addClass('error');
                 setupSourceFailed();
             }
         });

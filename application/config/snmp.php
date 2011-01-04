@@ -16,24 +16,32 @@ return array(
 
     //Set
     'agentTable' => array(
-        'ipaddress' => array(
-            'type' => 'string',
-            'oid' => NMMIB.'.0.0.0.id',
-        ),
-        'name' => array(
-            'type' => 'string',
-            'oid' => NMMIB.'.0.0.4.id',
-        ),
-        'city' => array(
-            'oid' => NMMIB.'.0.0.5.id',
-            'type' => 'string'
-        ),
-        'state' => array(
-            'oid' => NMMIB.'.0.0.6.id',
-            'type' => 'string',
-        )
+	    'entryStatus' => array(
+            'oid'=>NMMIB.'.0.0.9.id',
+            'type'=>'int'
+       ),
+       'ipaddress' => array(
+	       'type' => 'string',
+          'oid' => NMMIB.'.0.0.0.id',
+       ),
+       'name' => array(
+	       'type' => 'string',
+          'oid' => NMMIB.'.0.0.4.id',
+       ),
+	    'city' => array(
+		    'oid' => NMMIB.'.0.0.5.id',
+          'type' => 'string'
+	    ),
+       'state' => array(
+	       'oid' => NMMIB.'.0.0.6.id',
+          'type' => 'string',
+       )
     ),
     'profileTable'=> array(
+	     'entryStatus' => array(
+            'oid'=>NMMIB.'.1.0.14.id',
+            'type'=>'int'
+        ),
         'polling' => array(
             'type' => 'int',
             'oid'=>NMMIB.'.1.0.0.id'
@@ -71,7 +79,7 @@ return array(
     'managerTable' => array(
         'managerEntryStatus' => array(
             'oid'=>NMMIB.'.10.0.3.id',
-            'type'=>'string'
+            'type'=>'int'
         ),
         'managerAddress' => array(
             'oid'=>NMMIB.'.10.0.0.id',
