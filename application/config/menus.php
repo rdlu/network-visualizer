@@ -24,8 +24,8 @@ return array(
                'profiles'=>array(
                     'title'=>__('Perfis de Teste'),
                     'href'=>'profiles/'),
-	            'log'=>array(
-		            'title'=>__('Registro de Eventos'),
+	            'logviewer'=>array(
+		            'title'=>__('Registro de Eventos (Log)'),
 		            'href'=>'log/'),
 	            ),
             'href'=>'admin'

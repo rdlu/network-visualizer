@@ -15,6 +15,11 @@ class Rrd {
         1 => array('Min','Max','Avg'),
     );
 
+	/**
+	 * @var bool
+	 */
+	public $errors = false;
+
 /**
  * @static
  * @param  string $source
@@ -100,6 +105,7 @@ class Rrd {
                 if($ret == 0) {
                     Fire::error($opts,'RRD File Create Error: '.rrd_error());
                     Kohana_Log::instance()->add('error',"RRD File Create Error: $path.$filename",$opts);
+                    $this->errors = true;
                 } else {
                     Kohana_Log::instance()->add('info',"RRD File Created $path$filename with $step second step");
                 }

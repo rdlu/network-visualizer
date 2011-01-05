@@ -242,7 +242,21 @@ class Controller_Processes extends Controller_Skeleton {
                     if($process->count()) {
 	                    $response['message'] = 'Processo de monitoramento já existente no banco de dados, as sondas foram apenas resetadas.';
 	                    $response['class'] = 'warn';
-                    } else $process->create();
+                    } else {
+	                    $process->create();
+                       $response['message'] = "Configurações salvas com sucesso no banco de dados do MoM";
+                       $response['class'] = 'success';
+                       $rrd = Rrd::instance($source->ipaddress,$destination->ipaddress);
+                       foreach($profile->metrics as $metric) {
+	                      $rrd->create($profile->id,$metric->name,$profile->polling);
+                       }
+
+                       if($rrd->errors) {
+	                       $response['message'] .= ', mas houveram falhas na criação dos arquivos RRD, cheque o Registro de Eventos.';
+                          $response['class'] = 'warn';
+                       }
+
+                    }
 
                 }
             } catch (Exception $e) {
