@@ -33,6 +33,7 @@ class Model_Profile extends Sprig {
              *  Unidade: s (segundos)
              */
             'timeout'=>new Sprig_Field_Integer(array('label'=>'Tempo de expiração (segundos)')),
+	         'protocol'=>new Sprig_Field_Integer(array('choices'=>array(0=>'UDP',1=>'TCP'))),
             'description'=>new Sprig_Field_Text(array('label'=>'Descrição')),
             /*
              *  0 para diffserv (dscp)

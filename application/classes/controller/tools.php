@@ -32,19 +32,4 @@ class Controller_Tools extends Controller {
         $this->request->headers['Content-Type'] = 'text/x-component';
         include( DOCROOT.'pie/PIE.htc' );
     }
-
-    public function action_crrd() {
-        $rrd = Rrd::instance('127.0.0.1','127.0.0.1');
-        $rrd->create(1,'throughput',300);
-    }
-
-    public function action_urrd() {
-        $rrd = Rrd::instance('127.0.0.1','127.0.0.1');
-        $snmp = Snmp::instance('143.54.10.75')->group('throughput');
-        $rrd->update(1,'throughput',$snmp);
-    }
-
-    public function action_vrrd(){
-        $rrd = Rrd::instance('127.0.0.1','127.0.0.1')->graph(1,'throughput');
-    }
 }
