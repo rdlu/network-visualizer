@@ -57,8 +57,8 @@ class Model_Entity extends Sprig {
                 array('choices'=>array(
                          1=>'Ativo',2=>'Bloqueado',0=>'Inativo'),
                      'default'=>1)),
-            'sources' => new Sprig_Field_HasMany(array('model'=>'Process','foreign_key'=>'source_id')),
-            'destinations' => new Sprig_Field_HasMany(array('model'=>'Process','foreign_key'=>'destination_id'))
+            'processes_as_source' => new Sprig_Field_HasMany(array('model'=>'Process','foreign_key'=>'source_id')),
+            'processes_as_destination' => new Sprig_Field_HasMany(array('model'=>'Process','foreign_key'=>'destination_id'))
         );
     }
 }

@@ -133,8 +133,9 @@ class Rrd {
                 $ret = rrd_update($path.$filename,"$timestamp:$downstream:$upstream");
 
                 if($ret == 0) {
-                    Kohana_Log::instance()->add('warning','RRD Update Failed',array($path.$filename,$downstream,$upstream));
-                    Fire::error(array($path.$filename,$downstream,$upstream),'RRD Update Failed: '.rrd_error());
+	                $erf = rrd_error();
+                    Kohana_Log::instance()->add(Kohana::DEBUG,"RRD Update Failed :: $filename TIME $timestamp : DS $downstream : SD $upstream :: ".$erf,array($path.$filename,$downstream,$upstream));
+                    Fire::error(array($path.$filename,$downstream,$upstream),'RRD Update Failed: '.$erf);
                 }
             }
         Fire::groupEnd();

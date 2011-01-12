@@ -10,8 +10,8 @@
 			<latitude><?=$entity->latitude?></latitude>
 			<longitude><?=$entity->longitude?></longitude>
 			<agentes>
-<?php foreach($entity->destinations as $destination): ?>
-				<med><?=$destination->id?></med>
+<?php foreach($entity->processes_as_source as $process): ?>
+				<med><?=$process->destination->id?></med>
 <?php endforeach; ?>
 			</agentes>
 		</sonda>
