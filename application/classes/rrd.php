@@ -15,6 +15,11 @@ class Rrd {
         1 => array('Min','Max','Avg'),
     );
 
+	/**
+	 * @var bool
+	 */
+	public $errors = false;
+
 /**
  * @static
  * @param  string $source
@@ -100,6 +105,7 @@ class Rrd {
                 if($ret == 0) {
                     Fire::error($opts,'RRD File Create Error: '.rrd_error());
                     Kohana_Log::instance()->add('error',"RRD File Create Error: $path.$filename",$opts);
+                    $this->errors = true;
                 } else {
                     Kohana_Log::instance()->add('info',"RRD File Created $path$filename with $step second step");
                 }
@@ -115,23 +121,23 @@ class Rrd {
      * @param  array $data
      * @return Rrd
      */
-    public function update($profileId,$metric,array $data) {
-        Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId");
+    public function update($profileId,$metric,array $data,$timestamp = 'N') {
+        //Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId");
         $path = $this->path($profileId);
         foreach($this->types[0] as $l1)
             foreach($this->types[1] as $l2) {
                 $filename = $this->filename($metric,$l1.$l2);
                 $downstream = $data[$l1.'DS'.$l2];
                 $upstream = $data[$l1.'SD'.$l2];
-                Fire::info($filename.' : '.$downstream.' : '.$upstream);
-                $ret = rrd_update($path.$filename,"N:$downstream:$upstream");
+                //Fire::info($filename.' : '.$downstream.' : '.$upstream);
+                $ret = rrd_update($path.$filename,"$timestamp:$downstream:$upstream");
 
                 if($ret == 0) {
                     Kohana_Log::instance()->add('warning','RRD Update Failed',array($path.$filename,$downstream,$upstream));
-                    Fire::error(array($path.$filename,$downstream,$upstream),'RRD Update Failed: '.rrd_error());
+                    //Fire::error(array($path.$filename,$downstream,$upstream),'RRD Update Failed: '.rrd_error());
                 }
             }
-        Fire::groupEnd();
+        //Fire::groupEnd();
         return $this;
     }
 

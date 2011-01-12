@@ -1,22 +1,21 @@
-<?php if(!isset($errors)): ?>
+<?php if(!$errors): ?>
 <form class="bForms">
     <fieldset>
         <legend>Configuração da Sonda de Destino</legend>
         <ul class="info"  id="confDest">
-            <li class="loading">Configurando sonda de destino "<?=$dModel->name.' ('.$dModel->ipaddress.')'?>", aguarde...</li>
+            <li class="loading">Configurando sonda de destino "<?=$destination->name.' ('.$destination->ipaddress.')'?>", aguarde...</li>
         </ul>
     </fieldset>
     <fieldset>
         <legend>Configuração da Sonda de Origem</legend>
         <ul class="info" id="confSource">
             <li class="loading">
-                Aguardando as configurações acima serem concluídas...
-                Configurando sonda de origem "<?=$sModel->name.' ('.$sModel->ipaddress.')'?>", aguarde...
+                Configurando sonda de origem "<?=$source->name.' ('.$source->ipaddress.')'?>", aguarde...
             </li>
         </ul>
     </fieldset>
     <fieldset>
-        <legend>Configurações no banco de dados</legend>
+        <legend>Checagem final e ativação</legend>
         <ul class="info" id="confDB">
             <li class="loading">Aguardando as configurações acima serem concluídas...</li>
         </ul>
@@ -26,60 +25,60 @@
 <script type="text/javascript">
 $(function() {
 
-    setupDestination(<?=$destination?>,<?=$source?>,<?=$profile?>);
+    setupDestination(<?=$process->id?>);
+	setupSource(<?=$process->id?>);
+	var finalcount=0;
 
-    function setupDestination(destination,source,profile){
+    function setupDestination(id){
          $.ajax({
-		    url: "<?=url::site('processes/setupDestination')?>/"+destination+'/'+source+'/'+profile,
+		    url: "<?=url::site('processes/setupDestination')?>/"+id,
             type: 'get',
 			success: function( data ) {
                 $("#confDest").html("");
                 $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confDest');
                 $('#confDest').removeClass('info').removeClass('errors').addClass(data.class);
-                if(data.class == 'success') {
-                   setupSource(source,destination,profile);
-                } else {
-                    setupDestinationFailed();
-                }
+                activeFinal(4);
             },
             error: function(status,msg,error) {
                 console.log(error);
                 $("#confDest").html("");
                 $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDest');
                 $('#confDest').removeClass('info').removeClass('errors').addClass('error');
-                setupDestinationFailed();
+                activeFinal(4);
             }
         });
     }
 
-    function setupSource(source,destination,profile) {
+    function setupSource(id) {
          $.ajax({
-		    url: "<?=url::site('processes/setupSource')?>/"+source+'/'+destination+'/'+profile,
+		    url: "<?=url::site('processes/setupSource')?>/"+id,
             type: 'get',
 			success: function( data ) {
                 $("#confSource").html("");
                 $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confSource');
                 $('#confSource').removeClass('info').removeClass('errors').addClass(data.class);
-                if(data.class == 'success') {
-	                setupDB(profile,source,destination);
-                } else {
-	                setupSourceFailed();
-
-                }
+                activeFinal(5);
             },
             error: function(status,msg,error) {
                 console.log(error);
                 $("#confSource").html("");
                 $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confSource');
                 $('#confSource').removeClass('info').removeClass('errors').addClass('error');
-                setupSourceFailed();
+	            activeFinal(5);
             }
         });
     }
 
-    function setupDB(profile,source,destination) {
+	function activeFinal(num) {
+		finalcount += num;
+		if(finalcount>8) {
+			finalCheck(<?=$process->id?>);
+		}
+	}
+
+    function finalCheck(id) {
          $.ajax({
-		    url: "<?=url::site('processes/SaveProfile')?>/"+profile+'/'+source+'/'+destination,
+		    url: "<?=url::site('processes/FinalCheck')?>/"+id,
             type: 'get',
 			success: function( data ) {
                 $("#confDB").html("");
@@ -91,7 +90,6 @@ $(function() {
                 $("#confDB").html("");
                 $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDB');
                 $('#confDB').removeClass('info').removeClass('errors').addClass('error');
-                setupSourceFailed();
             }
         });
     }
@@ -111,9 +109,9 @@ $(function() {
 });
 </script>
 <?php else: ?>
+<ul class="errors">
 <?php foreach($errors as $k => $error): ?>
-    <ul id="errors">
-        <li class="error"><?=$error?></li>
-    </ul>
+	<li class="error"><?=$error?></li>
 <?php endforeach ?>
+	</ul>
 <?php endif; ?>

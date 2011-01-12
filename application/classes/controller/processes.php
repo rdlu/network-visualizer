@@ -105,49 +105,80 @@ class Controller_Processes extends Controller_Skeleton {
         $validado = false;
         if(Validate::numeric($_POST['sonda']) && ($_POST['sonda']>0))
             if(Validate::numeric($_POST['profile']) && ($_POST['profile']>0)) $validado = true;
-
+        $view = View::factory('processes/setup');
 
         if ($validado) {
             $source = (int) $source;
             $destination = $_POST['sonda'];
             $profile = $_POST['profile'];
-            $sourceModel = Sprig::factory('entity',array('id'=>$source))->load();
-            $destinationModel = Sprig::factory('entity',array('id'=>$destination))->load();
-            $profileModel = Sprig::factory('profile',array('id'=>$profile))->load();
-            $view = View::factory('processes/setup');
-            $view->bind('source',$source)
-                    ->bind('destination',$destination)
-                    ->bind('profile',$profile)
-                    ->bind('pModel',$profileModel)
-                    ->bind('dModel',$destinationModel)
-                    ->bind('sModel',$sourceModel);
 
-            $this->template->content = $view;
+				$process = self::setupFirst($source,$destination,$profile);
+
+
+				$destination = $process->destination->load();
+				$source = $process->source->load();
+				$profile = $process->profile->load();
+				$errors = false;
+
+			   $view->bind('process',$process)
+					   ->bind('destination',$destination)
+					   ->bind('source',$source)
+					   ->bind('profile',$profile)->bind('errors',$errors);
         } else {
-
+	        throw new Exception('Validation error on Process Setup, non numeric data sent',23);
         }
+        $this->template->content = $view;
     }
 
-    public function action_setupDestination($id,$sourceId,$profileId) {
+	/**
+	 * @static
+	 * @param  string $source
+	 * @param  string $destination
+	 * @param  string $profile
+	 * @return bool|Model_Process|Sprig
+	 */
+	private static function setupFirst($source,$destination,$profile) {
+		$sourceModel = Sprig::factory('entity',array('id'=>$source))->load();
+      $destinationModel = Sprig::factory('entity',array('id'=>$destination))->load();
+      $profileModel = Sprig::factory('profile',array('id'=>$profile))->load();
+
+      $process = Sprig::factory('process');
+      $process->source = $sourceModel;
+      $process->destination = $destinationModel;
+      $process->profile = $profileModel;
+
+      try {
+	      $process->create();
+      } catch (Exception $e) {
+	      $msg = $e->getMessage();
+	      $error['message'] = "Exceção no banco de dados, $msg";
+	      $error['class'] = 'error';
+      }
+
+	   return Sprig::factory('process',array('source'=>$source,'destination'=>$destination,'profile'=>$profile))->load();
+	}
+
+    public function action_setupDestination($processId) {
         if(Request::$is_ajax) {
             $this->auto_render = false;
-            $source = Sprig::factory('entity',array('id'=>$sourceId))->load();
-            $destination = Sprig::factory('entity',array('id'=>$id))->load();
-            $profile = Sprig::factory('profile',array('id'=>$profileId))->load();
+            $process = Sprig::factory('process',array('id'=>$processId))->load();
+            $source = $process->source->load();
+            $destination = $process->destination->load();
+            $profile = $process->profile->load();
 
             $values = array(
                 'managerEntryStatus' => 6,
                 'managerAddress' => $source->ipaddress,
                 'managerPort' => 12000,
-                'managerProtocol' => 0
+                'managerProtocol' => $profile->protocol
             );
 
-            $snmp = Snmp::instance($destination->ipaddress,'suppublic')->setGroup('managerTable',$values,array('id'=>$source->id));
+            $snmp = Snmp::instance($destination->ipaddress,'suppublic')->setGroup('managerTable',$values,array('id'=>$process->id));
 
             if(count($snmp)) {
                 $e['errors'] = $snmp;
                 Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set managerTable para o ip $destination->ipaddress");
-                $e['message'] = 'Erros na transmissão dos dados via SNMP';
+                $e['message'] = 'Erros na transmissão dos dados via SNMP: '.$snmp['managerEntryStatus'];
                 $e['class'] = 'error';
             } else {
                 $e['errors'] = null;
@@ -160,103 +191,108 @@ class Controller_Processes extends Controller_Skeleton {
         }
     }
 
-    public function action_setupSource($id,$destinationId,$profileId) {
+	public function action_setupSource($processId) {
+		if(Request::$is_ajax) {
+			$this->auto_render = false;
+			$process = Sprig::factory('process',array('id'=>$processId))->load();
+			$source = $process->source->load();
+			$destination = $process->destination->load();
+			$profile = $process->profile->load();
+
+			//Checar se o destino esta OK
+	      if(Snmp::instance($destination->ipaddress)->isReachable(NMMIB.'.10.0.0.'.$process->id)) {
+		      $sourceSnmp = Snmp::instance($source->ipaddress,'suppublic');
+
+		      if(!$sourceSnmp->isReachable(NMMIB.'.1.0.9.'.$process->id)) {
+			      $values = array('entryStatus'=>6);
+					$values = array_merge($values,$profile->as_array());
+					$values['metrics'] = $profile->metrics;
+					$ptable = $sourceSnmp->setGroup('profileTable',$values,array('id'=>$profile->id));
+		      } else {
+			      $ptable = array();
+		      }
+		      
+		      $avalues = array('entryStatus'=>6);
+            $avalues = array_merge($avalues,$destination->as_array());
+            $avalues['profile'] = $profile->id;
+            $atable = $sourceSnmp->setGroup('agentTable',$avalues,array('pid'=>$process->id));
+
+            if(count($ptable)) {
+	            $e['errors'] = array_keys($ptable);
+	            Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $source->ipaddress (Profile Table)");
+	            $e['message'] = 'Erros na transmissão dos dados via SNMP (Profile Setup)';
+	            $e['class'] = 'error';
+	            $ptrue = true;
+            }
+
+            if(count($atable)) {
+	            Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $source->ipaddress (Agent Table)");
+	            $e['message'] = 'Erros na transmissão dos dados via SNMP (Agent Setup)';
+	            $e['class'] = 'error';
+	            if(isset($ptrue)) {
+		            $e['message'] .= ' & (Profile Setup): '.$atable['entryStatus'];
+		            $e['errors'] = array_merge($e['errors'],array_keys($ptable));
+	            } else
+		            $e['errors'] = array_keys((array) $ptable);
+	            $atrue = true;
+            }
+
+            if(!isset($ptrue) && !isset($atrue)) {
+	            $e['errors'] = null;
+	            $e['class'] = 'success';
+	            $e['message'] = "Entidade de origem $source->name ($source->ipaddress) foi configurada com sucesso via SNMP.";
+            }
+	      } else {
+		      $e['errors'] = 'destinationEntity';
+		      $e['class'] = 'error';
+		      $e['message'] = "Entidade de destino $destination->name ($destination->ipaddress) não recebeu as configurações via SNMP, abortando.";
+	      }
+
+	      $this->request->headers['Content-Type'] = 'application/json';
+	      $this->request->response = json_encode($e);
+		}
+	}
+
+	public function action_FinalCheck($processId) {
         if(Request::$is_ajax) {
-            $this->auto_render = false;
-            $source = Sprig::factory('entity',array('id'=>$id))->load();
-            $destination = Sprig::factory('entity',array('id'=>$destinationId))->load();
-            $profile = Sprig::factory('profile',array('id'=>$profileId))->load();
+	        $this->auto_render = false;
+	        $process = Sprig::factory('process',array('id'=>$processId))->load();
+	        $source = $process->source->load();
+	        $destination = $process->destination->load();
+	        $profile = $process->profile->load();
 
-            //checar se o perfil existe e fazer o setup
-            try {
-                $ps = snmp2_get($source->ipaddress,'suppublic','.1.3.6.1.2.1.1.1.0'.$profile->id);
-            } catch (Exception $e) {
-                Fire::group('Exception')->error($e)->info($e->getCode(),'Codigo do erro')->groupEnd();
-            }
+           if($process->count())
+	        if(Snmp::instance($source->ipaddress)->isReachable(NMMIB.'.0.0.0.'.$process->id)) {
+		        if(Snmp::instance($destination->ipaddress)->isReachable(NMMIB.'.10.0.0.'.$process->id)) {
+			        $response['message'] = "Configurações salvas com sucesso no banco de dados do MoM";
+			        $response['class'] = 'success';
+			        $rrd = Rrd::instance($source->ipaddress,$destination->ipaddress);
 
-            if(!preg_match('/^No Such/',$ps)) {
-                Fire::info($ps);
-                $e['message'] = 'Sonda de origem não tem o Netmetric corretamente instalado';
-                $e['errors'][] = 'No such instance';
-                $e['class'] = 'error';
-            } else {
-                $values = array('entryStatus'=>6);
-                $values = array_merge($values,$profile->as_array());
-                $ptable = Snmp::instance($source->ipaddress,'suppublic')->setGroup('profileTable',$values,array('id'=>$destination->id));
+			        foreach($profile->metrics as $metric) {
+				        $rrd->create($profile->id,$metric->name,$profile->polling);
+			        }
 
-                $avalues = array('entryStatus'=>6);
-                $avalues = array_merge($avalues,$destination->as_array());
-                $atable = Snmp::instance($source->ipaddress,'suppublic')->setGroup('agentTable',$avalues,array('id'=>$destination->id));
-
-                if(count($ptable)) {
-                    $e['errors'] = array_keys($ptable);
-                    Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $source->ipaddress (Profile Table)");
-                    $e['message'] = 'Erros na transmissão dos dados via SNMP (Profile Setup)';
-                    $e['class'] = 'error';
-                    $ptrue = true;
-                }
-
-                if(count($atable)) {
-                    Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set Source para o ip $source->ipaddress (Agent Table)");
-                    $e['message'] = 'Erros na transmissão dos dados via SNMP (Agent Setup)';
-                    $e['class'] = 'error';
-                    if(isset($ptrue)) {
-                        $e['message'] .= ' & (Profile Setup)';
-                        $e['errors'] = array_merge($e['errors'],array_keys($ptable));
-                    } else
-                        $e['errors'] = array_keys((array) $ptable);
-                    $atrue = true;
-                }
-
-                if(!isset($ptrue) && !isset($atrue)) {
-                    $e['errors'] = null;
-                    $e['class'] = 'success';
-                    $e['message'] = "Entidade de origem $source->name ($source->ipaddress) foi configurada com sucesso via SNMP.";
-                }
-            }
-
-            $this->request->headers['Content-Type'] = 'application/json';
-            $this->request->response = json_encode($e);
-        }
-    }
-
-    public function action_SaveProfile($profileId,$sourceId,$destinationId) {
-        if(Request::$is_ajax) {
-            $this->auto_render = false;
-            $source = Sprig::factory('entity',array('id'=>$sourceId))->load();
-            $destination = Sprig::factory('entity',array('id'=>$destinationId))->load();
-            $profile = Sprig::factory('profile',array('id'=>$profileId))->load();
-
-            //checar se o perfil existe e fazer o setup
-            try {
-                $ps = snmp2_get($source->ipaddress,'suppublic','.1.3.6.1.2.1.1.1.0'.$profile->id);
-                if(!preg_match('/^No Such/',$ps)) {
-                    $response['message'] = 'Perfil não foi setado corretamente na máquina de origem, as configurações não serão salvas.';
-                    $response['class'] = 'error';
-                } else {
-                    $process = Sprig::factory('process');
-                    $process->source = $source;
-                    $process->destination = $destination;
-                    $process->profile = $profile;
-                    $process->load();
-                    if($process->count()) {
-	                    $response['message'] = 'Processo de monitoramento já existente no banco de dados, as sondas foram apenas resetadas.';
-	                    $response['class'] = 'warn';
-                    } else $process->create();
-
-                }
-            } catch (Exception $e) {
-                Fire::error($e)->info($e->getCode(),'Codigo do erro');
-                $response['message'] = 'Exceção no banco de dados, entre em contato com o DBA';
-                $response['class'] = 'error';
-            }
+			        if($rrd->errors) {
+				        $response['message'] .= ', mas houveram falhas na criação dos arquivos RRD, cheque o Registro de Eventos.';
+				        $response['class'] = 'warn';
+			        }
+		        } else {
+			        $response['message'] = "A sonda de destino $destination->ipaddress não respondeu ao teste de verificação, abortando a configuração";
+			        $response['class'] = 'error';
+		           $process->delete();
+		        }
+	        } else {
+		        $response['message'] = "A sonda de origem $source->ipaddress não respondeu ao teste de verificação, abortando a configuração.";
+              $response['class'] = 'error';
+              $process->delete();
+	        }
             $this->request->headers['Content-Type'] = 'application/json';
             $this->request->response = json_encode($response);
 
         }
-    }
-    
-    public function action_remove($id) {
+	}
+
+	public function action_remove($id) {
         $process = Sprig::factory('process');
         if($id!=0) {
             $process->id = $id;
