@@ -41,8 +41,31 @@ class Controller_Welcome extends Controller_Skeleton {
             $view->bind('entities', $entidades);
 
             //$this->request->headers['Content-Type'] = 'application/xml';
+            $this->request->headers['Content-Type'] = 'text/xml';
             $this->request->response = $view;
         }
+    }
+
+    public function action_infoBar() {
+        if(Request::$is_ajax) {
+            $this->auto_render = false;
+
+            $id = $this->request->get('id'); // -> ISSO NÃO ESTÁ FUNCIONANDO
+
+            $dados = Sprig::factory('entity', array("id" => $id))->load();
+
+            //$view = View::factory('json/infoBar');
+
+            //$view->bind('entity', $entidade);
+
+            $this->request->headers['Content-Type'] = 'text/json';
+
+            $this->request->response = JSON_encode( array(
+                'endereco' => "$dados->address, $dados->addressnum",
+                'localidade' => "$dados->state, $dados->city",
+                'status' => "$dados->status"
+            ));
+        };
     }
 
 } // End Welcome

@@ -17,7 +17,7 @@ return array
 			 *
 			 * Ports and sockets may be appended to the hostname.
 			 */
-			'hostname'   => 'localhost',
+			'hostname'   => 'julia',
 			'database'   => 'mom_dev',
 			'username'   => 'mom',
 			'password'   => 'upY3tsLrHSszHtwC',

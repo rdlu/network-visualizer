@@ -9,13 +9,14 @@
 
 /******************************************************************************/
 
-
 /************************* DEFAULTS DO MOM ************************************/
 var MOM = {
-    imgDir: "./",
-    serverName: 'http://hrist.inf.ufrgs.br/mom/images/markers/',
-    script1: 'retornaXML.php',
-    script2: 'retornaXML2.php'
+    imgDir: "../mom/images/markers/",
+    serverName: 'http://julia.inf.ufrgs.br/',
+    script1: '../mom/welcome/infoMapa',
+    script2: 'retornaXML2.php',
+    script_info_mapa: '../mom/welcome/infoMapa',
+    script_info_bar: '../mom/welcome/infoBar'
 }
 //namespace reservado para o layout e os resizes
 var DS = { //display screen :)
@@ -69,7 +70,7 @@ var Template = {
         else if (status == 2) link.addClass('sondaStatus2');
         else if (status == 3) link.addClass('sondaStatus3');
         else link.addClass('sondaStatus0');
-        //tudo terminado, adiciona o template à página
+        //terminado, adiciona o template à página
         link.bind('click', id, function(e){
             e.preventDefault();
             RIGHTBAR.mostraDestaque(id);
@@ -116,7 +117,7 @@ var RIGHTBAR = {
                    //alert("wow"); ->DEBUG(OK)
                     var sonda = $(this); //dentre as entradas do XML, escolhe cada uma das sondas
                     //pega as informações contidas no XML                    
-                    var id = sonda.find('id').text();
+                    var id = sonda.find('id').text();                    
                     var ip = sonda.find('ip').text();
                     var nome = sonda.find('nome').text();
                     var status = sonda.find('status').text();
@@ -142,12 +143,12 @@ var RIGHTBAR = {
         //pega as info restantes
         //prepara o objeto json para passar
         var dataString = new Object();
-
+        
         $.ajax({
             type: 'get',
-            url: MOM.script2,
+            url: MOM.script_info_bar,
             dataType: 'json',
-            data: id,            
+            data: {'id' : id},
             async: false, //necessário, ou terá problema de sincronicidade
             success: function(dados){
                 //console.log(dados.endereco);
@@ -174,14 +175,15 @@ var RIGHTBAR = {
 }
 //essa variável foi criada em desacordo com o cache, para fim de agilizar a codificação
 var SONDA = {};
-SONDA.dadosMaps = function(id){
+SONDA.dadosMaps = function(){
      $.ajax({
         type: 'get',
-        url: 'getDadosMapa.php',
-        dataType: 'json',
-        async: true,
+        url: MOM.script_info_mapa,
+        dataType: 'xml',
+        async: false,
         success: function(dados){
-           Template.sondaDestaque(dados);
+           console.log(dados);           
+           return(dados);
         }
     })
 }
@@ -220,7 +222,7 @@ SONDA.statusImg = function(st){
             return ("icon_amarelo.png");
             break; //haha
         }
-        case (3): //fallthrough
+        case (3):
             return ("icon_vermelho.png");
             break;
     }
@@ -247,7 +249,7 @@ CACHED.init = function(){
     
     $.ajax({
         type: 'get',
-        url: MOM.script1,
+        url: MOM.script_info_mapa,
         dataType: 'xml',
         async: false,
         success: function(xml){
@@ -430,8 +432,7 @@ var MAPA = {
     iconeAmarelo: 'markerAmarelo.png',
     iconeVermelho: 'markerVermelho.png',
     iconeCinza: 'markerCinza.png',
-    imgDir: './',
-    
+        
     init: function(){
       //inicia o mapa
       var latlng = new google.maps.LatLng(-21.698265, -46.757812);
@@ -444,46 +445,52 @@ var MAPA = {
       return (gmap);
     },
     //pega os pontos do cache e desenha no mapa
-    povoa: function(gmap){
-        if (CACHED.loaded == false){
-            CACHED.init();
-        }         
-        var entities = $('#cache > entities');
+    povoa: function(gmap){        
+        //var entities = $('#cache > entities');
         //alert (entities.text());        
         //seta os pontos
-        entities.find("sonda").each(function(){
-            var sonda = $(this); //dentre as entradas do XML, escolhe cada uma das sondas
-            //pega as informações contidas no XML
-            var id = parseInt( sonda.find('id').text());
-            var ip = sonda.find('ip').text();
-            var latitude = parseFloat( sonda.find('latitude').text());
-            var longitude = parseFloat( sonda.find('longitude').text());
-            var nome = sonda.find('nome').text();
-            var status = parseInt(sonda.find('status').text());
-            var iconePath = MOM.serverName + MAPA.imgDir + MAPA.statusImg(status);
-            //console.log(icone);
-            //alert(id);
-            MAPA.myLatlng[id] = new google.maps.LatLng(latitude, longitude);
-            MAPA.marcadores[id] = new google.maps.Marker({
-               position: MAPA.myLatlng[id],
-               draggable: false,               
-               //labelContent: nome,
-               //labelAnchor: new google.maps.Point(35, 0),
-               //labelClass: "labels", // the CSS class for the label
-               //labelStyle: {opacity: 0},
-               title: nome,
-               icon: iconePath,
-               shadow: iconePath
-            });
+        $.ajax({
+            type: 'get',
+            url: MOM.script_info_mapa,
+            dataType: 'xml',
+            async: true,
+            success: function(xml){                
+                //var entities = ('entities');
+                $(xml).find('sonda').each(function(){
+                    
+                    var sonda = $(this); //dentre as entradas do XML, escolhe cada uma das sondas
+                    //pega as informações contidas no XML
+                    var id = parseInt( sonda.find('id').text());
+                    var ip = sonda.find('ip').text();
+                    var latitude = parseFloat( sonda.find('latitude').text());
+                    var longitude = parseFloat( sonda.find('longitude').text());
+                    var nome = sonda.find('nome').text();
+                    var status = parseInt(sonda.find('status').text());
+                    var iconePath = MOM.imgDir + MAPA.statusImg(status);
+                    //console.log(icone);
+                    
+                    MAPA.myLatlng[id] = new google.maps.LatLng(latitude, longitude);
+                    MAPA.marcadores[id] = new google.maps.Marker({
+                       position: MAPA.myLatlng[id],
+                       draggable: false,
+                       //labelContent: nome,
+                       //labelAnchor: new google.maps.Point(35, 0),
+                       //labelClass: "labels", // the CSS class for the label
+                       //labelStyle: {opacity: 0},
+                       title: nome,
+                       icon: iconePath,
+                       shadow: iconePath
+                    });
 
-            //MAPA.marcadores[id].setMap(gmap);
-            google.maps.event.addListener(MAPA.marcadores[id], 'click', function(){
-                RIGHTBAR.mostraDestaque(id);
-                MAPA.desenhaLinhas(id, gmap);
-            });
-            //google.maps.event.addListener(MAPA.marcadores[id], 'mouseover', function(){MAPA.marcadores[id].setOptions( 'labelClass': {'opacity': 0.5}} ));
-            MAPA.marcadores[id].setMap(gmap);
-        });
+                    //MAPA.marcadores[id].setMap(gmap);
+                    google.maps.event.addListener(MAPA.marcadores[id], 'click', function(){
+                        RIGHTBAR.mostraDestaque(id);
+                        MAPA.desenhaLinhas(id, gmap);
+                    });
+                    //google.maps.event.addListener(MAPA.marcadores[id], 'mouseover', function(){MAPA.marcadores[id].setOptions( 'labelClass': {'opacity': 0.5}} ));
+                    MAPA.marcadores[id].setMap(gmap);
+                });
+        }})
         //seta os caminhos. Essa é a função que funciona para setar todas as polylines
         /*
         entities.find("sonda").each(function(){
@@ -545,7 +552,7 @@ var MAPA = {
                         strokeColor: "#EE8844", /*#FF0000*/
                         strokeOpacity: 0.8,
                         strokeWeight: 2
-                    }))                                        
+                    }))
              })
          }
      },
@@ -577,7 +584,7 @@ var MAPA = {
         }
      },
      atualizaStatus: function(id, status){
-         var iconePath = MOM.serverName + MAPA.imgDir + MAPA.statusImg(status);
+         var iconePath = MOM.imgDir + MAPA.statusImg(status);
          MAPA.marcadores[id].setIcon(iconePath);
      }
  }
@@ -597,6 +604,7 @@ $(document).ready(function(){
     RIGHTBAR.entitiesPovoa();  
     MAPA.gmap = MAPA.init(); 
     MAPA.povoa(MAPA.gmap);
+   
    /*
     myLatlng[1] = new google.maps.LatLng(-34.397, 150.644);
     marcadores[1] = new google.maps.Marker({
