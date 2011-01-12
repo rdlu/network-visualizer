@@ -18,7 +18,7 @@ class Model_Process extends Sprig {
             'destination' => new Sprig_Field_BelongsTo(array(
                                                             'model'=>'Entity',
                                                             'column'=>'destination_id',
-                                                            'empty' => false,
+                                                            'null' => false,
                                                             'rules'=>array('isId'=>array()))),
             'profile' => new Sprig_Field_BelongsTo(array('model'=>'Profile')),
             /*

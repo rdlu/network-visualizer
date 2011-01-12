@@ -122,22 +122,22 @@ class Rrd {
      * @return Rrd
      */
     public function update($profileId,$metric,array $data,$timestamp = 'N') {
-        //Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId");
+        Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId");
         $path = $this->path($profileId);
         foreach($this->types[0] as $l1)
             foreach($this->types[1] as $l2) {
                 $filename = $this->filename($metric,$l1.$l2);
                 $downstream = $data[$l1.'DS'.$l2];
                 $upstream = $data[$l1.'SD'.$l2];
-                //Fire::info($filename.' : '.$downstream.' : '.$upstream);
+                Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
                 $ret = rrd_update($path.$filename,"$timestamp:$downstream:$upstream");
 
                 if($ret == 0) {
                     Kohana_Log::instance()->add('warning','RRD Update Failed',array($path.$filename,$downstream,$upstream));
-                    //Fire::error(array($path.$filename,$downstream,$upstream),'RRD Update Failed: '.rrd_error());
+                    Fire::error(array($path.$filename,$downstream,$upstream),'RRD Update Failed: '.rrd_error());
                 }
             }
-        //Fire::groupEnd();
+        Fire::groupEnd();
         return $this;
     }
 

@@ -46,11 +46,11 @@ class Controller_Welcome extends Controller_Skeleton {
         }
     }
 
-    public function action_infoBar() {
+    public function action_infoBar($id) {
         if(Request::$is_ajax) {
             $this->auto_render = false;
 
-            $id = $this->request->get('id'); // -> ISSO NÃO ESTÁ FUNCIONANDO
+            $id = (int) $id;
 
             $dados = Sprig::factory('entity', array("id" => $id))->load();
 
@@ -65,7 +65,7 @@ class Controller_Welcome extends Controller_Skeleton {
                 'localidade' => "$dados->state, $dados->city",
                 'status' => "$dados->status"
             ));
-        };
+        }
     }
 
 } // End Welcome

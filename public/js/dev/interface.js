@@ -146,9 +146,8 @@ var RIGHTBAR = {
         
         $.ajax({
             type: 'get',
-            url: MOM.script_info_bar,
+            url: MOM.script_info_bar+'/'+id,
             dataType: 'json',
-            data: {'id' : id},
             async: false, //necessário, ou terá problema de sincronicidade
             success: function(dados){
                 //console.log(dados.endereco);

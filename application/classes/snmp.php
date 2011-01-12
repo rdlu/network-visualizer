@@ -129,23 +129,25 @@ class Snmp {
 					$value = (string) utf8::transliterate_to_ascii($value);
 			}
 
-            Fire::info("$key: $value");
+			Fire::info("$key: $value");
 
-            try {
-                $result = snmp2_set($this->address,$this->community,$oid['oid'],$type,$value,$this->timeout,$this->retries);
-            } catch (Exception $err) {
-                $code = $err->getCode();
-                $msg = $err->getMessage();                $oe = $oid['oid'];
-                Fire::error($err,"Exception on SNMP SET $code");
-                Kohana::$log->add(Kohana::ERROR,"Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
-                $data[$key] = $msg;
-            }
+			try {
+				$result = snmp2_set($this->address,$this->community,$oid['oid'],$type,$value,$this->timeout,$this->retries);
+			} catch (Exception $err) {
+				$code = $err->getCode();
+				$msg = $err->getMessage();                $oe = $oid['oid'];
+				Fire::error($err,"Exception on SNMP SET $code");
+				if($key == 'entryStatus' || $key == 'managerEntryStatus') {
 
-        }
+				} else {
+					Kohana::$log->add(Kohana::ERROR,"Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
+					$data[$key] = $msg;
+				}
+			}
+		}
 
-        Fire::groupEnd();
-
-        return $data;
+		Fire::groupEnd();
+		return $data;
     }
 
     public function setAddress($address) {
@@ -193,9 +195,9 @@ class Snmp {
 	}
 
 	public static function convertTimestamp($string) {
-		$str = explode('(',$string);
+		$str = explode(')',$string);
 		if(count($str)>1)
-			return trim($str[1],'() \t\n\r\0');
+			return trim($str[0],"() \t\n\r\0");
 	   else
 		   return 'N';
 	}
