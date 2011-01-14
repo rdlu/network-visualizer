@@ -1,14 +1,11 @@
 /*
  * FALTA:
  * fazer os avisos
- * fazer funcionar o cache html
  * programar o search lá em cima, os filtros, etc
- * ?programar a parte do transformar sonda em status cinza?
  *
 /
 
 /******************************************************************************/
-
 /************************* DEFAULTS DO MOM ************************************/
 var MOM = {
     imgDir: "../mom/images/markers/",
@@ -16,7 +13,8 @@ var MOM = {
     script1: '../mom/welcome/infoMapa',
     script2: 'retornaXML2.php',
     script_info_mapa: '../mom/welcome/infoMapa',
-    script_info_bar: '../mom/welcome/infoBar'
+    script_info_bar: '../mom/welcome/infoBar',
+    info_mapa_json: '../mom/welcome/infoMapaJ'
 }
 //namespace reservado para o layout e os resizes
 var DS = { //display screen :)
@@ -74,6 +72,7 @@ var Template = {
         link.bind('click', id, function(e){
             e.preventDefault();
             RIGHTBAR.mostraDestaque(id);
+            MAPA.desenhaLinhas(id, MAPA.gmap);            
         });
         link.attr('id', 'sblink'+id).addClass('sondaLink');
         template.appendTo('#entities');                                          //coloca o template no HTML
@@ -86,7 +85,7 @@ var Template = {
         alvo.empty(); //limpa a div
         var template = $('#sondaItemDestaque').clone().removeClass('template').addClass('sondaDestaque');
         //var ip = $('#'+id).find('sondaIp').text();
-        //console.log(status);
+        
         var st = MOM.imgDir + SONDA.statusImg(status); //concatena as strings para o nome da figura do estado da sonda
         
         template.find('#sondaNome').text(nome);
@@ -108,64 +107,56 @@ var RIGHTBAR = {
     /* Povoa o elemento entidades do HTML com as sondas em formato reduzido */
     entitiesPovoa: function(){
         $('#entities').empty();
-        $.ajax({
-            type: 'get',
-            url: MOM.script1,
-            dataType: 'xml',
-            success: function(xml){
-               $(xml).find("sonda").each(function(){
-                   //alert("wow"); ->DEBUG(OK)
-                    var sonda = $(this); //dentre as entradas do XML, escolhe cada uma das sondas
-                    //pega as informações contidas no XML                    
-                    var id = sonda.find('id').text();                    
-                    var ip = sonda.find('ip').text();
-                    var nome = sonda.find('nome').text();
-                    var status = sonda.find('status').text();
-                    //var latitude = $(this).atrr('latitude');
-                    //var longitude = $(this).atrr('longitude');
-                    //passa os dados para função de template que coloca os dados no HTML
-                    Template.sondaItemBox(id, ip, nome, status);
-           })}
-    })},
+        var sondas = CACHED.JSONresponse;
+        $.each(sondas, function(){            
+            var sonda = $(this)[0];
+            var id = sonda.id;
+            var ip = sonda.ip;
+            var nome = sonda.nome;
+            var status = sonda.status;
+
+            Template.sondaItemBox(id, ip, nome, status);
+        });       
+    },
     mostraDestaque: function(id){
         if( CACHED.loaded == false) CACHED.init();
         //cata esses valores do cache
+        var sonda = SONDA.getFromCache(id);
+        var nome = sonda.nome;
+        var status = sonda.status;
+        var ip = sonda.ip;
+        /* cache HTML
         var sonda = $('#cache > entities sonda:[id=s'+id+']');
-        //var sonda = entities.find()
-        //console.log(sonda);
+        //var sonda = entities.find()        
         var ip = sonda.find('ip').text();
         //var latitude = parseFloat( sonda.find('latitude').text());
         //var longitude = parseFloat( sonda.find('longitude').text());
         var nome = sonda.find('nome').text();
         var status = parseInt(sonda.find('status').text());
+        */
+
         var endereco;
         var localidade;
         //pega as info restantes
         //prepara o objeto json para passar
-        var dataString = new Object();
-        
+                
         $.ajax({
             type: 'get',
             url: MOM.script_info_bar+'/'+id,
             dataType: 'json',
             async: false, //necessário, ou terá problema de sincronicidade
             success: function(dados){
-                //console.log(dados.endereco);
                 endereco = dados.endereco;                
                 localidade = dados.localidade;
+                status = parseInt(status);
                 if (dados.status != status){
                     status = dados.status;
-                    SONDA.atualizaStatus(id, status); //atualiza o status no cache e nas views
+                    //SONDA.atualizaStatus(id, status); //atualiza o status no cache e nas views
                     //MAPA.atualizaStatus(id, status);
-                }
-                //console.log(status);
+                }                
             }
         });
-        //console.log(nome);
-        //console.log(ip);
-        //console.log(status);
-        //console.log(endereco);
-        //console.log(localidade);
+        
         Template.sondaDestaque(id, ip, nome, status, endereco, localidade);
     },
     atualizaStatus: function(id, status){
@@ -180,8 +171,7 @@ SONDA.dadosMaps = function(){
         url: MOM.script_info_mapa,
         dataType: 'xml',
         async: false,
-        success: function(dados){
-           console.log(dados);           
+        success: function(dados){           
            return(dados);
         }
     })
@@ -202,24 +192,33 @@ SONDA.getMedicoes = function(id){
     
 }
 SONDA.getFromCache = function(id){
-    var sonda = $('#cache > entities sonda:[id=s'+id+']'); //CONTINUE DAQUI
-    //console.log(sonda);
-    return (sonda);
+    var sondas = CACHED.JSONresponse;
+    var found = null;
+    $.each(sondas, function(){
+        var sonda = $(this)[0];        
+        if (sonda.id == id){            
+            found = sonda;
+        }
+    });
+    /* código antigo que usava o cache xml
+    var sonda = $('sonda:[id=s'+id+']'); //CONTINUE DAQUI -> Isso não está mais funcionando...'sonda:[id=s'+id+']'
+        */
+    return (found);
 }
 //devolve o nome da imagem que representa o estado
 SONDA.statusImg = function(st){
     switch(st){
         case (0): {
             return ("icon_cinza.png");
-            break; //haha
+            break; 
         }
         case (1): {
             return ("icon_verde.png");
-            break; //haha
+            break; 
         }
         case (2): {
             return ("icon_amarelo.png");
-            break; //haha
+            break; 
         }
         case (3):
             return ("icon_vermelho.png");
@@ -241,11 +240,22 @@ SONDA.atualizaStatus = function(id, status){ //atualiza o status no
 /*************** CACHE PARA AS SONDAS **************************************************/
 /***************************************************************************************/
 var CACHED = {
-   loaded: false   
+   loaded: false,
+   
+   infoMapaJ: function(){
+       $.ajax({
+           url: MOM.info_mapa_json,
+           type: 'get',
+           dataType: 'json',
+           async: false,
+           success: function(JSONresp){               
+               CACHED.JSONresponse = JSONresp;
+           }
+       })
+   }
 };
 
-CACHED.init = function(){
-    
+CACHED.init = function(){    
     $.ajax({
         type: 'get',
         url: MOM.script_info_mapa,
@@ -261,169 +271,6 @@ CACHED.init = function(){
         }
     })
     CACHED.loaded = true;
-}
-
-var diagrama = {
-    //OK
-    //inicia o diagrama: canvas e etc
-
-    //OK
-    //função para desenhar as setas - optei por usar linhas curvas. A função já está feita e está no topo do arquivo por enquanto
-    //EXTENDI A FN DO RAFAELJS
-
-    //50%
-    //função para desenhar as sondas, tenho que definir o layout, se vão ser pontos ou desenhos
-    //devo fazer um template?
-    //LAYOUT: nome e imagem. A imagem é necessária para evitar complicações desnecessárias calculando
-    //ângulos e coordenadas de ponta de setas
-
-    //70%
-    //função que faz i, cache no próprio HTML das sondas que há e suas informações
- 
-    //0%
-    //função para salvar a posição dos elementos
-    //Devo fazer testes para ver se fica mais rápido com um XML dedicado ou com um bloated
-
-    //função para povoar com os elementos dada uma posição já salva
-    //devo definir outros campos no banco de dados para isso...
-    //ESPAÇAMENTO : deve ser rodada apenas se não houver posição salva
-    //função para espaçar os nodos "principais" - vai ser rodada apenas no início, depois o usuário arruma e salva a posição
-    //função para ver se o elementos está dentro do círculo
-    //função para repelir o elemento de dentro do círculo
-    //função para selecionar os nodos principais. Tem que ter um critério numérico para isso
-            //set up our object for dragging
-        dragStart: function() {
-            var g = null;
-            if (!isNaN(this.idx)) {
-                //find the set (if possible)
-                g = groups[this.idx];
-            }
-            if (g) {
-                var i;
-                //store the starting point for each item in the set
-                for(i=0; i < g.items.length; i++) {
-                    g.items[i].ox = g.items[i].attr("x");
-                    g.items[i].oy = g.items[i].attr("y");
-                }
-            }
-        },
-        //clean up after dragging
-        dragStop: function () {
-            var g = null;
-            if (!isNaN(this.idx)) {
-                //find the set (if possible)
-                g = groups[this.idx];
-            }
-            if (g) {
-                var i;
-                //remove the starting point for each of the objects
-                for(i=0; i < g.items.length; i++) {
-                    delete(g.items[i].ox);
-                    delete(g.items[i].oy);
-                }
-            }
-        },
-        //take care of moving the objects when dragging
-        dragMove: function (dx, dy) {
-            if (!isNaN(this.idx)) {
-                var g = groups[this.idx];
-            }
-
-            if (g) {
-                var x;
-                //reposition the objects relative to their start position
-                for(x = 0; x < g.items.length; x++) {
-                    var obj = g.items[x];   //shorthand
-                    obj.attr({x: obj.ox + dx, y: obj.oy + dy});
-
-                    //adendo para desenhar as conexões após trocar posições
-                    for (var i = connections.length; i--;) {
-                        r.connection(connections[i]);
-                    }
-                    r.safari();
-                    //optional:  We can do a check here to see what property
-                    //           we should be changing.
-                    // i.e. (haven't fully tested this yet):
-                    // switch (obj.type) {
-                    //     case "rect":
-                    //     case "text":
-                    //         obj.attr({ x: obj.ox + dx, y: obj.oy + dy });
-                    //         break;
-                    //     case "circle":
-                    //         obj.attr({ cx: obj.ox + dx, cy: obj.oy + dy });
-                    // }
-                }
-            }
-        }
-}
-diagrama.initCanvas = function(largura, altura){
-    var canvas =  Raphael(document.getElementById('diagrama'), largura, altura);
-    return (canvas);
-}
-diagrama.construct = function (coordX, coordY) {
-           this.coordX = coordX;
-           this.coordY = coordY;
-       }
-var diagramaDnG = {
-   //definição das três funções que dedinem o comportamento do drag'n'drop:
-   //onmove:
-       move : function (dx, dy) {
-            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
-            this.attr(att);
-            for (var i = connections.length; i--;) {
-                r.connection(connections[i]);
-            }            
-            r.safari();
-       },
-    //onstart
-       dragger : function () {
-            this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
-            this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
-            this.animate({"fill-opacity": .2}, 500);
-       },
-    //onend
-       up : function () {
-            this.animate({"fill-opacity": 0}, 500);            
-       }
-}
-
-
-
-var sondaDnG = {
-    move : function(dx, dy) {
-       var _offsetx = this.ox + dx;
-       var _offsety = this.oy + dy;
-
-       //mantém objeto dentro da área da canvas; coord X
-       if (_offsetx > DS.canvasWdt - 32){
-           _offsetx = DS.canvasWdt - 32;
-       }
-       else if (_offsetx < 0){
-           _offsetx = 0;
-       }
-       //mantém objeto dentro da área da canvas; coord Y
-       if (_offsety > DS.canvasHgt - 32){
-           _offsety = DS.canvasHgt - 32; //32 é o tamenho do ícone
-       }
-       else if (_offsety < 0){
-           _offsety = 0;
-       }
-       
-       var att = {x: _offsetx, y: _offsety};
-       this.attr(att);
-       for (var i = connections.length; i--;){
-           r.connection(connections[i]);
-       }
-       r.safari();       
-    },
-    dragger : function (){
-       this.ox = this.attr("x");
-       this.oy = this.attr("y");
-
-    },
-    up : function (dx, dy){
-         
-    }
 }
 
 var MAPA = {
@@ -444,113 +291,66 @@ var MAPA = {
       return (gmap);
     },
     //pega os pontos do cache e desenha no mapa
-    povoa: function(gmap){        
-        //var entities = $('#cache > entities');
-        //alert (entities.text());        
-        //seta os pontos
-        $.ajax({
-            type: 'get',
-            url: MOM.script_info_mapa,
-            dataType: 'xml',
-            async: true,
-            success: function(xml){                
-                //var entities = ('entities');
-                $(xml).find('sonda').each(function(){
-                    
-                    var sonda = $(this); //dentre as entradas do XML, escolhe cada uma das sondas
-                    //pega as informações contidas no XML
-                    var id = parseInt( sonda.find('id').text());
-                    var ip = sonda.find('ip').text();
-                    var latitude = parseFloat( sonda.find('latitude').text());
-                    var longitude = parseFloat( sonda.find('longitude').text());
-                    var nome = sonda.find('nome').text();
-                    var status = parseInt(sonda.find('status').text());
-                    var iconePath = MOM.imgDir + MAPA.statusImg(status);
-                    //console.log(icone);
-                    
-                    MAPA.myLatlng[id] = new google.maps.LatLng(latitude, longitude);
-                    MAPA.marcadores[id] = new google.maps.Marker({
-                       position: MAPA.myLatlng[id],
-                       draggable: false,
-                       //labelContent: nome,
-                       //labelAnchor: new google.maps.Point(35, 0),
-                       //labelClass: "labels", // the CSS class for the label
-                       //labelStyle: {opacity: 0},
-                       title: nome,
-                       icon: iconePath,
-                       shadow: iconePath
-                    });
-
-                    //MAPA.marcadores[id].setMap(gmap);
-                    google.maps.event.addListener(MAPA.marcadores[id], 'click', function(){
-                        RIGHTBAR.mostraDestaque(id);
-                        MAPA.desenhaLinhas(id, gmap);
-                    });
-                    //google.maps.event.addListener(MAPA.marcadores[id], 'mouseover', function(){MAPA.marcadores[id].setOptions( 'labelClass': {'opacity': 0.5}} ));
-                    MAPA.marcadores[id].setMap(gmap);
-                });
-        }})
-        //seta os caminhos. Essa é a função que funciona para setar todas as polylines
-        /*
-        entities.find("sonda").each(function(){
-            var sonda = $(this);
-            var id = parseInt( sonda.find('id').text());
+    povoa: function(gmap){                  
+        var sondas = CACHED.JSONresponse;
             
-            sonda.find('agentes').find('med').each(function(){
-                var med = parseInt($(this).text());
-                var coord = [];
-                coord.push(MAPA.myLatlng[id]);
-                coord.push(MAPA.myLatlng[med]);
-                //console.log(coord[0], coord[1]);
-                //desenha as linhas
-                var flightPath = new google.maps.Polyline({
-                    path: coord,
-                    map: gmap,
-                    strokeColor: "#FF0000",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2
-                });
-                //flightPath.setMap(gmap);
+        $.each(sondas, function(){            
+            var sonda = $(this)[0];
+            var id = sonda.id;
+            var ip = sonda.ip;
+            var latitude = sonda.latitude;
+            var longitude = sonda.longitude;
+            var nome = sonda.nome;
+            var status = sonda.status;
+            var iconePath = MOM.imgDir + MAPA.statusImg(status);
+            
+            MAPA.myLatlng[id] = new google.maps.LatLng(latitude, longitude);
+            MAPA.marcadores[id] = new google.maps.Marker({
+                position: MAPA.myLatlng[id],
+                draggable: false,
+                //labelContent: nome,
+                //labelAnchor: new google.maps.Point(35, 0),
+                //labelClass: "labels", // the CSS class for the label
+                //labelStyle: {opacity: 0},
+                title: nome,
+                icon: iconePath,
+                shadow: iconePath
             });
-        }); */
-        /******************************************************************/
-        /*
-        $('#cache > entities').find("sonda").each(function(){
-            var flightPath = new google.maps.Polyline({
-                path: MAPA.myLatlng,
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.8,
-                strokeWeight: 2
+
+            //MAPA.marcadores[id].setMap(gmap);
+            google.maps.event.addListener(MAPA.marcadores[id], 'click', function(){
+                RIGHTBAR.mostraDestaque(id);
+                MAPA.desenhaLinhas(id, gmap);
             });
-            flightPath.setMap(gmap);
-        }); */
+            //google.maps.event.addListener(MAPA.marcadores[id], 'mouseover', function(){MAPA.marcadores[id].setOptions( 'labelClass': {'opacity': 0.5}} ));
+            MAPA.marcadores[id].setMap(gmap);
+        })
      },
      desenhaLinhas: function(id, gmap){
+         
          if(id != MAPA.ultimaLinhaDesenhada){ //só desenha se não tiver desenhado ainda
              MAPA.deletaLinhas(MAPA.ultimaLinhaDesenhada, gmap);
              var sonda = SONDA.getFromCache(id);
-             console.log(sonda);
+             
              MAPA.linhas = [];
-             MAPA.ultimaLinhaDesenhada = id;
-             console.log(MAPA.ultimaLinhaDesenhada);
-             console.log(id);
-             sonda.find('med').each(function(){
-                 var med = parseInt($(this).text());
-                 //console.log(med);
+             MAPA.ultimaLinhaDesenhada = id;                         
+             //itera sobre as medições de cada agente
+             
+             $.each(sonda.agentes, function(key, value){
+                 
+                 var med = value;                 
                  var coord = [];
                     coord.push(MAPA.myLatlng[id]);
-                    coord.push(MAPA.myLatlng[med]);
-                    //console.log(coord[0], coord[1]);
+                    coord.push(MAPA.myLatlng[med]);                    
                     //desenha as linhas
                     //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
-                    //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
-                    
+                    //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas                    
                     (MAPA.linhas).push( new google.maps.Polyline({
                         path: coord,
                         map: gmap,
                         strokeColor: "#EE8844", /*#FF0000*/
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2
+                        strokeOpacity: 0.9,
+                        strokeWeight: 3
                     }))
              })
          }
@@ -590,36 +390,19 @@ var MAPA = {
 MAPA.marcadores = [];
 MAPA.myLatlng = [];
 MAPA.linhas = [];
-MAPA.ultimaLinhaDesenhada = 0;
+MAPA.ultimaLinhaDesenhada = null;
 
 /******************************************************************************/
-/*************************** INÍCIO DO CÓDIGO *********************************/
+/*************************** INÍCIO DO MAIN ***********************************/
 /******************************************************************************/
 
 $(document).ready(function(){
     //inicia os elementos na tela
-    CACHED.init();
+    //CACHED.init();
+    CACHED.infoMapaJ();
     //inicia os dados para povoar o lado direito com sondas em formato Box
     RIGHTBAR.entitiesPovoa();  
     MAPA.gmap = MAPA.init(); 
     MAPA.povoa(MAPA.gmap);
-   
-   /*
-    myLatlng[1] = new google.maps.LatLng(-34.397, 150.644);
-    marcadores[1] = new google.maps.Marker({
-      position: myLatlng[1],
-      title:"Hello World!",
-      icon: 'http://localhost/teste/MomjavaScriptTests/computer.png'
-    });
-    marcadores[1].setMap(gmap); */
-    //
-    /*
-    var flightPath = new google.maps.Polyline({
-        path: myLatlng,
-        strokeColor: "#FF0000",
-        strokeOpacity: 0.8,
-        strokeWeight: 2
-    });
 
-  flightPath.setMap(gmap); */
-});
+}); //não deixar o código com 400 linhas. Wirlau diz que é o número da morte

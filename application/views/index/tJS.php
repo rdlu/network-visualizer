@@ -46,5 +46,5 @@
     </div>
     <!-- Aqui vai o cache com os dados das sondas e tal -->
 
-    <div class="template" id="cache" ></div>
+    <div class="template" id="cache"> </div>
 

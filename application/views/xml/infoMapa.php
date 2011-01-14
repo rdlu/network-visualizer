@@ -2,7 +2,7 @@
 <xml>
 	<entities>
 <?php foreach($entities as $k => $entity): ?>
-		<sonda>
+		<sonda id="<?='s'.$entity->id?>">
 			<id><?=$entity->id?></id>
 			<ip><?=$entity->ipaddress?></ip>
 			<nome><?=$entity->name?></nome>
