@@ -12,7 +12,7 @@ class Rrd {
 
     protected $types = array(
         0 => array('Last'),
-        1 => array('Min','Max','Avg'),
+        1 => array('Avg','Max','Min'),
     );
 
 	/**
@@ -157,15 +157,42 @@ class Rrd {
         return $this;
     }
 
+	public function xml($profileId,$metric,$start,$end,$m='Avg') {
+		  $path = $this->path($profileId);
+
+        Fire::group("Creating RRD $metric xml from $this->source to $this->destination, profile $profileId",array('Collapsed'=>"true"));
+        $measures = Kohana::config("measure.$metric");
+
+        //if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
+        //if(!$end) $end = date('d.m.Y H:i');
+
+        Fire::info("Fetched range from $start to $end");
+
+        /**
+         * Opcoes da geracao do RRD
+         */
+         $filename = $this->filename($metric,"Last".$m);
+         $verboseMeasure = __($measures['view']);
+
+         $options = "-s \"$start\" -e \"$end\" DEF:ds=$path$filename:downstream:AVERAGE XPORT:ds:\"Downstream $metric\"";
+
+         if($metric != 'rtt') $options .= " DEF:sd=$path$filename:upstream:AVERAGE XPORT:sd:\"Upstream $metric\"";
+         $resp = array();
+         $ret = exec("rrdtool xport $options",$resp,$code);
+	      Fire::info("Xport Code: $code Last Line: $ret Command: rrdtool xport $options");
+         Fire::groupEnd();
+	      return implode("\n",$resp);
+	}
+
    /**
     * @param int $profileId
     * @param string $metric
     * @param string $start
     * @param string $end
     * @param bool $measure
-    * @return void
+    * @return string
     */
-	public function graph($profileId,$metric,$start = null,$end = null,$measure=false) {
+	public function graph($profileId,$metric,$start,$end,$measure=false) {
         $rrdPath = $this->path($profileId);
         $path = $this->imgPath($profileId);
 
@@ -176,8 +203,8 @@ class Rrd {
         }
         $measures = Kohana::config("measure.$metric");
 
-        if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
-        if(!$end) $end = date('d.m.Y H:i');
+        //if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
+        //if(!$end) $end = date('d.m.Y H:i');
 
         Fire::info("Fetched range from $start to $end");
 

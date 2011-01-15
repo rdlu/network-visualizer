@@ -304,3 +304,7 @@ span.button {
 span.button img {
     vertical-align: middle;
 }
+
+div#resultado {
+    margin: 10px 0;
+}

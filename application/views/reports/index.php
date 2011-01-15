@@ -65,9 +65,10 @@
 				});
 			}
 		});
-		$("#inicio").inputmask("d/M/y");
 
-		$("#horaini").inputmask("h:m");
+		$("#inicio").inputmask("d/M/y");
+		$("#fim").inputmask("d/M/y");
+		$("#horafim").inputmask("h:m");
 
 
 		function log( message ) {
