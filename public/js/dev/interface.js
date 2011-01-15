@@ -385,13 +385,22 @@ var MAPA = {
      atualizaStatus: function(id, status){
          var iconePath = MOM.imgDir + MAPA.statusImg(status);
          MAPA.marcadores[id].setIcon(iconePath);
+     },
+     desenhaTodasLinhas: function(){
+         if (MAPA.todasLinhasDesenhadas == false){
+             var sondas = CACHED.JSONresponse;
+             $.each(sondas, function(){
+                var id = sonda.id;
+                MAPA.desenhaLinhas(id, gmap);
+             });
+         }
      }
  }
 MAPA.marcadores = [];
-MAPA.myLatlng = [];
+MAPA.myLatlng = []; //não deixar o código com 400 linhas. Wirlau diz que é o número da morte
 MAPA.linhas = [];
 MAPA.ultimaLinhaDesenhada = null;
-
+MAPA.todasLinhasDesenhadas = false;
 /******************************************************************************/
 /*************************** INÍCIO DO MAIN ***********************************/
 /******************************************************************************/
@@ -405,4 +414,4 @@ $(document).ready(function(){
     MAPA.gmap = MAPA.init(); 
     MAPA.povoa(MAPA.gmap);
 
-}); //não deixar o código com 400 linhas. Wirlau diz que é o número da morte
+}); 
