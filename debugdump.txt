@@ -1,0 +1,45 @@
+== Info: About to connect() to sabix20.ufrgs.br port 8991 (#0)
+== Info:   Trying 143.54.1.161... == Info: connected
+== Info: Connected to sabix20.ufrgs.br (143.54.1.161) port 8991 (#0)
+=> Send header, 160 bytes (0xa0)
+0000: GET / HTTP/1.1
+0010: User-Agent: curl/7.19.7 (i486-pc-linux-gnu) libcurl/7.19.7 OpenS
+0050: SL/0.9.8k zlib/1.2.3.3 libidn/1.15
+0074: Host: sabix20.ufrgs.br:8991
+0091: Accept: */*
+009e: 
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+<= Recv header, 37 bytes (0x25)
+0000: Date: Thu, 20 Jan 2011 16:56:43 GMT
+<= Recv header, 101 bytes (0x65)
+0000: Server: Apache/2.0.61 (Unix) mod_ssl/2.0.61 OpenSSL/0.9.8g PHP/5
+0040: .3.3-dev mod_perl/2.0.2 Perl/v5.8.8
+<= Recv header, 46 bytes (0x2e)
+0000: Last-Modified: Thu, 02 Dec 2010 20:30:38 GMT
+<= Recv header, 29 bytes (0x1d)
+0000: ETag: "468724-195-4b71d780"
+<= Recv header, 22 bytes (0x16)
+0000: Accept-Ranges: bytes
+<= Recv header, 21 bytes (0x15)
+0000: Content-Length: 405
+<= Recv header, 18 bytes (0x12)
+0000: Pragma: no-cache
+<= Recv header, 40 bytes (0x28)
+0000: Expires: Fri, 01 Jan 2000 00:00:00 GMT
+<= Recv header, 42 bytes (0x2a)
+0000: Cache-Control: no-cache, must-revalidate
+<= Recv header, 40 bytes (0x28)
+0000: Content-Type: text/html; charset=UTF-8
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 405 bytes (0x195)
+0000: <html>.<head>.<title> Aleph main menu</title>.<script language="
+0040: Javascript">.<!--.  function doLoad ().  {.    var session = Mat
+0080: h.round(Math.random()*1000000000);.    var loc = "http://sabix20
+00c0: .ufrgs.br:8991/F?RN="+session;.//    <!--var loc = "http://143.5
+0100: 4.1.161:8991/F?RN="+session; -->.    window.location.href = loc;
+0140: .  }.// -->.</script>.</head>.<body onLoad= "javascript:doLoad()
+0180: ;">.</body>.</html>..
+== Info: Connection #0 to host sabix20.ufrgs.br left intact
+== Info: Closing connection #0
