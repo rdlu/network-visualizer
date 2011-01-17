@@ -1,3 +1,7 @@
+#container {
+    min-width: 1000px;
+}
+
 /**********************************/
 
 #naviBar{
@@ -29,13 +33,37 @@
     width: 33%;
 }
 
+#rightBarMenu a {
+    color: #375D81;
+    line-height: 28px;    
+    margin-right: 20px;
+}
+
+#rightBarMenu a:visited {
+
+}
+
+#rightBarMenu a:clicked {
+    
+}
+
+#rightBarMenu a:hover {
+
+}
+
+
 /************ RightBar: destaque **************/
 .sondaBox{
     margin: 10px;
 }
 
-#sondaDestaque {
-   padding-bottom: 10px;
+.sondaDestaque {
+  padding-bottom: 5px;
+}
+
+.sondaDestaqueBox {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #sondaDestaqueBoxLeft{
@@ -62,7 +90,7 @@
 }
 
 .sondaMenuInfo ul li a{
-    color: blue;
+    
 }
 
 .sondaDestaqueBox ul li{
@@ -106,25 +134,40 @@
 
 .sondaLink{ /*now it hovers: flawless victory*/
     display: block;
-    width: 105px;
+    width: 104px;
     height: 20px;
     padding: 5px;
     margin: 5px;
     float: left;
+    clear: right;
+    color:#375D81;
+}
+.sondaBg{
     background-color: #ccc;
 }
-.sondaLink:link {color:blue;}
-.sondaLink:visited {color:blue;}  /* visited link */
-.sondaLink:hover{
-    background-color: #eee;
+.sondaLink:link {
+
 }
-.sondaLink:active {
-    color:blue;
+.sondaLink:visited {
+
+}  /* visited link */
+.sondaBg:hover{
+    background-color: #fff;
+}
+.sondaBg:active {
     background-color: #fff;
 }
 
+.sondaBgClicked {
+    background-color: #eee;
+}
 
 /************ELEMENTS**************/
+
+a {
+    color: #375D81;
+    text-decoration: none;
+}
 
 /**********************************/
 .template {

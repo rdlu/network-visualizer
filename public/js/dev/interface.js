@@ -1,10 +1,3 @@
-/*
- * FALTA:
- * fazer os avisos
- * programar o search lá em cima, os filtros, etc
- *
-/
-
 /******************************************************************************/
 /************************* DEFAULTS DO MOM ************************************/
 var MOM = {
@@ -45,6 +38,8 @@ var AVISOS = {
             case 0: //alerta se a sonda teve seu status atualizado
                 var nome = SONDA.getNome(id);
                 return("O status da sonda " + nome + " foi atualizado");
+            case 1:
+                return("Não foi possível conectar ao banco de dados");
         }
     }
 }
@@ -72,9 +67,10 @@ var Template = {
         link.bind('click', id, function(e){
             e.preventDefault();
             RIGHTBAR.mostraDestaque(id);
-            MAPA.desenhaLinhas(id, MAPA.gmap);            
+            MAPA.desenhaLinhas(id, MAPA.gmap);
+            SONDA.clicked(id);
         });
-        link.attr('id', 'sblink'+id).addClass('sondaLink');
+        link.attr('id', 'sblink'+id).addClass('sondaLink').addClass('sondaBg');
         template.appendTo('#entities');                                          //coloca o template no HTML
         //alert(template.text());       
     },
@@ -161,10 +157,24 @@ var RIGHTBAR = {
     },
     atualizaStatus: function(id, status){
         $('#sb'+id).find('#sblink'+id).removeClass().addClass('sondaLink').addClass('sondaStatus'+status);
+    },
+    clicked: function(id){        
+        $('#sblink' + SONDA.lastClicked).removeClass('sondaBgClicked').addClass('sondaBg');
+        $('#sblink' + id).removeClass('sondaBg').addClass('sondaBgClicked');
     }
 }
 //essa variável foi criada em desacordo com o cache, para fim de agilizar a codificação
-var SONDA = {};
+var SONDA = {
+    clicked: function(id){
+        if(SONDA.lastClicked != id){
+            RIGHTBAR.clicked(id);
+            MAPA.clicked(id);
+
+            SONDA.lastClicked = id;
+            console.log('dentro de SONDA.clicked: ', SONDA.lastClicked);
+        }
+    }
+};
 SONDA.dadosMaps = function(){
      $.ajax({
         type: 'get',
@@ -176,20 +186,9 @@ SONDA.dadosMaps = function(){
         }
     })
 }
-SONDA.getIp = function(id){
-  
-}
 SONDA.getStatus = function(id){
-
-}
-SONDA.getEndereco = function(id){
-
-}
-SONDA.getLocalidade = function(id){
-    
-}
-SONDA.getMedicoes = function(id){
-    
+    sonda = SONDA.getFromCache(id);
+    return (sonda.status);
 }
 SONDA.getFromCache = function(id){
     var sondas = CACHED.JSONresponse;
@@ -225,6 +224,7 @@ SONDA.statusImg = function(st){
             break;
     }
 }
+
 /* Atualiza o status no cache e troca os ícones nos locais correspondentes */
 SONDA.atualizaStatus = function(id, status){ //atualiza o status no
     var sonda = $('#cache > entities sonda:[id=s'+id+']');
@@ -236,6 +236,8 @@ SONDA.atualizaStatus = function(id, status){ //atualiza o status no
     MAPA.atualizaStatus(id, status);
     //se tiver mais alguma outra view, deve ter outras funções que atualizem o status
 }
+SONDA.lastClicked = null;
+
 /***************************************************************************************/
 /*************** CACHE PARA AS SONDAS **************************************************/
 /***************************************************************************************/
@@ -274,10 +276,14 @@ CACHED.init = function(){
 }
 
 var MAPA = {
-    iconeVerde: 'markerVerde.png',
-    iconeAmarelo: 'markerAmarelo.png',
-    iconeVermelho: 'markerVermelho.png',
-    iconeCinza: 'markerCinza.png',
+    iconeVerde: 'verdeNormal.png', //markerGimp.png',
+    iconeAmarelo: 'amareloNormal2.png', //markerAmarelo.png',
+    iconeVermelho: 'vermelhoNormal.png',//'markerVermelho.png',
+    iconeCinza: 'cinzaNormal.png',
+    iconeVerdeClicked: 'verdeSelecionado.png', //markerVerdeV2.png',
+    iconeAmareloClicked: 'amareloSelecionado2.png', //markerAmareloClicked.png',
+    iconeVermelhoClicked: 'vermelhoSelecionado',//'markerVermelho.png',
+    iconeCinzaClicked: 'cinzaSelecionado.png', //'markerCinza.png',
         
     init: function(){
       //inicia o mapa
@@ -321,6 +327,7 @@ var MAPA = {
             google.maps.event.addListener(MAPA.marcadores[id], 'click', function(){
                 RIGHTBAR.mostraDestaque(id);
                 MAPA.desenhaLinhas(id, gmap);
+                SONDA.clicked(id); //efeitos para visualização do clique
             });
             //google.maps.event.addListener(MAPA.marcadores[id], 'mouseover', function(){MAPA.marcadores[id].setOptions( 'labelClass': {'opacity': 0.5}} ));
             MAPA.marcadores[id].setMap(gmap);
@@ -352,7 +359,24 @@ var MAPA = {
                         strokeOpacity: 0.9,
                         strokeWeight: 3
                     }))
-             })
+             });
+             $.each(sonda.gerentes, function(key, value){
+
+                 var med = value;
+                 var coord = [];
+                    coord.push(MAPA.myLatlng[id]);
+                    coord.push(MAPA.myLatlng[med]);
+                    //desenha as linhas
+                    //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
+                    //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
+                    (MAPA.linhas).push( new google.maps.Polyline({
+                        path: coord,
+                        map: gmap,
+                        strokeColor: "#EE9955",
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2
+                    }))
+             });
          }
      },
      deletaLinhas: function(){
@@ -382,6 +406,27 @@ var MAPA = {
             }
         }
      },
+     statusImgClicked: function(status){
+         switch(status){
+            case (0): {
+                return (MAPA.iconeCinzaClicked);
+                break; //haha
+            }
+            case (1): {
+                return (MAPA.iconeVerdeClicked);
+                break; //haha
+            }
+            case (2): {
+                return (MAPA.iconeAmareloClicked);
+                break; //haha
+            }
+            default:
+            case (3): { //fallthrough
+               return (MAPA.iconeVermelhoClicked);
+               break;
+            }
+        }
+     },
      atualizaStatus: function(id, status){
          var iconePath = MOM.imgDir + MAPA.statusImg(status);
          MAPA.marcadores[id].setIcon(iconePath);
@@ -393,6 +438,22 @@ var MAPA = {
                 var id = sonda.id;
                 MAPA.desenhaLinhas(id, gmap);
              });
+         }
+     },
+     clicked: function(id){
+         //atualiza o novo
+         var status = SONDA.getStatus(id);
+         console.log('status', status);
+         console.log('dentro de MAPA: ', SONDA.lastClicked);
+         var iconePath = MOM.imgDir + MAPA.statusImgClicked(status);
+         
+         MAPA.marcadores[id].setIcon(iconePath);
+         
+         //retorna o último clicado ao normal
+         if(SONDA.lastClicked != null){
+             status = SONDA.getStatus(SONDA.lastClicked);
+             iconePath = MOM.imgDir + MAPA.statusImg(status);
+             MAPA.marcadores[SONDA.lastClicked].setIcon(iconePath);
          }
      }
  }
