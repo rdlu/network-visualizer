@@ -46,9 +46,11 @@
 						endHour: $("#horafim").val()
 					},
 					success: function( data ) {
+						$("#resultado").html("");
                   $("#resultado").html(data);
 					},
 					error: function(status,msg,error) {
+						$("#resultado").html("");
 						err(msg);
 					}
 				});
@@ -67,6 +69,7 @@
 		});
 
 		$("#inicio").inputmask("d/M/y");
+		$("#horaini").inputmask("h:m");
 		$("#fim").inputmask("d/M/y");
 		$("#horafim").inputmask("h:m");
 

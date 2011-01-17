@@ -71,6 +71,7 @@ class Controller_Reports extends Controller_Skeleton {
 		   if(Request::$is_ajax) {
 			   $view->bind('images',$img)
 			      ->bind('processes',$processes);
+			   $this->request->headers['Cache-Control'] = "no-cache";
 			   $this->request->response = $view;
 		   } else {
 			   $this->template->content = $view;

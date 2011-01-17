@@ -53,8 +53,8 @@ class Controller_Welcome extends Controller_Skeleton {
             $JSONresponse = array();            
             
             foreach($entities as $k => $entity){ //coloca as medições em um array
-                $agentes = array();
-                $gerentes = array();
+					 $status = Sonda::instance($entity->id)->getCode();
+                $medicoes = array();
                 foreach ($entity->processes_as_source as $process){
                     $agentes[] = $process->destination->id;
                 }
@@ -66,7 +66,7 @@ class Controller_Welcome extends Controller_Skeleton {
                     'id' => $entity->id,
                     'ip' => $entity->ipaddress,
                     'nome' => $entity->name,
-                    'status' => $entity->status,
+                    'status' => $status,
                     'latitude' => $entity->latitude,
                     'longitude' => $entity->longitude,
                     'agentes' => $agentes,
@@ -95,4 +95,5 @@ class Controller_Welcome extends Controller_Skeleton {
             ));
         }
     }
+
 } // End Welcome

@@ -6,15 +6,16 @@ class Controller_Tools extends Controller {
         if(!isset($_POST['ip'])) throw new Kohana_Exception('Compulsory data not set, must be called with post',$_POST);
 
         $ip = $_POST['ip'];
-        if(Validate::Ip($ip)) {
-            $data = Snmp::instance($ip)->group('linuxManager');
-            $json['address'] = $ip;
+        if(Validate::ipOrHostname($ip)) {
+	         $realip = Network::getAddress($ip);
+            $data = Snmp::instance($realip)->group('linuxManager');
+            $json['address'] = $realip;
             $json['data'] = $data;
             $this->request->headers['Content-Type'] = 'application/json';
             if(Request::$is_ajax) $this->request->response = json_encode($json);
             else throw new Kohana_Exception('This controller only accepts AJAX requests',$json);
         } else {
-            throw new Kohana_Exception('Invalid format for IP Address',array($ip));
+            throw new Kohana_Exception("Invalid format for IP Address $ip");
         }
     }
 
@@ -32,4 +33,14 @@ class Controller_Tools extends Controller {
         $this->request->headers['Content-Type'] = 'text/x-component';
         include( DOCROOT.'pie/PIE.htc' );
     }
+
+	public function action_entityStatus($id) {
+		$id = (int) $id;
+		if(Request::$is_ajax) {
+			$this->auto_render = false;
+			$dados = Sprig::factory('entity', array("id" => $id))->load();
+			$this->request->headers['Content-Type'] = 'text/json';
+
+		}
+	}
 }

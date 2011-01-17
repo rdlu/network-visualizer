@@ -119,9 +119,11 @@ class Controller_Entities extends Controller_Skeleton {
         $view = View::factory('entities/view');
 
         $entity = Sprig::factory('entity',array('id'=>$id))->load();
+	     $status = Sonda::instance($entity->id)->num();
+	    $this->template->title .= "Informações da sonda ".$entity->name;
 
         if($entity->loaded()) {
-            $view->bind('entity',$entity);
+            $view->bind('entity',$entity)->bind('status',$status);
             $this->template->content = $view;
         } else {
             $this->template->content = 'Entidade não localizada no sistema';

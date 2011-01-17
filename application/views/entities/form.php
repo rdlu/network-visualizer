@@ -26,7 +26,8 @@
 <fieldset title="Dados Obrigatórios">
     <legend>Dados Obrigatórios</legend>
     <?=$entity->label('ipaddress');?>
-    <?=$entity->input('ipaddress',array('id'=>'ipaddress'));?><br />
+    <?=$entity->input('ipaddress',array('id'=>'ipaddress'));?>
+	<span id="ipCheck" class="input info">Endereços válidos: número IPv4 (123.123.123.123) ou hostname netmetric (5188888888.vivo.com.br)</span><br />
     <?=$entity->label('city');?>
     <?=$entity->input('city',array('id'=>'city',$disabled=>$disabled));?>
     <?=$entity->label('state');?>
@@ -64,6 +65,7 @@ $(function() {
            dataType: 'json',
            beforeSend: function(req) {
                 $('span#ipCheck').remove();
+	           $('input[name$="ipaddress"]').after('<span id="ipCheck" class="input wait">Checando endereço via SNMP, aguarde...</span>');
                disableFields();
            },
            success: function(data) {

@@ -2,7 +2,11 @@
 
 return array(
 	'linuxManager' => array(
-		'version'=>'.1.3.6.1.2.1.1.1.0'
+		'version' => array(
+			'oid' => '.1.3.6.1.2.1.1.1.0',
+			'type' => 'string',
+			'readonly' => true
+		)
 	),
     'throughput' => array(
 	    'LastDSMax' => array(
