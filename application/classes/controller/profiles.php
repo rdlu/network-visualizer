@@ -28,7 +28,7 @@ class Controller_Profiles extends Controller_Skeleton {
         if ($_POST) {
             try {
                 $profile->values($_POST)->create();
-                $this->request->redirect(Route::get('profiles')->uri(array('name' => $project->name)));
+                $this->request->redirect('profiles');
             } catch (Validate_Exception $e) {
                 $errors = $e->array->errors('profiles/new');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();

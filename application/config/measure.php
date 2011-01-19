@@ -17,8 +17,8 @@ return array(
         'view' => 'ms'
     ),
     'loss' => array(
-        'default' => '%',
-        'view' => '%'
+        'default' => "%%",
+        'view' => "%%"
     ),
     'mos' => array(
         'default' => '',
@@ -29,8 +29,8 @@ return array(
         'view' => 'ms'
     ),
     'pom' => array(
-        'default' => '%',
-        'view' => '%'
+        'default' => '%%',
+        'view' => '%%'
     ),
     'rtt' => array(
         'default' => 's',

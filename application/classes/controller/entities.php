@@ -18,6 +18,47 @@ class Controller_Entities extends Controller_Skeleton {
         $this->template->content = $view;
 	}
 
+	public function action_list() {
+		$this->auto_render = false;
+
+		$query = Db::select('id','city','state','name','ipaddress')->from('entities')->order_by('name','ASC');
+
+		if(isset($_POST['city'])) $query = $query->where('city','like',$_POST['city'].'%');
+		if(isset($_POST['name'])) $query = $query->where('name','like','%'.$_POST['name'].'%');
+		if(isset($_POST['maxRows'])) $query = $query->limit((int) $_POST['maxRows']);
+		$response['entities'] = $query->execute()->as_array();
+		$this->request->headers['Content-Type'] = 'application/json';
+		$this->request->headers['Cache-Control'] = 'no-cache';
+		if(Request::$is_ajax) $this->request->response = json_encode($response);
+		else throw new Kohana_Exception('This controller only accepts AJAX requests',$response);
+	}
+
+	public function action_destinations($id=0) {
+		$this->auto_render = false;
+
+		if(Request::$is_ajax) {
+			if($id==0) {
+				$id = $_POST['id'];
+			}
+
+			$source = Sprig::factory('entity',array('id'=>$id))->load();
+			$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id','=',$source->id),null);
+			$resp = array();
+			foreach($processes as $process) {
+				$resp[] = $process->destination->load()->as_array();
+			}
+		   //Fire::info($destination->as_array());
+
+		   $this->request->headers['Content-Type'] = 'application/json';
+			$this->request->headers['Cache-Control'] = 'no-cache';
+		   $this->request->response = json_encode($resp);
+		} else {
+			throw new Kohana_Exception("This controller only accept ajax requests",$_POST);
+		}
+
+
+	}
+
     public function action_edit($id) {
         $entity = Sprig::factory('entity');
 

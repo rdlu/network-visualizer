@@ -7,11 +7,10 @@ class Controller_Welcome extends Controller_Skeleton {
         $this->template->title .= 'Início :: ';
     }
 
-	public function action_index()
-	{
-        $view = View::factory('index/welcome');
+	public function action_index() {
+		$view = View::factory('index/welcome');
 		$this->template->content = $view;
-        $this->template->extras = View::factory('index/tJS');
+		$this->template->extras = View::factory('index/tJS');
 	}
 
     public function after() {
@@ -53,10 +52,6 @@ class Controller_Welcome extends Controller_Skeleton {
             $id = (int) $id;
 
             $dados = Sprig::factory('entity', array("id" => $id))->load();
-
-            //$view = View::factory('json/infoBar');
-
-            //$view->bind('entity', $entidade);
 
             $this->request->headers['Content-Type'] = 'text/json';
 

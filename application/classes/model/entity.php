@@ -30,8 +30,8 @@ class Model_Entity extends Sprig {
             'district' => new Sprig_Field_Char(array('null' => true,'label'=>'Bairro')),
             'latitude' => new Sprig_Field_Char(array('null' => true)),
             'longitude' => new Sprig_Field_Char(array('null' => true)),
-            'added' => new Sprig_Field_Timestamp(array('auto_now_create' => TRUE, 'editable'=>false)),
-            'updated' => new Sprig_Field_Timestamp(array('auto_now_update' => TRUE,'auto_now_create' => true, 'editable'=>false)),
+            'added' => new Sprig_Field_Timestamp(array('auto_now_create' => TRUE, 'editable'=>false,'format' => "d.m.Y H:i:s")),
+            'updated' => new Sprig_Field_Timestamp(array('auto_now_update' => TRUE,'auto_now_create' => true, 'editable'=>false,'format' => "d.m.Y H:i:s")),
             /*
              * Tipo de entidade
              * 0: Gerente Linux

@@ -144,21 +144,6 @@ return array(
 		    'type' => 'int',
 		    'readonly' => true
 	    ),
-	    'LastSDMax' => array(
-		    'oid' => NMMIB.'.3.5.0.3.id',
-		    'type' => 'int',
-		    'readonly' => true
-	    ),
-	    'LastSDMin' => array(
-		    'oid' => NMMIB.'.3.5.0.4.id',
-		    'type' => 'int',
-		    'readonly' => true
-	    ),
-	    'LastSDAvg' => array(
-		    'oid' => NMMIB.'.3.5.0.5.id',
-		    'type' => 'int',
-		    'readonly' => true
-	    ),
 	    'AverageDSMax' => array(
 		    'oid' => NMMIB.'.3.5.0.6.id',
 		    'type' => 'int',
@@ -171,21 +156,6 @@ return array(
 	    ),
 	    'AverageDSAvg' => array(
 		    'oid' => NMMIB.'.3.5.0.8.id',
-		    'type' => 'int',
-		    'readonly' => true
-	    ),
-	    'AverageSDMax' => array(
-		    'oid' => NMMIB.'.3.5.0.9.id',
-		    'type' => 'int',
-		    'readonly' => true
-	    ),
-	    'AverageSDMin' => array(
-		    'oid' => NMMIB.'.3.5.0.10.id',
-		    'type' => 'int',
-		    'readonly' => true
-	    ),
-	    'AverageSDAvg' => array(
-		    'oid' => NMMIB.'.3.5.0.11.id',
 		    'type' => 'int',
 		    'readonly' => true
 	    ),

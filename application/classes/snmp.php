@@ -177,6 +177,7 @@ class Snmp {
 					$data = snmp2_get($this->address,$this->community,$oid['oid'],$this->timeout,$this->retries);
 					$pos = strpos($data,':');
 					$dt = substr($data,$pos+2);
+					$dt = trim($dt,"\0\n\r \"");
 					$return[$key] = $dt;
 				} catch(Exception $e) {
 					$return[$key] = NULL;

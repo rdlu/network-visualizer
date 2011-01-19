@@ -290,3 +290,16 @@ fieldset.left label {
 fieldset.group label {
     
 }
+
+span.button {
+    -moz-border-radius:10px;
+    border-radius: 10px;
+    border: solid thin #999;
+    padding: 5px 10px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+span.button img {
+    vertical-align: middle;
+}

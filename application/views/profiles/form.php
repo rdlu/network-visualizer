@@ -20,7 +20,9 @@
 <fieldset title="Dados Obrigatórios">
     <legend>Dados Obrigatórios</legend>
     <?=$profile->label('name');?>
-    <?=$profile->input('name',array('id'=>'name'));?><br />
+    <?=$profile->input('name',array('id'=>'name'));?>
+	 <?=$profile->label('protocol');?>
+    <?=$profile->input('protocol',array('id'=>'protocol'));?><br />
     <?=$profile->label('polling');?>
     <?=$profile->input('polling',array('id'=>'polling'));?>
     <?=$profile->label('count');?>
@@ -37,11 +39,13 @@
     <?=$profile->input('qosType',array('id'=>'qosType'));?>
     <?=$profile->label('qosValue');?>
     <?=$profile->input('qosValue',array('id'=>'qosValue'));?><br />
-        <?=$profile->label('status');?>
+	<?=$profile->label('description');?>
+    <?=$profile->input('description',array('id'=>'description', 'rows'=>2, 'style'=>'vertical-align:baseline;'));?><br />
     <fieldset class="group left">
         <legend>Métricas cobertas por este perfil</legend>
         <?=$profile->input('metrics');?>
     </fieldset>
+	Status:&nbsp;
     <?=$profile->input('status',array('id'=>'status'));?>
 
 </fieldset>

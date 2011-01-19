@@ -22,5 +22,5 @@ return array(
 	'range'         => ':field must be within the range of :param1 to :param2',
 	'regex'         => ':field does not match the required format',
 	'url'           => ':field must be a url',
-    'polling'       => 'Tempo de polling insuficiente para a realização da medição',
+   'polling'       => 'Intervalo de Polling insuficiente para a realização da medição, utilize um valor maior, ou reduza o número de vagões, ou reduza o Intervalo entre vagões',
 );

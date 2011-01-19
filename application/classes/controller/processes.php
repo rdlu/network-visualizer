@@ -9,7 +9,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 	public function action_index() {
         $view = View::factory('processes/index');
-        $this->template->title .= 'Escolha da Entidade de Origem do Tráfego';
+        $this->template->title .= 'Escolha da Entidade de Origem do Teste';
 
         $entities = Sprig::factory('entity')->load(NULL, FALSE);
         $estados = Sprig::factory('uf')->load(NULL, FALSE);
@@ -20,6 +20,7 @@ class Controller_Processes extends Controller_Skeleton {
     public function action_list($sourceAddr=0) {
         $this->auto_render = false;
         $view = View::factory('processes/list');
+        $this->template->title .= 'Escolha da Entidade de Destino do Teste';
 
         if(!$sourceAddr) {
             $sourceAddr = '128.0.0.1';
@@ -200,8 +201,7 @@ class Controller_Processes extends Controller_Skeleton {
 			$profile = $process->profile->load();
 
 			//Checar se o destino esta OK
-	      if(Snmp::instance($destination->ipaddress)->isReachable(NMMIB.'.10.0.0.'.$process->id)) {
-		      $sourceSnmp = Snmp::instance($source->ipaddress,'suppublic');
+			$sourceSnmp = Snmp::instance($source->ipaddress,'suppublic');
 
 		      if(!$sourceSnmp->isReachable(NMMIB.'.1.0.9.'.$process->id)) {
 			      $values = array('entryStatus'=>6);
@@ -242,11 +242,6 @@ class Controller_Processes extends Controller_Skeleton {
 	            $e['class'] = 'success';
 	            $e['message'] = "Entidade de origem $source->name ($source->ipaddress) foi configurada com sucesso via SNMP.";
             }
-	      } else {
-		      $e['errors'] = 'destinationEntity';
-		      $e['class'] = 'error';
-		      $e['message'] = "Entidade de destino $destination->name ($destination->ipaddress) não recebeu as configurações via SNMP, abortando.";
-	      }
 
 	      $this->request->headers['Content-Type'] = 'application/json';
 	      $this->request->response = json_encode($e);
