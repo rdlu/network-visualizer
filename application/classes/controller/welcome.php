@@ -45,6 +45,32 @@ class Controller_Welcome extends Controller_Skeleton {
         }
     }
 
+    public function action_infoMapaJ(){
+        if(Request::$is_ajax){
+            $this->auto_render = false;
+            $entities = Sprig::factory('entity')->load(null, FALSE);
+            $JSONresponse = array();            
+            
+            foreach($entities as $k => $entity){ //coloca as medições em um array
+                $medicoes = array();
+                foreach ($entity->processes_as_source as $process){
+                    $medicoes[] = $process->destination->id;
+                }
+                $JSONresponse[$k] = array( //prepara um array com a resposta
+                    'id' => $entity->id,
+                    'ip' => $entity->ipaddress,
+                    'nome' => $entity->name,
+                    'status' => $entity->status,
+                    'latitude' => $entity->latitude,
+                    'longitude' => $entity->longitude,
+                    'agentes' => $medicoes
+                );
+            }
+            $this->request->header['Content-Type'] = 'text/json';
+            $this->request->response = json_encode($JSONresponse);
+        }
+    }
+
     public function action_infoBar($id) {
         if(Request::$is_ajax) {
             $this->auto_render = false;
@@ -58,7 +84,7 @@ class Controller_Welcome extends Controller_Skeleton {
             $this->request->response = JSON_encode( array(
                 'endereco' => "$dados->address, $dados->addressnum",
                 'localidade' => "$dados->state, $dados->city",
-                'status' => "$dados->status"
+                'status' => "$dados->status"                
             ));
         }
     }
