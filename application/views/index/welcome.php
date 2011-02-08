@@ -12,8 +12,10 @@
    </div>
    <div id="leftBar">
        <div id="leftBarMenu" class="contentBar">
+           <!--
            <span class="leftBarBtn"><a href="#">Diagrama</a></span>
            <span class="leftBarBtn"><a href="#">Mapa</a></span>
+           -->
        </div>
        <div id="leftBarContent">
            <!-- TAB COM A VISÃO por GOOGLE/MAPS -->

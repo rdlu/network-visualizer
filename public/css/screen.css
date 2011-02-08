@@ -108,6 +108,7 @@ div#footer {
     padding: 5px 15px;
     margin: 7px 0 10px;
     text-align: right;
+    behavior: url('/mom/pie/PIE.php');
 }
 
 span.footer {

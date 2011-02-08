@@ -48,15 +48,20 @@ class Controller_Welcome extends Controller_Skeleton {
     public function action_infoMapaJ(){
         if(Request::$is_ajax){
             $this->auto_render = false;
-            $entities = Sprig::factory('entity')->load(null, FALSE);
+            $query = DB::select()->order_by('status', 'DESC');
+            $entities = Sprig::factory('entity')->load($query, FALSE);
             $JSONresponse = array();            
             
             foreach($entities as $k => $entity){ //coloca as medições em um array
 					 $status = Sonda::instance($entity->id)->getCode();
                 $medicoes = array();
                 foreach ($entity->processes_as_source as $process){
-                    $medicoes[] = $process->destination->id;
+                    $agentes[] = $process->destination->id;
                 }
+                foreach ($entity->processes_as_destination as $process){
+                    $gerentes[] = $process->source->id;
+                }
+
                 $JSONresponse[$k] = array( //prepara um array com a resposta
                     'id' => $entity->id,
                     'ip' => $entity->ipaddress,
@@ -64,7 +69,8 @@ class Controller_Welcome extends Controller_Skeleton {
                     'status' => $status,
                     'latitude' => $entity->latitude,
                     'longitude' => $entity->longitude,
-                    'agentes' => $medicoes
+                    'agentes' => $agentes,
+                    'gerentes' => $gerentes
                 );
             }
             $this->request->header['Content-Type'] = 'text/json';
