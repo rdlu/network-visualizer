@@ -6,34 +6,42 @@
 return array(
     'throughput' => array(
         'default' => 'bps',
-        'view' => 'bps'
+        'view' => '',
+	     'factor' => 1
     ),
     'bandwith' => array(
         'default' => 'bps',
-        'view' => 'bps'
+        'view' => '',
+	     'factor' => 1
     ),
     'jitter' => array(
-        'default' => 'µs',
-        'view' => 'ms'
+        'default' => 's',
+        'view' => 'Em segundos',
+	     'factor' => 1
     ),
     'loss' => array(
         'default' => "%%",
-        'view' => "%%"
+        'view' => "Porcentagem de perda",
+	     'factor' => 1
     ),
     'mos' => array(
         'default' => '',
-        'view' => ''
+        'view' => 'Mean Opinion Score, valor absoluto',
+	     'factor' => 1
     ),
     'owd' => array(
         'default' => 's',
-        'view' => 'ms'
+        'view' => 'Em segundos',
+	     'factor' => 1
     ),
     'pom' => array(
         'default' => '%%',
-        'view' => '%%'
+        'view' => '%%',
+	     'factor' => 1
     ),
     'rtt' => array(
         'default' => 's',
-        'view' => 'ms'
+        'view' => 'Em segundos',
+	     'factor' => 1
     ),
 );

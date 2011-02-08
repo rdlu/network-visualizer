@@ -142,6 +142,7 @@ class Snmp {
 				} else {
 					Kohana::$log->add(Kohana::ERROR,"Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
 					$data[$key] = $msg;
+					break;
 				}
 			}
 		}
@@ -153,8 +154,10 @@ class Snmp {
     public function setAddress($address) {
         if(Validate::Ip($address)) {
             $this->address = $address;
+        } elseif(Validate::hostname($address)) {
+	       $this->address = Network::getAddress($address);
         } else {
-            throw new Exception('Invalid IP Address in SNMP Class',$address);
+            throw new Exception("Invalid IP Address in SNMP Class $address .");
         }
     }
 
@@ -175,6 +178,7 @@ class Snmp {
 				
 				try {
 					$data = snmp2_get($this->address,$this->community,$oid['oid'],$this->timeout,$this->retries);
+					Fire::info($oid['oid']);
 					$pos = strpos($data,':');
 					$dt = substr($data,$pos+2);
 					$dt = trim($dt,"\0\n\r \"");

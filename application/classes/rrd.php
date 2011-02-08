@@ -40,27 +40,45 @@ class Rrd {
 
     public function setAddress($address,$source=true) {
         if($source) {
-            if(Validate::Ip($address)) {
+            if(Validate::ipOrHostname($address)) {
                 $this->source = $address;
-            } else throw new Kohana_Exception('Invalid SOURCE address in RRD class',$address);
+            }  else throw new Kohana_Exception("Invalid SOURCE address in RRD class $address");
         } else {
-            if(Validate::Ip($address)) {
+            if(Validate::ipOrHostname($address)) {
                 $this->destination = $address;
-            } else throw new Kohana_Exception('Invalid DESTINATION address in RRD class',$address);
+            } else throw new Kohana_Exception("Invalid DESTINATION address in RRD class $address");
         }
 
     }
 
+	public function getSource() {
+		if(Validate::Ip($this->source))
+			return $this->source;
+		else return Network::getAddress($this->source);
+	}
+
+	public function getDestination() {
+		if(Validate::Ip($this->source))
+			return $this->source;
+		else return Network::getAddress($this->source);
+	}
+
     public function path($profileId) {
-        return DATAPATH."rrd/$this->source/$this->destination/$profileId/";
+	    $source = $this->getSource();
+		 $destination = $this->getDestination();
+		 return DATAPATH."rrd/$source/$destination/$profileId/";
     }
 
     public function imgPath($profileId) {
-        return DOCROOT."images/rrd/$this->source/$this->destination/$profileId/";
+	   $source = $this->getSource();
+		$destination = $this->getDestination();
+      return DOCROOT."images/rrd/$source/$destination/$profileId/";
     }
 
 	public function imgSrc($profileId,$metric,$type) {
-		return "images/rrd/$this->source/$this->destination/$profileId/".$this->filename($metric,$type,'png');
+		$source = $this->getSource();
+		$destination = $this->getDestination();
+		return "images/rrd/$source/$destination/$profileId/".$this->filename($metric,$type,'png');
 	}
 
     public function filename($metric,$type,$ext='rrd') {
@@ -81,19 +99,30 @@ class Rrd {
      */
     public function create($profileId,$metric,$step) {
         $heartbeat = 2*$step;
+        $mainPrecision = 1209600 / $step; //1 semana
+	     $secondaryPrecision = 2628000 / $step; //1 mes
+	     $thirdPrecision = 15768000 / $step; //6 meses
+	     $fourthPrecision = 31536000 / $step; //1 anos
+	     $fifthPrecision = 157680000 / $step; //5anos
+
         $opts[] = "-s";
         $opts[] = "$step";
         $opts[] = "DS:downstream:GAUGE:$heartbeat:U:U";
         if($metric != 'rtt')
 	        $opts[] = "DS:upstream:GAUGE:$heartbeat:U:U";
-        $opts[] = "RRA:AVERAGE:0.5:1:600";
-        $opts[] = "RRA:AVERAGE:0.5:6:700";
-        $opts[] = "RRA:AVERAGE:0.5:24:775";
-        $opts[] = "RRA:AVERAGE:0.5:288:797";
-        $opts[] = "RRA:MAX:0.5:1:600";
-        $opts[] = "RRA:MAX:0.5:6:700";
-        $opts[] = "RRA:MAX:0.5:24:775";
-        $opts[] = "RRA:MAX:0.5:288:797";
+        $opts[] = "RRA:AVERAGE:0.5:1:$mainPrecision"; //step por step
+        $opts[] = "RRA:AVERAGE:0.5:4:$secondaryPrecision"; //a cada 4 steps
+        $opts[] = "RRA:AVERAGE:0.5:16:$thirdPrecision"; //a cada 16 steps
+	     $opts[] = "RRA:AVERAGE:0.5:32:$fourthPrecision"; //a cada 32 steps
+        $opts[] = "RRA:AVERAGE:0.5:64:$fifthPrecision"; //a cada 100 steps
+        $opts[] = "RRA:MAX:0.5:1:$mainPrecision";
+        $opts[] = "RRA:MAX:0.5:4:$secondaryPrecision";
+        //$opts[] = "RRA:MAX:0.5:16:$thirdPrecision";
+        //$opts[] = "RRA:MAX:0.5:100:$fourthPrecision";
+        //$opts[] = "RRA:MIN:0.5:1:$mainPrecision";
+        //$opts[] = "RRA:MIN:0.5:4:$secondaryPrecision";
+        //$opts[] = "RRA:MIN:0.5:16:$thirdPrecision";
+        //$opts[] = "RRA:MIN:0.5:100:$fourthPrecision";
         Fire::group('Created RRD Files: ');
         $path = $this->path($profileId);
         if(!is_dir($path)) {
@@ -132,17 +161,17 @@ class Rrd {
         foreach($this->types[0] as $l1)
             foreach($this->types[1] as $l2) {
                 $filename = $this->filename($metric,$l1.$l2);
-                $downstream = $data[$l1.'DS'.$l2];
+                $downstream = $data[$l1.'SD'.$l2];
 
                 if($metric != 'rtt') {
-	                $upstream = $data[$l1.'SD'.$l2];
+	                $upstream = $data[$l1.'DS'.$l2];
                    //Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
-                   $numbers = "DS $downstream : SD $upstream";
+                   $numbers = "SD $downstream : DS $upstream";
                    $ret = rrd_update($path.$filename,"$timestamp:$downstream:$upstream");
                 } else {
 	                //Fire::info("$filename TIME $timestamp : RTT $downstream");
                    $ret = rrd_update($path.$filename,"$timestamp:$downstream");
-                   $numbers = "DS $downstream";
+                   $numbers = "SD $downstream";
                 }
 
                 Fire::info("RRD Update : TIME $timestamp : $numbers on $path$filename");
@@ -174,9 +203,9 @@ class Rrd {
          $filename = $this->filename($metric,"Last".$m);
          $verboseMeasure = __($measures['view']);
 
-         $options = "-s \"$start\" -e \"$end\" DEF:ds=$path$filename:downstream:AVERAGE XPORT:ds:\"Downstream $metric\"";
+         $options = "-s \"$start\" -e \"$end\" DEF:sd=$path$filename:downstream:AVERAGE XPORT:sd:\"Downstream $metric\"";
 
-         if($metric != 'rtt') $options .= " DEF:sd=$path$filename:upstream:AVERAGE XPORT:sd:\"Upstream $metric\"";
+         if($metric != 'rtt') $options .= " DEF:ds=$path$filename:upstream:AVERAGE XPORT:ds:\"Upstream $metric\"";
          $resp = array();
          $ret = exec("rrdtool xport $options",$resp,$code);
 	      Fire::info("Xport Code: $code Last Line: $ret Command: rrdtool xport $options");
@@ -211,10 +240,10 @@ class Rrd {
         if($measure) {
 
         } else {
-            $choosenMeasure = $measures['view'];
-            $choosenFactor = 1024;
+            $choosenMeasure = $measures['default'];
+            $choosenView = __($measures['view']);
+            $choosenFactor = $measures['factor'];
         }
-        $verboseMeasure = __($choosenMeasure);
 
         foreach($this->types[0] as $l1)
             foreach($this->types[1] as $l2) {
@@ -225,7 +254,7 @@ class Rrd {
                 $title = "<b>".ucfirst($metric)." ".__($l2)."</b> <small>($start até $end)</small>\r";
 
                 if($metric != 'rtt')
-	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $verboseMeasure",
+	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $choosenView",
 		                "-w 800","-h 200",
 		                "DEF:ds=$rrdPath$filename:downstream:AVERAGE",
 		                "DEF:sd=$rrdPath$filename:upstream:AVERAGE",
@@ -242,7 +271,7 @@ class Rrd {
 		                "GPRINT:sd:MAX: Pto Máx Up\:   %6.2lf %S$choosenMeasure\\r"
 	                );
                 else
-	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $verboseMeasure",
+	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $choosenView",
 		                "-w 800","-h 200",
 		                "DEF:ds=$rrdPath$filename:downstream:AVERAGE",
 		                "LINE2:ds#990000:Roundtrip Time",

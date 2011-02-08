@@ -27,7 +27,7 @@ class Controller_Processes extends Controller_Skeleton {
             $errors[] = "Selecione uma sonda na lista.";
         }
 
-        if(Validate::ip($sourceAddr)){
+        if(Validate::ipOrHostname($sourceAddr)){
             $sourceEntity = Sprig::factory('entity',array('ipaddress'=>$sourceAddr))->load();
             $entities = Sprig::factory('entity')->load(NULL, FALSE);
 
@@ -179,7 +179,7 @@ class Controller_Processes extends Controller_Skeleton {
             if(count($snmp)) {
                 $e['errors'] = $snmp;
                 Kohana::$log->add(Kohana::ERROR,"Erro no SNMP set managerTable para o ip $destination->ipaddress");
-                $e['message'] = 'Erros na transmissão dos dados via SNMP: '.$snmp['managerEntryStatus'];
+                $e['message'] = 'Erros na transmissão dos dados via SNMP: ';
                 $e['class'] = 'error';
             } else {
                 $e['errors'] = null;

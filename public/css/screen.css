@@ -208,7 +208,7 @@ span.input {
     font-family: Ubuntu, Arial, sans-serif;
 }
 
-span.sucess {
+span.sucess, span.success {
     background-image: url('../images/actions/tick.png');
     background-repeat: no-repeat;
     background-position: 5px center;
@@ -222,6 +222,22 @@ span.error {
     background-position: 5px center;
     border: dotted thin #b54242;
     background-color: #e3c0c0;
+}
+
+span.info {
+    background-image: url('../images/actions/information.png');
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    border: dotted thin #006666;
+    background-color: #ccccff;
+}
+
+span.wait {
+    background-image: url('../images/loading/16.gif');
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    border: dotted thin #ffcc66;
+    background-color: #ccccff;
 }
 
 ul.errors, ul.error, ul.info, ul.success, ul.warn {
