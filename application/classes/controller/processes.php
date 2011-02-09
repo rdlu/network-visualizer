@@ -206,6 +206,7 @@ class Controller_Processes extends Controller_Skeleton {
 		      if(!$sourceSnmp->isReachable(NMMIB.'.1.0.9.'.$process->id)) {
 			      $values = array('entryStatus'=>6);
 					$values = array_merge($values,$profile->as_array());
+			      $values['gap'] = $profile->gap * 1000;
 					$values['metrics'] = $profile->metrics;
 					$ptable = $sourceSnmp->setGroup('profileTable',$values,array('id'=>$profile->id));
 		      } else {

@@ -17,10 +17,12 @@ return array(
 	'matches'       => ':field must be the same as :param1',
 	'min_length'    => ':field must be at least :param1 characters long',
 	'max_length'    => ':field must be less than :param1 characters long',
+	'numeric'      => ':field deve ser um número',
 	'phone'         => ':field must be a phone number',
 	'not_empty'     => ':field é obrigatório.',
 	'range'         => ':field must be within the range of :param1 to :param2',
 	'regex'         => ':field does not match the required format',
 	'url'           => ':field must be a url',
+	'unique'       => ':field já existente no MoM',
    'polling'       => 'Intervalo de Polling insuficiente para a realização da medição, utilize um valor maior, ou reduza o número de vagões, ou reduza o Intervalo entre vagões',
 );

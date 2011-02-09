@@ -18,7 +18,7 @@ class Validate extends Kohana_Validate {
         $count = (int) $_POST['count'];
         $minWait = $count*$gap*2.2;
         Fire::info("Tempo mínimo de polling: $minWait");
-        return $value > $minWait;
+        return $value*1000 > $minWait;
     }
 
     public static function isId($value) {

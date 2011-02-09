@@ -9,10 +9,10 @@
     <thead>
     <tr>
         <th>Nome da entidade</th>
-        <th>Endereço IPv4</th>
+        <th>Endereço IP / Hostname DDNS</th>
         <th>UF / Cidade</th>
         <th>Ult. Atualização</th>
-        <th>Ações</th>
+	    <th>Status</th>
     </tr>
     </thead>
 <tbody>
@@ -23,10 +23,7 @@
             <td><?=$entity->ipaddress?></td>
             <td><?=$entity->state?> / <?=$entity->city?></td>
             <td><?=Date("Y-m-d H:i:s",$entity->updated)?></td>
-            <td>
-                <a href="<?=url::site('entities/edit').'/'.$entity->id?>"><img src="<?=url::site('images/actions/computer_edit.png')?>" alt="Editar" /></a>
-                <a href="<?=url::site('entities/remove').'/'.$entity->id?>"><img src="<?=url::site('images/actions/computer_delete.png')?>" alt="Remover" /></a>
-            </td>
+            <td><?=Sonda::instance($entity->id)->getString()?></td>
         </tr>
 
     <? endforeach ?>
@@ -42,7 +39,7 @@
 $(function(){
 	$('#entityList').tablesorter({
 		'headers': {
-			4: {sorter: false},
+			4: {sorter: false}
 		},
 		'widgets': ['zebra']
 	});

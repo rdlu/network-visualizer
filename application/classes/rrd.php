@@ -155,23 +155,23 @@ class Rrd {
      * @return Rrd
      */
     public function update($profileId,$metric,array $data,$timestamp = 'N') {
-	    $ts = date("d.m.Y H:i:s T",$timestamp);
+	    if($timestamp == 'N') $ts = date("d.m.Y H:i:s T");
+	    else $ts = date("d.m.Y H:i:s T",$timestamp);
         Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId TS:$ts");
         $path = $this->path($profileId);
         foreach($this->types[0] as $l1)
             foreach($this->types[1] as $l2) {
                 $filename = $this->filename($metric,$l1.$l2);
-                $downstream = $data[$l1.'SD'.$l2];
-
+	             $upstream = $data[$l1.'DS'.$l2];
                 if($metric != 'rtt') {
-	                $upstream = $data[$l1.'DS'.$l2];
+	                $downstream = $data[$l1.'SD'.$l2];
                    //Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
                    $numbers = "SD $downstream : DS $upstream";
                    $ret = rrd_update($path.$filename,"$timestamp:$downstream:$upstream");
                 } else {
 	                //Fire::info("$filename TIME $timestamp : RTT $downstream");
-                   $ret = rrd_update($path.$filename,"$timestamp:$downstream");
-                   $numbers = "SD $downstream";
+                   $ret = rrd_update($path.$filename,"$timestamp:$upstream");
+                   $numbers = "RTT $upstream";
                 }
 
                 Fire::info("RRD Update : TIME $timestamp : $numbers on $path$filename");
@@ -254,7 +254,7 @@ class Rrd {
                 $title = "<b>".ucfirst($metric)." ".__($l2)."</b> <small>($start até $end)</small>\r";
 
                 if($metric != 'rtt')
-	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $choosenView",
+	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $choosenView","-E",
 		                "-w 800","-h 200",
 		                "DEF:ds=$rrdPath$filename:downstream:AVERAGE",
 		                "DEF:sd=$rrdPath$filename:upstream:AVERAGE",
@@ -271,7 +271,7 @@ class Rrd {
 		                "GPRINT:sd:MAX: Pto Máx Up\:   %6.2lf %S$choosenMeasure\\r"
 	                );
                 else
-	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $choosenView",
+	                $opts = array( "-s $start", "-e $end","-t $title ","-P", "-v $choosenView","-E",
 		                "-w 800","-h 200",
 		                "DEF:ds=$rrdPath$filename:downstream:AVERAGE",
 		                "LINE2:ds#990000:Roundtrip Time",

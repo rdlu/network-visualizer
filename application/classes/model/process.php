@@ -13,7 +13,7 @@ class Model_Process extends Sprig {
              *  Descricao/Observacoes
              */
             'added' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false)),
-            'updated' => new Sprig_Field_Timestamp(array('auto_now_update' => true,'auto_now_create' => true, 'editable'=>false)),
+            'updated' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false)),
             'source' => new Sprig_Field_BelongsTo(array('model'=>'Entity','column'=>'source_id')),
             'destination' => new Sprig_Field_BelongsTo(array(
                                                             'model'=>'Entity',

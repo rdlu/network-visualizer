@@ -67,4 +67,13 @@ class Controller_Profiles extends Controller_Skeleton {
         else throw new Kohana_Exception('This controller only accepts AJAX requests',$_POST);
     }
 
+	public function action_view($id) {
+		$id = (int) $id;
+		$view = View::factory('profiles/view');
+		$profile = Sprig::factory('profile',array('id'=>$id))->load();
+
+		$view->bind('profile',$profile);
+		$this->template->content = $view;
+	}
+
 } // End Welcome

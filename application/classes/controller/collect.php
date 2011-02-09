@@ -23,7 +23,7 @@ class Controller_Collect extends Controller {
 		    $source = $process->source->load();
 		    Fire::info($source->as_array());
 		    $profile = $process->profile->load();
-	       if($source->ipaddress == $ip) {
+	       if(true || $source->ipaddress == $ip) {
 		       $snmp = Snmp::instance($source->ipaddress);
 		       $simple = $snmp->group('agentSimple',array('pid'=>$id));
 		       $dip = $simple['ipaddress'];
@@ -39,7 +39,7 @@ class Controller_Collect extends Controller {
 			       $process->update();
 		          $response = 'Updated';
 		       } else {
-			       throw new Kohana_Exception("Source IP $sip for id $id on Destination IP $ip does not match the records on DB",$simple);
+			       throw new Kohana_Exception("Source IP $ip for id $id on Destination IP $ip does not match the records on DB",$simple);
 		       }
 	       } else {
 		       throw new Kohana_Exception("Requester IP $ip not found in database",$_POST);

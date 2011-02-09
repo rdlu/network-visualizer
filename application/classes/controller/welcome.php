@@ -54,7 +54,8 @@ class Controller_Welcome extends Controller_Skeleton {
             
             foreach($entities as $k => $entity){ //coloca as medições em um array
 					 $status = Sonda::instance($entity->id)->getCode();
-                $medicoes = array();
+                $agentes = array();
+	             $gerentes = array();
                 foreach ($entity->processes_as_source as $process){
                     $agentes[] = $process->destination->id;
                 }

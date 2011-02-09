@@ -75,7 +75,7 @@ class Controller_Entities extends Controller_Skeleton {
         if ($_POST) {
             try {
                 $entity->values($_POST)->create();
-                //$this->request->redirect($this->request->controller.'/edit/'.$entity->id);
+                $this->request->redirect($this->request->controller.'/view/'.$entity->id);
                 $sucess  = true;
             } catch (Validate_Exception $e) {
                 $errors = $e->array->errors('entities/new');
@@ -119,7 +119,7 @@ class Controller_Entities extends Controller_Skeleton {
         $view = View::factory('entities/view');
 
         $entity = Sprig::factory('entity',array('id'=>$id))->load();
-	     $status = Sonda::instance($entity->id)->num();
+	     $status = Sonda::instance($entity->id)->getCode();
 	    $this->template->title .= "Informações da sonda ".$entity->name;
 
         if($entity->loaded()) {

@@ -19,9 +19,9 @@ class Model_Profile extends Sprig {
              */
             'count'=>new Sprig_Field_Integer(array('label'=>'Número de Vagões')),
             /*
-             *  Coluna que define a quantidade de probes em um trem
+             *  Coluna que define a quantidade de probes em um trem (vagão)
              */
-            'probeCount'=>new Sprig_Field_Integer(array('label'=>'Número de Probes')),
+            'probeCount'=>new Sprig_Field_Integer(array('label'=>'Número de Probes (por Vagão)')),
             /*
              *  Coluna que define o tamanho de um probe
              *  Unidade: bytes
