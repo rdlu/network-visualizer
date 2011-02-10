@@ -3,9 +3,9 @@
 var MOM = {
     imgDir: "../mom/images/markers/",
     serverName: 'http://julia.inf.ufrgs.br/',
-    script1: '../mom/welcome/infoMapa',
+    //script1: '../mom/welcome/infoMapa', -> função idêntica à infoMapaJ, mas retorna XML
     script2: 'retornaXML2.php',
-    script_info_mapa: '../mom/welcome/infoMapa',
+    //script_info_mapa: '../mom/welcome/infoMapa',
     script_info_bar: '../mom/welcome/infoBar',
     info_mapa_json: '../mom/welcome/infoMapaJ'
 }
@@ -115,7 +115,7 @@ var RIGHTBAR = {
         });       
     },
     mostraDestaque: function(id){
-        if( CACHED.loaded == false) CACHED.init();
+        if( CACHED.loaded == false) CACHED.infoMapaJ();
         //cata esses valores do cache
         var sonda = SONDA.getFromCache(id);
         var nome = sonda.nome;
@@ -141,6 +141,7 @@ var RIGHTBAR = {
             url: MOM.script_info_bar+'/'+id,
             dataType: 'json',
             async: false, //necessário, ou terá problema de sincronicidade
+            cache: false,
             success: function(dados){
                 endereco = dados.endereco;                
                 localidade = dados.localidade;
@@ -175,6 +176,7 @@ var SONDA = {
         }
     }
 };
+/* obsoleta
 SONDA.dadosMaps = function(){
      $.ajax({
         type: 'get',
@@ -186,6 +188,7 @@ SONDA.dadosMaps = function(){
         }
     })
 }
+*/
 SONDA.getStatus = function(id){
     sonda = SONDA.getFromCache(id);
     return (sonda.status);
@@ -241,8 +244,14 @@ SONDA.lastClicked = null;
 /***************************************************************************************/
 /*************** CACHE PARA AS SONDAS **************************************************/
 /***************************************************************************************/
+
+// A variável CACHE.JSONresponse armazena os dados das sondas.
+// Para inicializá-la, use CACHED.infoMapaJ
+
+//Para pegar informações de uma sonda específica, use SONDA.getFromCache(id); onde id é o id da sonda
+
 var CACHED = {
-   loaded: false,
+   //loaded: false,
    
    infoMapaJ: function(){
        $.ajax({
@@ -252,11 +261,12 @@ var CACHED = {
            async: false,
            success: function(JSONresp){               
                CACHED.JSONresponse = JSONresp;
+               CACHED.loaded = true;
            }
        })
    }
 };
-
+/*obsoleta: usar infoMapaJ para iniciar o CACHE
 CACHED.init = function(){    
     $.ajax({
         type: 'get',
@@ -274,7 +284,7 @@ CACHED.init = function(){
     })
     CACHED.loaded = true;
 }
-
+*/
 var MAPA = {
     iconeVerde: 'verdeNormal.png', //markerGimp.png',
     iconeAmarelo: 'amareloNormal2.png', //markerAmarelo.png',
@@ -282,7 +292,7 @@ var MAPA = {
     iconeCinza: 'cinzaNormal.png',
     iconeVerdeClicked: 'verdeSelecionado.png', //markerVerdeV2.png',
     iconeAmareloClicked: 'amareloSelecionado2.png', //markerAmareloClicked.png',
-    iconeVermelhoClicked: 'vermelhoSelecionado',//'markerVermelho.png',
+    iconeVermelhoClicked: 'vermelhoSelecionado.png',//'markerVermelho.png',
     iconeCinzaClicked: 'cinzaSelecionado.png', //'markerCinza.png',
         
     init: function(){

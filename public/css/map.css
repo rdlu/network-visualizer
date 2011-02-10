@@ -68,11 +68,11 @@
 
 #sondaDestaqueBoxLeft{
     float:left;
-    width: 50px;
+    width: 70px;
     white-space: nowrap;
 }
 #sondaDestaqueBoxRight{
-    margin-left: 60px;
+    margin-left: 80px;
     width: 400px;
 }
 .sondaStatusImg {

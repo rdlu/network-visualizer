@@ -84,13 +84,18 @@ class Controller_Welcome extends Controller_Skeleton {
             $this->auto_render = false;
 
             $id = (int) $id;
-
             $dados = Sprig::factory('entity', array("id" => $id))->load();
-
             $this->request->headers['Content-Type'] = 'text/json';
 
+            if(!empty($dados->address)){
+                $endereco = "$dados->address, $dados->addressnum";
+            }
+            else{
+                $endereco = "(endereço não cadastrado)";
+            }
+            
             $this->request->response = JSON_encode( array(
-                'endereco' => "$dados->address, $dados->addressnum",
+                'endereco' => $endereco,
                 'localidade' => "$dados->state, $dados->city",
                 'status' => "$dados->status"                
             ));
