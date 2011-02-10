@@ -148,6 +148,12 @@ class Controller_Processes extends Controller_Skeleton {
       $process->destination = $destinationModel;
       $process->profile = $profileModel;
 
+		$q = Db::select('port')->from('processes')->where('source_id','=',$source)->where('destination_id','=',$destination)->order_by('port','DESC')->execute();
+		if($q->count())
+			$process->port = $q->get('port') + 1;
+		else
+			$process->port = 12000;
+
       try {
 	      $process->create();
       } catch (Exception $e) {
@@ -170,7 +176,7 @@ class Controller_Processes extends Controller_Skeleton {
             $values = array(
                 'managerEntryStatus' => 6,
                 'managerAddress' => $source->ipaddress,
-                'managerPort' => 12000,
+                'managerPort' => $process->port,
                 'managerProtocol' => $profile->protocol
             );
 
@@ -216,6 +222,7 @@ class Controller_Processes extends Controller_Skeleton {
 		      $avalues = array('entryStatus'=>6);
             $avalues = array_merge($avalues,$destination->as_array());
             $avalues['profile'] = $profile->id;
+				$avalues['port'] = $process->port;
             $atable = $sourceSnmp->setGroup('agentTable',$avalues,array('pid'=>$process->id));
 
             if(count($ptable)) {
@@ -231,7 +238,7 @@ class Controller_Processes extends Controller_Skeleton {
 	            $e['message'] = 'Erros na transmissão dos dados via SNMP (Agent Setup)';
 	            $e['class'] = 'error';
 	            if(isset($ptrue)) {
-		            $e['message'] .= ' & (Profile Setup): '.$atable['entryStatus'];
+		            $e['message'] .= ' & (Profile Setup)';
 		            $e['errors'] = array_merge($e['errors'],array_keys($ptable));
 	            } else
 		            $e['errors'] = array_keys((array) $ptable);

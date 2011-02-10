@@ -324,3 +324,31 @@ span.button img {
 div#resultado {
     margin: 10px 0;
 }
+
+span.iblock {
+    display: inline-block;
+    min-width: 350px;
+}
+
+ul.tasks {
+
+}
+
+ul.tasks li {
+    padding-left: 25px;
+    background-repeat: no-repeat;
+    background-position: top left;
+    margin: 5px;
+}
+
+ul.tasks li.back {
+    background-image: url("../images/actions/arrow_left.png");
+}
+
+ul.tasks li.retry {
+    background-image: url("../images/actions/arrow_rotate_anticlockwise.png");
+}
+
+ul.tasks li.viewSource {
+    background-image: url("../images/actions/arrow_rotate_anticlockwise.png");
+}

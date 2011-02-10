@@ -155,8 +155,10 @@ class Rrd {
      * @return Rrd
      */
     public function update($profileId,$metric,array $data,$timestamp = 'N') {
-	    if($timestamp == 'N') $ts = date("d.m.Y H:i:s T");
-	    else $ts = date("d.m.Y H:i:s T",$timestamp);
+	    if($timestamp == 'N') {
+		    $ts = date("d.m.Y H:i:s T");
+		    $timestamp = date("U");
+	    } else $ts = date("d.m.Y H:i:s T",$timestamp);
         Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId TS:$ts");
         $path = $this->path($profileId);
         foreach($this->types[0] as $l1)
