@@ -13,7 +13,7 @@ class Model_Process extends Sprig {
              *  Descricao/Observacoes
              */
             'added' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false)),
-            'updated' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false)),
+            'updated' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false,'format' => "d/m/Y H:i:s")),
             'source' => new Sprig_Field_BelongsTo(array('model'=>'Entity','column'=>'source_id')),
             'destination' => new Sprig_Field_BelongsTo(array(
                                                             'model'=>'Entity',
@@ -33,6 +33,7 @@ class Model_Process extends Sprig {
                 array('choices'=>array(
                          1=>'Ativo',2=>'Bloqueado',0=>'Inativo'),
                      'default'=>1)),
+	         'port'=> new Sprig_Field_Integer(array('min_value'=>10000,'max_value'=>20000)),
         );
     }
 }

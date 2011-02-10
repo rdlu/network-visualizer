@@ -20,6 +20,16 @@
             <li class="loading">Aguardando as configurações acima serem concluídas...</li>
         </ul>
     </fieldset>
+	<fieldset>
+		<legend>Próximas tarefas</legend>
+		<ul class="tasks">
+			<li class="back"><a class="button p24" href="<?=url::base()?>processes/">Voltar à listagem de processos</a></li>
+			<li class="retry"><a class="button p24" href="<?=url::base()?>processes/new/<?=$source->ipaddress?>">Configurar outro processo de mesma origem</a></li>
+			<li class="viewSource"><a class="button p24" href="<?=url::base()?>entities/view/<?=$source->id?>">Visualizar informações da entidade de origem</a></li>
+			<li class="viewDestination"><a class="button p24" href="<?=url::base()?>entities/view/<?=$destination->id?>">Visualizar informações da entidade de destino</a></li>
+
+		</ul>
+    </fieldset>
 </form>
 
 <script type="text/javascript">

@@ -13,6 +13,7 @@
         <th>Destino</th>
         <th>Perfil</th>
         <th>Métricas cobertas</th>
+	     <th>Última atualização</th>
         <th>Ações</th>
     </tr>
     </thead>
@@ -26,6 +27,7 @@
             <td><a href="<?=Url::site('entities/view').'/'.$destination->id?>"><?=$destination->name.' ('.$destination->ipaddress?>)</a></td>
             <td><?=$process->profile->load()->name?></td>
             <td><?php foreach($process->profile->metrics as $metric) echo $metric->name.' '; ?></td>
+	         <td><?=$process->verbose('updated')?></td>
             <td>
                 <a href="<?=url::site('processes/remove').'/'.$process->id?>"><img src="<?=url::site('images/actions/clock_delete.png')?>" alt="Remover" /></a>
             </td>

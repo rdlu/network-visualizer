@@ -39,11 +39,11 @@ class Model_Profile extends Sprig {
              *  0 para diffserv (dscp)
              *  1 para tos (tos-dtr+precedence) (RFC-1349)
              */
-            'qosType'=>new Sprig_Field_Integer(array('choices'=>array(0=>'DiffServ (DSCP)',1=>'TOS (RFC-1349)'))),
+            'qosType'=>new Sprig_Field_Integer(array('label'=>'Tipo de QoS','choices'=>array(0=>'DiffServ (DSCP)',1=>'TOS (RFC-1349)'))),
             /*
              *  valor que vai ser preenchido no campo qos do pacote ip, de acordo com o qosType
              */
-            'qosValue'=>new Sprig_Field_Integer(array('choices'=>Kohana::config('qos.dscp'))),
+            'qosValue'=>new Sprig_Field_Integer(array('label'=>'Valor do QoS','choices'=>Kohana::config('qos.dscp'))),
             /**
              * Relacionamento HasMany com processos
              */
@@ -61,4 +61,9 @@ class Model_Profile extends Sprig {
             'status'=>new Sprig_Field_Integer(array('choices'=>array(1=>'Ativo',0=>'Inativo'))),
         );
     }
+
+	public function title($field)
+	{
+		return $this->_fields[$field]->label;
+	}
 }

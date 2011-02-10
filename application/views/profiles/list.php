@@ -22,7 +22,7 @@
                     <?=$metric->name?> 
                 <?php endforeach; ?>
              </td>
-            <td><?=$profile->status?></td>
+            <td><?=$profile->verbose('status')?></td>
             <td>
                 <a href="<?=url::site('profiles/remove').'/'.$profile->id?>"><img src="<?=url::site('images/actions/delete.png')?>" alt="Remover" /></a>
             </td>

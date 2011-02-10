@@ -204,6 +204,7 @@ class Snmp {
 		if(count($str)>1)
 			return trim($str[0],"() \t\n\r\0");
 	   else
-		   return 'N';
+		   //return 'N';
+			return date('U');
 	}
 }
