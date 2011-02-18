@@ -1,17 +1,33 @@
 #!/bin/bash
+echo "--------  Setup Netmetric MoM ----------"
 
 #grupo no gentoo,archlinux,outras distros
 #group=httpd
 #No debian e ubuntu
 #group=www-data
-
-echo Configurando Permissoes dos Diretorios data/*, cache e logs...
-chmod ug+rwx data/* application/cache/ application/logs/
-chmod o-wx data/* application/cache/ application/logs/
-echo Permissoes OK
-
-if [ ! -z "$group" ]
+if [ ! -z "$1" ]
   then
-	echo Configurando grupos dos arquivos para o do servidor web
-	chgrp -R $group *
+	echo "Configurando Permissoes dos Diretorios data/*, cache e logs..."
+	chmod ug+rwx data/* application/cache/ application/logs/
+	chmod o-wx data/* application/cache/ application/logs/
+	echo Permissoes OK
+
+
+	echo "++++++++ Configurando grupos dos arquivos para o do servidor web"
+	chgrp -R $1 *
+
+	echo "++++++++ Criando a database no MySQL"
+
+	mysql -u root < ./install/create-db.sql
+	mysql -u root -D mom < ./install/mom.sql
+	mysql -u root -D mom-dev < ./install/mom.sql
+
+	echo "++++++++ Criando o arquivo public/.htaccess para o Apache"
+	cp public/example.htaccess public/.htaccess
+	vim public/.htaccess
+
+else
+	echo "Falta parametro obrigatorio: grupo usado pelo apache (ex: www-data no Ubuntu)"
+	echo "Uso: setup <grupo-apache>"
+#	echo "Ambiente de uso pode ser de production ou development"
 fi
