@@ -25,6 +25,10 @@ if [ ! -z "$1" ]
 	echo "++++++++ Criando o arquivo public/.htaccess para o Apache"
 	cp public/example.htaccess public/.htaccess
 	vim public/.htaccess
+	
+	echo "++++++++ Criando os arquivos de configurações"
+	cp application/config/database.php.example application/config/database.php
+	vim application/config/database.php
 
 else
 	echo "Falta parametro obrigatorio: grupo usado pelo apache (ex: www-data no Ubuntu)"

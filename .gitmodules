@@ -39,4 +39,4 @@
 	url = git://github.com/shadowhand/kohana-log.git
 [submodule "modules/firephp"]
 	path = modules/firephp
-	url = git://github.com/rddweb/KO3_FirePHP.git
+	url = git://github.com/rodrigodk/KO3_FirePHP.git
