@@ -60,7 +60,7 @@ else
 			<?php if (version_compare(PHP_VERSION, '5.2.3', '>=')): ?>
 				<td class="pass"><?php echo PHP_VERSION ?></td>
 			<?php else: $failed = TRUE ?>
-				<td class="fail">Kohana requires PHP 5.2.3 or newer, this version is <?php echo PHP_VERSION ?>.</td>
+				<td class="fail">NetMetric MoM requires PHP 5.2.3 or newer, this version is <?php echo PHP_VERSION ?>.</td>
 			<?php endif ?>
 		</tr>
 		<tr>
@@ -68,7 +68,7 @@ else
 			<?php if (is_dir(SYSPATH) AND is_file(SYSPATH.'classes/kohana'.EXT)): ?>
 				<td class="pass"><?php echo SYSPATH ?></td>
 			<?php else: $failed = TRUE ?>
-				<td class="fail">The configured <code>system</code> directory does not exist or does not contain required files.</td>
+				<td class="fail">The configured <code>system</code> directory does not exist or does not contain required files. <?php echo SYSPATH ?></td>
 			<?php endif ?>
 		</tr>
 		<tr>
@@ -76,7 +76,7 @@ else
 			<?php if (is_dir(APPPATH) AND is_file(APPPATH.'bootstrap'.EXT)): ?>
 				<td class="pass"><?php echo APPPATH ?></td>
 			<?php else: $failed = TRUE ?>
-				<td class="fail">The configured <code>application</code> directory does not exist or does not contain required files.</td>
+				<td class="fail">The configured <code>application</code> directory does not exist or does not contain required files. <?php echo APPPATH ?></td>
 			<?php endif ?>
 		</tr>
 		<tr>
@@ -230,7 +230,7 @@ else
 	</table>
 
 	<?php if ($failed === TRUE): ?>
-		<p id="results" class="fail">✘ Kohana may not work correctly with your environment.</p>
+		<p id="results" class="fail">✘ NetMetric MoM may not work correctly with your environment.</p>
 	<?php else: ?>
 		<p id="results" class="pass">✔ Your environment passed all requirements.</p>
 	<?php endif ?>
