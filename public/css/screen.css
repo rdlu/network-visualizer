@@ -339,6 +339,7 @@ ul.tasks li {
     background-repeat: no-repeat;
     background-position: top left;
     margin: 5px;
+    height: 16px;
 }
 
 ul.tasks li.back {
@@ -346,9 +347,13 @@ ul.tasks li.back {
 }
 
 ul.tasks li.retry {
-    background-image: url("../images/actions/arrow_rotate_anticlockwise.png");
+    background-image: url("../images/actions/transmit_add.png");
 }
 
 ul.tasks li.viewSource {
-    background-image: url("../images/actions/arrow_rotate_anticlockwise.png");
+    background-image: url("../images/actions/transmit.png");
+}
+
+ul.tasks li.viewDestination {
+    background-image: url("../images/actions/transmit_blue.png");
 }

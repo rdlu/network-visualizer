@@ -20,7 +20,7 @@
             <li class="loading">Aguardando as configurações acima serem concluídas...</li>
         </ul>
     </fieldset>
-	<fieldset>
+	<fieldset id="nextTasks" style="display:none;">
 		<legend>Próximas tarefas</legend>
 		<ul class="tasks">
 			<li class="back"><a class="button p24" href="<?=url::base()?>processes/">Voltar à listagem de processos</a></li>
@@ -94,12 +94,14 @@ $(function() {
                 $("#confDB").html("");
                 $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confDB');
                 $('#confDB').removeClass('info').removeClass('errors').addClass(data.class);
+						$('#nextTasks').show('slow');
             },
             error: function(status,msg,error) {
                 console.log(error);
                 $("#confDB").html("");
                 $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDB');
                 $('#confDB').removeClass('info').removeClass('errors').addClass('error');
+	            $('#nextTasks').show('slow');
             }
         });
     }
