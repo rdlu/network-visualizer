@@ -29,7 +29,7 @@
             <td><?php foreach($process->profile->metrics as $metric) echo $metric->name.' '; ?></td>
 	         <td><?=$process->verbose('updated')?></td>
             <td>
-                <a href="<?=url::site('processes/remove').'/'.$process->id?>"><img src="<?=url::site('images/actions/clock_delete.png')?>" alt="Remover" /></a>
+                <a href="#"><img src="<?=url::site('images/actions/clock_delete.png')?>" alt="Remover" onclick="removeProcess(<?=$process->id?>,'<?=$source->name.' ('.$source->ipaddress.')'?>','<?=$destination->name.' ('.$destination->ipaddress.')'?>','<?=$process->profile->load()->name?>')" /></a>
             </td>
         </tr>
 

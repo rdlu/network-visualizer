@@ -357,3 +357,10 @@ ul.tasks li.viewSource {
 ul.tasks li.viewDestination {
     background-image: url("../images/actions/transmit_blue.png");
 }
+
+div.loadingBig {
+    min-height: 50px;
+    background-image: url("../images/loading/42.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+}
