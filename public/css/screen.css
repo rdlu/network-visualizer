@@ -364,3 +364,9 @@ div.loadingBig {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+span.iblock.status {
+    padding: 5px 10px 5px 25px;
+    -moz-border-radius:5px;
+    border-radius: 5px;
+}

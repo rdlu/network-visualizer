@@ -49,7 +49,7 @@ class Sonda {
 
 				if($snmp) {
 					$sncfg = Kohana::config('snmp.linuxManager.version');
-					$sn = Snmp::instance($newinstance->sonda->address)->isReachable($sncfg['oid']);
+					$sn = Snmp::instance($newinstance->sonda->ipaddress)->isReachable($sncfg['oid']);
 					if(!$sn) {
 						$newinstance->sonda->status = 3;
 						$newinstance->class = 'error';

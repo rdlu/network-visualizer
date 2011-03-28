@@ -119,11 +119,18 @@ class Controller_Entities extends Controller_Skeleton {
         $view = View::factory('entities/view');
 
         $entity = Sprig::factory('entity',array('id'=>$id))->load();
-	     $status = Sonda::instance($entity->id)->getCode();
+	     $status = Sonda::instance($entity->id,true);
 	    $this->template->title .= "Informações da sonda ".$entity->name;
 
         if($entity->loaded()) {
-            $view->bind('entity',$entity)->bind('status',$status);
+
+	        $processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id','=',$entity->id),null);
+	        $resp = array();
+	        foreach($processes as $process) {
+		        $resp[] = $process->destination->load()->as_array();
+	        }
+
+            $view->bind('entity',$entity)->bind('status',$status)->bind('destinations',$resp);
             $this->template->content = $view;
         } else {
             $this->template->content = 'Entidade não localizada no sistema';
