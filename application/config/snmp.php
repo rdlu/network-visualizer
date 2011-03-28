@@ -622,5 +622,19 @@ return array(
 		    'oid' => NMMIB.'.10.0.3.id',
 		    'default' => 2
 	    )
-    )
+    ),
+	'removeAgent' => array(
+	    'entryStatus' => array(
+          'oid'=>NMMIB.'.0.0.9.id',
+          'type'=>'int',
+		    'default' => 6
+       ),
+	),
+	'removeManager' => array(
+	    'entryStatus' => array(
+		    'oid'=>NMMIB.'.10.0.3.id',
+		    'type'=>'int',
+		    'default' => 6
+       ),
+	)
 );

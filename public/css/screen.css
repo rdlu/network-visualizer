@@ -461,3 +461,11 @@ synth_form h2 {
     display: none;
 }
 /* synth_index -> synth_box -> synth_bar_bg -> synth_bar_inner */
+
+div.loadingBig {
+    min-height: 50px;
+    background-image: url("../images/loading/42.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
