@@ -27,16 +27,16 @@ class Controller_Entities extends Controller_Skeleton {
 		if(isset($_POST['name'])) $query = $query->where('name','like','%'.$_POST['name'].'%');
 		if(isset($_POST['maxRows'])) $query = $query->limit((int) $_POST['maxRows']);
 		$response['entities'] = $query->execute()->as_array();
-		$this->request->headers['Content-Type'] = 'application/json';
-		$this->request->headers['Cache-Control'] = 'no-cache';
-		if(Request::$is_ajax) $this->request->response = json_encode($response);
+		$this->response->headers('Content-Type','application/json');
+		$this->response->headers('Cache-Control','no-cache');
+		if(Request::current()->is_ajax()) $this->response->body(json_encode($response));
 		else throw new Kohana_Exception('This controller only accepts AJAX requests',$response);
 	}
 
 	public function action_destinations($id=0) {
 		$this->auto_render = false;
 
-		if(Request::$is_ajax) {
+		if(Request::current()->is_ajax()) {
 			if($id==0) {
 				$id = $_POST['id'];
 			}
@@ -49,9 +49,9 @@ class Controller_Entities extends Controller_Skeleton {
 			}
 		   //Fire::info($destination->as_array());
 
-		   $this->request->headers['Content-Type'] = 'application/json';
-			$this->request->headers['Cache-Control'] = 'no-cache';
-		   $this->request->response = json_encode($resp);
+		   $this->response->headers('Content-Type','application/json');
+			$this->response->headers('Cache-Control','no-cache');
+		   $this->response->body(json_encode($resp));
 		} else {
 			throw new Kohana_Exception("This controller only accept ajax requests",$_POST);
 		}
@@ -143,9 +143,9 @@ class Controller_Entities extends Controller_Skeleton {
         $post = 'Port';
         if(isset($_POST['city'])) $post = (string) $_POST['city'];
         $query['entities'] = Db::select('id','city','state','name','ipaddress')->from('entities')->where('city','like',$post.'%')->order_by('name','ASC')->execute()->as_array();
-        $this->request->headers['Content-Type'] = 'application/json';
-        $this->request->headers['Cache-Control'] = 'no-cache';
-        if(Request::$is_ajax) $this->request->response = json_encode($query);
+        $this->response->headers('Content-Type','application/json');
+        $this->response->headers('Cache-Control','no-cache');
+        if(Request::current()->is_ajax()) $this->response->body(json_encode($query));
         else throw new Kohana_Exception('This controller only accepts AJAX requests',$query);
     }
 

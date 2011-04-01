@@ -1,6 +1,16 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 //-- Environment setup --------------------------------------------------------
+// Load the core Kohana class
+require SYSPATH . 'classes/kohana/core' . EXT;
+
+if (is_file(APPPATH . 'classes/kohana' . EXT)) {
+	// Application extends the core
+	require APPPATH . 'classes/kohana' . EXT;
+} else {
+	// Load empty core extension
+	require SYSPATH . 'classes/kohana' . EXT;
+}
 /**
  * Set the default time zone.
  *
@@ -34,14 +44,19 @@ spl_autoload_register(array('Kohana', 'auto_load'));
 ini_set('unserialize_callback_func', 'spl_autoload_call');
 
 //-- Configuration and initialization -----------------------------------------
+/**
+ * Set the default language
+ */
+I18n::lang('en-us');
 
 /**
  * Set Kohana::$environment if a 'KOHANA_ENV' environment variable has been supplied.
- * 
+ *
+ * Note: If you supply an invalid environment name, a PHP warning will be thrown
+ * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
-if (getenv('KOHANA_ENV') !== FALSE)
-{
-	Kohana::$environment = getenv('KOHANA_ENV');
+if (isset($_SERVER['KOHANA_ENV'])) {
+	Kohana::$environment = constant('Kohana::' . strtoupper($_SERVER['KOHANA_ENV']));
 }
 
 /**
@@ -58,71 +73,61 @@ if (getenv('KOHANA_ENV') !== FALSE)
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url'   => getenv('BASE_URL'),
-    'index_file' => ''
+	'base_url' => getenv('BASE_URL'),
+	'index_file' => ''
 ));
 
 /**
  * Attach the file write to logging. Multiple writers are supported.
  */
-Kohana::$log->attach(new Kohana_Log_File(APPPATH.'logs'));
+Kohana::$log->attach(new Log_File(APPPATH . 'logs'));
 
 /**
  * Attach a file reader to config. Multiple readers are supported.
  */
-Kohana::$config->attach(new Kohana_Config_File);
+Kohana::$config->attach(new Config_File);
 
 /**
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-	// 'auth'       => MODPATH.'auth',       // Basic authentication
-	 'cache'      => MODPATH.'cache',      // Caching with multiple backends
+	'auth'       => MODPATH.'auth',       // Basic authentication
+	'cache' => MODPATH . 'cache', // Caching with multiple backends
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
-	 'database'   => MODPATH.'database',   // Database access
-	 'image'      => MODPATH.'image',      // Image manipulation
-	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
+	'database' => MODPATH . 'database', // Database access
+	'image' => MODPATH . 'image', // Image manipulation
+	'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
-	 'pagination' => MODPATH.'pagination', // Paging of results
+	'pagination' => MODPATH . 'pagination', // Paging of results
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
-	 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
-     'sprig'  => MODPATH.'sprig',  // User guide and API documentation
-     'firephp'  => MODPATH.'firephp',  // User guide and API documentation
-     'log'  => MODPATH.'log',
-	'zend'  => MODPATH.'zend',
+	'userguide' => MODPATH . 'userguide', // User guide and API documentation
+	'sprig' => MODPATH . 'sprig', // User guide and API documentation
+	'firephp' => MODPATH . 'firephp', // User guide and API documentation
+	'log' => MODPATH . 'log',
+	'zend' => MODPATH . 'zend',
+	'firelogger'  => MODPATH.'firelogger',
 
-	));
+));
 
 /**
  * Attach FirePHP to logging. be sure to enable firephp module
  */
 
 // Exclude all FirePHP console logs from the file log...
-Kohana::$log->attach(new FirePHP_Log_File(APPPATH.'logs'));
-Kohana::$log->attach(new FirePHP_Log_Console());
+//Kohana::$log->attach(new FirePHP_Log_File(APPPATH.'logs'));
+//Kohana::$log->attach(new FirePHP_Log_Console());
 
 
+Cookie::$salt = 'Xg0kVdEh';
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
-require_once APPPATH.'routes.php';
-
-if ( ! defined('SUPPRESS_REQUEST'))
-{
-	/**
-	 * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
-	 * If no source is specified, the URI will be automatically detected.
-	 */
-	echo Request::instance()
-		->execute()
-		->send_headers()
-		->response;
-}
+require_once APPPATH . 'routes.php';
 
 FirePHP_Profiler::instance()
-	->group('NetMetric MoM Profiler Results:',array('Collapsed'=>'true'))
-	->superglobals() // New Superglobals method to show them all...
-	->database()
-	->benchmark()
-	->groupEnd();
+		->group('NetMetric MoM Profiler Results:', array('Collapsed' => 'true'))
+		->superglobals() // New Superglobals method to show them all...
+		->database()
+		->benchmark()
+		->groupEnd();

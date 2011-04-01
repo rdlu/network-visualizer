@@ -14,6 +14,7 @@ body {
     background-color: #D7E8F7;
     font-family: Ubuntu, Corbel, Arial, sans-serif;
     font-size: 13px;
+    min-width: 800px;
 }
 
 div#header {
@@ -357,6 +358,109 @@ ul.tasks li.viewSource {
 ul.tasks li.viewDestination {
     background-image: url("../images/actions/transmit_blue.png");
 }
+
+/* Sintetização */
+.synth_index, synth_secao {
+    padding: 10px 20px 10px 20px;
+    background-color:#CDCDCD;
+    font-family: Ubuntu, Corbel, "Segoe UI", Tahoma, Arial;
+    font-size:14px;       
+    -moz-border-radius:8px;
+    border-radius: 8px;
+}
+
+.synth_secao {
+    margin: 10px;
+    min-height: 800px;
+    
+}
+
+.synth_secao h2 {
+    text-align: center;
+}
+
+.synth_box {    
+    width: 145px;
+    height: 55px;
+    margin: 10px;
+    background-color: #ccc;
+
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+
+    float: left;
+}
+
+#synth_select {
+     border: thin solid #999999;
+     padding: 10px 20px 10px 20px;
+     margin: 10px;
+     background-color: #cdcdcd;
+     border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+
+.synth_form {
+    width: 300px;
+    margin: auto;
+}
+
+.synth_bar {
+
+}
+
+.synth_menu {
+    margin-left: 10px;
+}
+
+.synth_bar_bg { /*fundo da barra de medição*/
+    margin-top: 20px;
+    width: 60px;
+    background: white;
+    float: left;
+    margin: 2px 5px 2px 5px;
+    border: 1px solid black;
+
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    cursor: default;
+}
+
+.synth_bar_bg span { /*aqui vai o nome da métrica*/
+    margin-left: 2px;
+    white-space:nowrap;
+    /* disables selection: */
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.synth_bar_inner {
+    width: 20px;
+    background: yellow;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+.separator, .synth_box {
+    text-align: center;
+}
+
+synth_form h2 {
+    text-align: center;
+    text-decoration: none;
+}
+
+.template {
+    display: none;
+}
+/* synth_index -> synth_box -> synth_bar_bg -> synth_bar_inner */
 
 div.loadingBig {
     min-height: 50px;
