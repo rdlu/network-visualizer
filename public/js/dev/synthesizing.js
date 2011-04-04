@@ -11,7 +11,7 @@
 //SONDA: update
 
 /******************************************************************************/
-//fake input
+//fake input para criar uma seção
 var sondaInfo = [
     {
      "id":1,
@@ -21,7 +21,7 @@ var sondaInfo = [
      "loss":"15.77972",
      "tpUDP":"47.92972",
      "tpTCP": "12.12233",
-     "erro":[]
+     "erros":[]
     },
     {
      "id":2,
@@ -31,7 +31,7 @@ var sondaInfo = [
      "loss":"5.972",
      "tpUDP":"7.92972",
      "tpTCP": "1.2233",
-     "erro":[]
+     "erros":[]
     }
 ];
 
@@ -51,17 +51,47 @@ var SYNTH_AVISOS = {
     }
 }
 
+var SYNTH = {    
+         // faz uma nova seção na página com as medições a partir de uma origem
+    newSection: function(idSondaOrigem){
+        //conecta e recebe os dados das sondas destino
+        var sondasDestino = SYNTH_AJAX.getInfoSondasDestino(idSondaOrigem);
+        console.log(sondasDestino);
+        //povoa a seção fazendo um .each newBow para cada sonda destino
+
+        //é isso. vá tomar um café
+
+    }
+};
+
+var SYNTH_AJAX = {
+    getInfoSondasDestino: function(idSondaOrigem){
+        $.ajax({
+            type: 'get',
+            url: '../mom/welcome/infoBar/'+idSondaOrigem,
+            dataType: 'json',
+            async: false, //necessário, ou terá problema de sincronicidade
+            cache: false,
+            success: function(dados){
+                dados = sondaInfo;
+                return (dados);
+            }
+        });
+    }
+}
+
 var SYNTH_TEMPLATE = {
     /* pega o template que está no próprio HTML da página, completa com as informaões */
     /* trata individualmente cada uma */
-    newSection: function(nome){
+    buildNewSection: function(){
 
     },
-    synthBox: function(secaoid, id, nome, rtt, loss, tpUDP, tpTCP){
+    //
+    buildNewBox: function(secaoid, id, nome, rtt, loss, tpUDP, tpTCP){
         //html        
         var template = $('#synthBox').clone().removeClass('template');
         //prepara o template                                   //coloca os dados nas tags do template
-        template.find('#synth_destino span').text(nome);
+        template.find('.synth_destino span').text(nome);
         template.find('.rtt span').text(rtt);
         template.find('.loss span').text(loss);
         template.find('.tpUDP span').text(tpUDP);
@@ -88,3 +118,45 @@ var SYNTH_TEMPLATE = {
         //alert(template.text());
     }
 }
+
+SYNTH_BAR = {
+    verde: 1,
+    vermelho: 0,
+    amarelo: 2,
+    limiat: function(métrica, valor){
+        /*
+         * código de cores
+         * 0 - red
+         * 1 - green
+         * 2 - yellow
+         */
+        switch(metrica){
+            case 'rtt':
+                return(SYNTH_BAR.verde);
+                break;
+            case 'loss':
+                return(SYNTH_BAR.verde);
+                break
+            case 'tptcp':
+                return(SYNTH_BAR.verde);
+                break;
+            case 'tpudp':
+                return(SYNTH_BAR.verde);
+                break;
+        }
+    }
+}
+
+$(document).ready(function(){
+    // coloca os hooks de eventos
+
+    //SELECT MENU - para selecionar sonda de origem. Botão que adiciona uma seção na página
+    $("#synth_select_add").click(function(event){
+       event.preventDefault();       
+       var sondaOrigemId = $('#synth_dropdown').val();
+       $("#synth_opt_"+sondaOrigemId).attr({'disabled': 'disabled'});       
+       SYNTH.newSection(sondaOrigemId);
+    });
+
+    //popout
+});
