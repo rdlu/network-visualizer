@@ -81,7 +81,7 @@ class Controller_Processes extends Controller_Skeleton {
 			try {
 				$process->check($_POST);
 				$this->request->redirect($this->request->controller . '/setup/' . $process->source->id);
-			} catch (Validate_Exception $e) {
+			} catch (Validation_Exception $e) {
 				$errors = $e->array->errors('processes/edit');
 				Fire::group('Form Validation Results')->warn($errors)->groupEnd();
 			}

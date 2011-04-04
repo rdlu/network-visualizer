@@ -89,7 +89,6 @@ class Controller_Skeleton extends Controller_Template {
 			$this->template->styles = array_merge($styles,$this->template->styles);
 			$this->template->scripts = array_merge($scripts,$this->template->scripts);
 			$this->template->footer->breadcumb = $this->template->title;
-			Flog("info",$this->template->scripts);
 		}
 		parent::after();
 	}

@@ -1,7 +1,7 @@
 <table id="filterMenu">
     <tr>
         <td>
-            <a href="<?=url::base().Request::instance()->controller?>" class="filterMenu">Voltar</a>
+            <a href="<?=url::base().Request::current()->controller?>" class="filterMenu">Voltar</a>
         </td>
         <td>
             <i>Cadastro de Novo Processo de Medição</i>
@@ -16,7 +16,7 @@
 </ul>
 <?php endif ?>
 
-<?=Form::open(Request::instance()->controller.'/setup/'.$sourceEntity->id,array('id'=>'newEntity','class'=>'bForms'))?>
+<?=Form::open(Request::current()->controller.'/setup/'.$sourceEntity->id,array('id'=>'newEntity','class'=>'bForms'))?>
 <fieldset title="Dados da Sonda de Origem">
     <legend>Dados da Sonda de Origem</legend>
     <img src="<?=url::site('images/boardMenu/source.png')?>" alt="Sonda de Origem" style="float:left"/>
@@ -68,7 +68,7 @@
         </tr>
     </table>
 </fieldset>
-<?=Form::submit('submit_'.Request::instance()->controller,'OK')?>
+<?=Form::submit('submit_'.Request::current()->controller(),'OK')?>
 <?=Form::close()?>
 
 <script type="text/javascript">

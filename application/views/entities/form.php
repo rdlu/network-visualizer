@@ -1,7 +1,7 @@
 <table id="filterMenu">
     <tr>
         <td>
-            <a href="<?=url::base().Request::instance()->controller?>" class="filterMenu">Voltar</a>
+            <a href="<?=url::base().Request::current()->controller()?>" class="filterMenu">Voltar</a>
         </td>
         <td>
             <i>Cadastro de Nova Entidade</i>
@@ -11,7 +11,7 @@
 <?php if($success): ?>
 <ul class="info">
 	<li class="success">Entidade registrada com sucesso!</li>
-	<li class="info"><a href="<?=url::base().Request::instance()->controller?>">Voltar para a listagem de entidades.</a></li>
+	<li class="info"><a href="<?=url::base().Request::current()->controller?>">Voltar para a listagem de entidades.</a></li>
 </ul>
 <?php endif ?>
 <?php if($errors): ?>
@@ -22,7 +22,7 @@
 </ul>
 <?php endif ?>
 
-<?=Form::open(Request::instance()->controller.'/'.Request::instance()->action.'/'.Request::instance()->param('id',0),array('id'=>'newEntity','class'=>'bForms'))?>
+<?=Form::open(Request::current()->controller().'/'.Request::current()->action().'/'.Request::current()->param('id',0),array('id'=>'newEntity','class'=>'bForms'))?>
 <fieldset title="Dados Obrigatórios">
     <legend>Dados Obrigatórios</legend>
     <?=$entity->label('ipaddress');?>

@@ -29,7 +29,7 @@ class Controller_Profiles extends Controller_Skeleton {
             try {
                 $profile->values($_POST)->create();
                 $this->request->redirect('profiles');
-            } catch (Validate_Exception $e) {
+            } catch (Validation_Exception $e) {
                 $errors = $e->array->errors('profiles/new');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
             }

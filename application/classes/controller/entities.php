@@ -77,7 +77,7 @@ class Controller_Entities extends Controller_Skeleton {
                 $entity->values($_POST)->create();
                 $this->request->redirect($this->request->controller.'/view/'.$entity->id);
                 $sucess  = true;
-            } catch (Validate_Exception $e) {
+            } catch (Validation_Exception $e) {
                 $errors = $e->array->errors('entities/new');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
                 if(!isset($errors['ipaddress'])) {

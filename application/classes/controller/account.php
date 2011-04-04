@@ -18,7 +18,7 @@ class Controller_Account extends Controller_Skeleton {
 		#If user already signed-in
 		if (Auth::instance()->logged_in() != 0) {
 			#redirect to the user account
-			Request::instance()->redirect('account/myaccount');
+			Request::current()->redirect('account/myaccount');
 		}
 
 		#Load the view
@@ -26,6 +26,7 @@ class Controller_Account extends Controller_Skeleton {
 
 		#If there is a post and $_POST is not empty
 		if ($_POST) {
+			$auth = Auth::instance();
 			#Instantiate a new user
 			$user = ORM::factory('user');
 
@@ -48,7 +49,7 @@ class Controller_Account extends Controller_Skeleton {
 				Auth::instance()->login($post['username'], $post['password']);
 
 				#redirect to the user account
-				Request::instance()->redirect('account/myaccount');
+				Request::current()->redirect('account/myaccount');
 			}
 			else
 			{
@@ -60,30 +61,28 @@ class Controller_Account extends Controller_Skeleton {
 
 
 	public function action_signin() {
+		 $this->template->title .= 'Login';
 		#If user already signed-in
 		if (Auth::instance()->logged_in() != 0) {
 			#redirect to the user account
-			Request::instance()->redirect('account/myaccount');
+			Request::current()->redirect('account/myaccount');
 		}
 
 		$content = $this->template->content = View::factory('account/signin');
 
 		#If there is a post and $_POST is not empty
 		if ($_POST) {
+			$auth = Auth::instance();
 			#Instantiate a new user
-			$user = ORM::factory('user');
+			//$user = ORM::factory('user');
 
-			#Check Auth
-			$status = $user->login($_POST);
-
-			#If the post data validates using the rules setup in the user model
-			if ($status) {
+			if ($auth->login($_POST['username'],$_POST['password'])) {
 				#redirect to the user account
-				Request::instance()->redirect('account/myaccount');
-			} else
-			{
+				Request::current()->redirect('account/myaccount');
+			} else {
 				#Get errors for display in view
-				$content->errors = $_POST->errors('signin');
+				$errors[] = array('class'=>'error','message'=>'Usuário e/ou senha inválidos.');
+				$content->bind('errors',$errors);
 			}
 
 		}
@@ -95,7 +94,7 @@ class Controller_Account extends Controller_Skeleton {
 		Auth::instance()->logout();
 
 		#redirect to the user account and then the signin page if logout worked as expected
-		Request::instance()->redirect('account/myaccount');
+		Request::current()->redirect('account/myaccount');
 	}
 
 }

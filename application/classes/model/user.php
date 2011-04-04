@@ -4,7 +4,7 @@ class Model_User extends Model_Auth_User {
 	public function validate_create(& $array) 
 	{
 		// Initialise the validation library and setup some rules		
-		$array = Valid::factory($array)
+		$array = Validation::factory($array)
 						->rules('password', $this->_rules['password'])
 						->rules('username', $this->_rules['username'])
 						->rules('email', $this->_rules['email'])
