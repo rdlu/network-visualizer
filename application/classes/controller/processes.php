@@ -27,7 +27,7 @@ class Controller_Processes extends Controller_Skeleton {
 			$errors[] = "Selecione uma sonda na lista.";
 		}
 
-		if (Validate::ipOrHostname($sourceAddr)) {
+		if (Valid::ipOrHostname($sourceAddr)) {
 			$sourceEntity = Sprig::factory('entity', array('ipaddress' => $sourceAddr))->load();
 			$entities = Sprig::factory('entity')->load(NULL, FALSE);
 
@@ -53,7 +53,7 @@ class Controller_Processes extends Controller_Skeleton {
 				->bind('source', $sourceEntity)
 				->bind('sourceAddr', $sourceAddr)
 				->bind('entities', $entities);
-		$this->request->response = $view;
+		$this->response->body($view);
 	}
 
 	/**
@@ -81,7 +81,7 @@ class Controller_Processes extends Controller_Skeleton {
 			try {
 				$process->check($_POST);
 				$this->request->redirect($this->request->controller . '/setup/' . $process->source->id);
-			} catch (Validate_Exception $e) {
+			} catch (Validation_Exception $e) {
 				$errors = $e->array->errors('processes/edit');
 				Fire::group('Form Validation Results')->warn($errors)->groupEnd();
 			}
@@ -104,8 +104,8 @@ class Controller_Processes extends Controller_Skeleton {
 		$this->template->title .= 'Configurando o novo processo de medição';
 		//validando dados
 		$validado = false;
-		if (Validate::numeric($_POST['sonda']) && ($_POST['sonda'] > 0))
-			if (Validate::numeric($_POST['profile']) && ($_POST['profile'] > 0)) $validado = true;
+		if (Valid::numeric($_POST['sonda']) && ($_POST['sonda'] > 0))
+			if (Valid::numeric($_POST['profile']) && ($_POST['profile'] > 0)) $validado = true;
 		$view = View::factory('processes/setup');
 
 		if ($validado) {
@@ -166,7 +166,7 @@ class Controller_Processes extends Controller_Skeleton {
 	}
 
 	public function action_setupDestination($processId) {
-		if (Request::$is_ajax) {
+		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$process = Sprig::factory('process', array('id' => $processId))->load();
 			$source = $process->source->load();
@@ -184,7 +184,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 			if (count($snmp)) {
 				$e['errors'] = $snmp;
-				Kohana::$log->add(Kohana::ERROR, "Erro no SNMP set managerTable para o ip $destination->ipaddress");
+				Kohana::$log->add(Log::ERROR, "Erro no SNMP set managerTable para o ip $destination->ipaddress");
 				$e['message'] = 'Erros na transmissão dos dados via SNMP: ';
 				$e['class'] = 'error';
 			} else {
@@ -193,13 +193,13 @@ class Controller_Processes extends Controller_Skeleton {
 				$e['class'] = 'success';
 			}
 
-			$this->request->headers['Content-Type'] = 'application/json';
-			$this->request->response = json_encode($e);
+			$this->response->headers('Content-Type','application/json');
+			$this->response->body(json_encode($e));
 		}
 	}
 
 	public function action_setupSource($processId) {
-		if (Request::$is_ajax) {
+		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$process = Sprig::factory('process', array('id' => $processId))->load();
 			$source = $process->source->load();
@@ -227,14 +227,14 @@ class Controller_Processes extends Controller_Skeleton {
 
 			if (count($ptable)) {
 				$e['errors'] = array_keys($ptable);
-				Kohana::$log->add(Kohana::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Profile Table)");
+				Kohana::$log->add(Log::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Profile Table)");
 				$e['message'] = 'Erros na transmissão dos dados via SNMP (Profile Setup)';
 				$e['class'] = 'error';
 				$ptrue = true;
 			}
 
 			if (count($atable)) {
-				Kohana::$log->add(Kohana::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Agent Table)");
+				Kohana::$log->add(Log::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Agent Table)");
 				$e['message'] = 'Erros na transmissão dos dados via SNMP (Agent Setup)';
 				$e['class'] = 'error';
 				if (isset($ptrue)) {
@@ -251,13 +251,13 @@ class Controller_Processes extends Controller_Skeleton {
 				$e['message'] = "Entidade de origem $source->name ($source->ipaddress) foi configurada com sucesso via SNMP.";
 			}
 
-			$this->request->headers['Content-Type'] = 'application/json';
-			$this->request->response = json_encode($e);
+			$this->response->headers('Content-Type','application/json');
+			$this->response->body(json_encode($e));
 		}
 	}
 
 	public function action_FinalCheck($processId) {
-		if (Request::$is_ajax) {
+		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$process = Sprig::factory('process', array('id' => $processId))->load();
 			$source = $process->source->load();
@@ -289,14 +289,14 @@ class Controller_Processes extends Controller_Skeleton {
 					$response['class'] = 'error';
 					$process->delete();
 				}
-			$this->request->headers['Content-Type'] = 'application/json';
-			$this->request->response = json_encode($response);
+			$this->response->headers('Content-Type','application/json');
+			$this->response->body(json_encode($response));
 
 		}
 	}
 
 	public function action_remove() {
-		if (Request::$is_ajax) {
+		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$process = Sprig::factory('process');
 
@@ -355,8 +355,8 @@ class Controller_Processes extends Controller_Skeleton {
 				);
 			}
 
-			$this->request->headers['Content-Type'] = 'application/json';
-			$this->request->response = json_encode($response);
+			$this->response->headers('Content-Type','application/json');
+			$this->response->body(json_encode($response));
 		}
 	}
 

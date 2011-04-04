@@ -1,7 +1,7 @@
 <table id="filterMenu">
     <tr>
         <td>
-            <a href="<?=url::base().Request::instance()->controller?>" class="filterMenu">Voltar</a>
+            <a href="<?=url::base().Request::current()->controller()?>" class="filterMenu">Voltar</a>
         </td>
         <td>
             <i>Cadastro de Novo Perfil</i>
@@ -16,7 +16,7 @@
 </ul>
 <?php endif ?>
 
-<?=Form::open(Request::instance()->controller.'/'.Request::instance()->action.'/'.Request::instance()->param('id',0),array('id'=>'newProfile','class'=>'bForms'))?>
+<?=Form::open(Request::current()->controller().'/'.Request::current()->action().'/'.Request::current()->param('id',0),array('id'=>'newProfile','class'=>'bForms'))?>
 <fieldset title="Dados Obrigatórios">
     <legend>Dados Obrigatórios</legend>
     <?=$profile->label('name');?>
@@ -49,5 +49,5 @@
     <?=$profile->input('status',array('id'=>'status'));?>
 
 </fieldset>
-    <?=Form::submit('submit_'.Request::instance()->controller,'OK')?>
+    <?=Form::submit('submit_'.Request::current()->controller(),'OK')?>
 <?=Form::close()?>

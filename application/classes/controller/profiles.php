@@ -29,7 +29,7 @@ class Controller_Profiles extends Controller_Skeleton {
             try {
                 $profile->values($_POST)->create();
                 $this->request->redirect('profiles');
-            } catch (Validate_Exception $e) {
+            } catch (Validation_Exception $e) {
                 $errors = $e->array->errors('profiles/new');
                 Fire::group('Form Validation Results')->warn($errors)->groupEnd();
             }
@@ -62,8 +62,8 @@ class Controller_Profiles extends Controller_Skeleton {
             $q['metrics'][$metric->id] = $metric->name;
         }
         
-        $this->request->headers['Content-Type'] = 'application/json';
-        if(Request::$is_ajax) $this->request->response = json_encode($q);
+        $this->response->headers('Content-Type','application/json');
+        if(Request::current()->is_ajax()) $this->response->body(json_encode($q));
         else throw new Kohana_Exception('This controller only accepts AJAX requests',$_POST);
     }
 

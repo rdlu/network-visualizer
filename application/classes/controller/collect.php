@@ -49,6 +49,6 @@ class Controller_Collect extends Controller {
 		    throw new Kohana_Exception('Invalid ID in Collect/id',$_POST);
 	    }
 
-	    $this->request->response = $response;
+	    $this->response->body($response);
    }
 }

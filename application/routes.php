@@ -34,3 +34,9 @@ Route::set('processSetup', '(<controller>(/<action>/<first>/<second>/<profile>))
 		'action'     => 'setup',
 	));
 
+Route::set('reportsSpec', '(<controller>(/<action>/<source>/<destination>))')
+	->defaults(array(
+		'controller' => 'reports',
+		'action'     => 'json',
+	));
+

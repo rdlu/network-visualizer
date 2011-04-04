@@ -76,7 +76,7 @@ class Snmp {
 	}
 
 	protected function setError($userError,$logError,$class) {
-		Kohana::$log->add(Kohana::ERROR,$logError);
+		Kohana::$log->add(Log::ERROR,$logError);
 	   $arr['message'] = $userError;
 	   $arr['class'] = $class;
 		$this->errors[] = $arr;
@@ -140,7 +140,7 @@ class Snmp {
 				/*if($key == 'entryStatus' || $key == 'managerEntryStatus') {
 
 				} else {*/
-					Kohana::$log->add(Kohana::ERROR,"Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
+					Kohana::$log->add(Log::ERROR,"Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
 					$data[$key] = $msg;
 					break;
 				//}
@@ -152,9 +152,9 @@ class Snmp {
     }
 
     public function setAddress($address) {
-        if(Validate::Ip($address)) {
+        if(Valid::Ip($address)) {
             $this->address = $address;
-        } elseif(Validate::hostname($address)) {
+        } elseif(Valid::hostname($address)) {
 	       $this->address = Network::getAddress($address);
         } else {
             throw new Exception("Invalid IP Address in SNMP Class $address .");
@@ -188,7 +188,7 @@ class Snmp {
 				   $code = $e->getCode();
                 $msg = $e->getMessage();
                 Fire::error($e,"Exception on SNMP GET $code");
-                Kohana::$log->add(Kohana::ERROR,"Erro no snmpget para o ip $this->address, oid $key, $msg");
+                Kohana::$log->add(Log::ERROR,"Erro no snmpget para o ip $this->address, oid $key, $msg");
 				}
 			}
 

@@ -24,7 +24,7 @@ class Controller_Reports extends Controller_Skeleton {
 		$sId = (int) $sId;
 		$dId = (int) $dId;
 		$view = View::factory('reports/view');
-		if(Request::$is_ajax) {
+		if(Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$sId = (int) $_POST['source'];
 		   $dId = (int) $_POST['destination'];
@@ -35,10 +35,10 @@ class Controller_Reports extends Controller_Skeleton {
 		}
 
 	   //Valida dados
-		if(!Validate::data($start)) throw new Kohana_Exception("Start Date not valid",array($start));
-	   if(!Validate::data($end)) throw new Kohana_Exception("End Date not valid",array($end));
-	   if(!Validate::hora($stime)) throw new Kohana_Exception("Start time not valid",array($stime));
-	   if(!Validate::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
+		if(!Valid::data($start)) throw new Kohana_Exception("Start Date not valid",array($start));
+	   if(!Valid::data($end)) throw new Kohana_Exception("End Date not valid",array($end));
+	   if(!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid",array($stime));
+	   if(!Valid::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
 
 	   $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
 	   //array('destination_id'=>$dId,'source_id'=>$sId)
@@ -68,11 +68,11 @@ class Controller_Reports extends Controller_Skeleton {
 		   Fire::group("Images path")->info($img)->groupEnd();
 		   Fire::groupEnd();
 
-		   if(Request::$is_ajax) {
+		   if(Request::current()->is_ajax()) {
 			   $view->bind('images',$img)
 			      ->bind('processes',$processes);
-			   $this->request->headers['Cache-Control'] = "no-cache";
-			   $this->request->response = $view;
+			   $this->response->headers('Cache-Control',"no-cache");
+			   $this->response->body($view);
 		   } else {
 			   $this->template->content = $view;
 		   }
@@ -85,7 +85,7 @@ class Controller_Reports extends Controller_Skeleton {
 	}
 
 	public function action_xml($pId=0,$metric,$start='25/01/2011',$end='25/01/2011',$stime='13:00',$etime='14:00') {
-		if(true || Request::$is_ajax) {
+		if(true || Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			/*$pId = (int) $_POST['processId'];
 			$start = $_POST['startDate'];
@@ -95,10 +95,10 @@ class Controller_Reports extends Controller_Skeleton {
 		   $metric = $_POST['metric'];*/
 
 			//Valida dados
-			if(!Validate::data($start)) throw new Kohana_Exception("Start Date not valid",array($start));
-			if(!Validate::data($end)) throw new Kohana_Exception("End Date not valid",array($end));
-			if(!Validate::hora($stime)) throw new Kohana_Exception("Start time not valid",array($stime));
-			if(!Validate::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
+			if(!Valid::data($start)) throw new Kohana_Exception("Start Date not valid",array($start));
+			if(!Valid::data($end)) throw new Kohana_Exception("End Date not valid",array($end));
+			if(!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid",array($stime));
+			if(!Valid::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
 
 		   $process = Sprig::factory('process',array('id'=>$pId))->load();
 
@@ -110,7 +110,7 @@ class Controller_Reports extends Controller_Skeleton {
 			   $inicio = Rrd::converteData($start)." ".$stime;
 				$fim = Rrd::converteData($end)." ".$etime;
 				$xml = $rrd->xml($profile->id,$metric,$inicio,$fim);
-		      $this->request->response = Zend_Json::fromXml($xml);
+		      $this->response->body(Zend_Json::fromXml($xml));
 
 		   } else {
 			   throw new Kohana_Exception("Processo $pId nao encontrado");
@@ -123,7 +123,7 @@ class Controller_Reports extends Controller_Skeleton {
 		$sId = (int) $sId;
 		$dId = (int) $dId;
 		$view = View::factory('reports/view');
-		if(Request::$is_ajax) {
+		if(Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$sId = (int) $_POST['source'];
 		   $dId = (int) $_POST['destination'];
@@ -134,10 +134,10 @@ class Controller_Reports extends Controller_Skeleton {
 		}
 
 	   //Valida dados
-		if(!Validate::data($start)) throw new Kohana_Exception("Start Date not valid",array($start));
-	   if(!Validate::data($end)) throw new Kohana_Exception("End Date not valid",array($end));
-	   if(!Validate::hora($stime)) throw new Kohana_Exception("Start time not valid",array($stime));
-	   if(!Validate::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
+		if(!Valid::data($start)) throw new Kohana_Exception("Start Date not valid",array($start));
+	   if(!Valid::data($end)) throw new Kohana_Exception("End Date not valid",array($end));
+	   if(!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid",array($stime));
+	   if(!Valid::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
 
 	   $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
 	   //array('destination_id'=>$dId,'source_id'=>$sId)
@@ -167,10 +167,10 @@ class Controller_Reports extends Controller_Skeleton {
 		   Fire::group("Images path")->info($img)->groupEnd();
 		   Fire::groupEnd();
 
-		   if(Request::$is_ajax) {
+		   if(Request::current()->is_ajax()) {
 			   $view->bind('images',$img)
 			      ->bind('processes',$processes);
-			   $this->request->response = $view;
+			   $this->response->body($view);
 		   } else {
 			   $this->template->content = $view;
 		   }
@@ -182,4 +182,100 @@ class Controller_Reports extends Controller_Skeleton {
 		}
 	}
 
+	public function action_json() {
+		$this->auto_render = false;
+
+		$source = $_POST['source'];
+		$destination = $_POST['destination'];
+		$metric = $_POST['metric'];
+		//$source='143.54.10.199';$destination='143.54.10.122';$metric='owd';
+
+		$start = (isset($_POST['start']))?$_POST['start']:date("U", time() - 600);
+		$end = (isset($_POST['end']))?$_POST['end']:date("U");
+
+		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
+		$profile = $metricModel->profiles->current();
+
+		$json = Rrd::instance($source,$destination)->json($profile->id,$metric,$start,$end);
+		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
+
+		$this->response->headers('Content-Type','application/json');
+		$this->response->body(Zend_Json::encode($obj));
+	}
+
+	public function action_flot() {
+		$this->auto_render = false;
+		$source = $_POST['source'];
+		$destination = $_POST['destination'];
+		$metric = $_POST['metric'];
+		//$source='143.54.10.199';$destination='143.54.10.122';$metric='owd';
+
+		$start = (isset($_POST['start']))?$_POST['start']:date("U", time() - 24*3600);
+		$end = (isset($_POST['end']))?$_POST['end']:date("U");
+
+		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
+		$profile = $metricModel->profiles->current();
+
+		$json = Rrd::instance($source,$destination)->json($profile->id,'owd',$start,$end);
+
+		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
+
+		$results = new stdClass();
+		$results->labels = $obj->meta->legend->entry;
+		$results->values = new stdClass();
+
+		foreach($obj->meta->legend->entry as $x => $z) {
+			$results->values->$x = array();
+		}
+
+		foreach($obj->data->row as $k => $row) {
+			foreach($row->v as $j => $value) {
+				$value = ($value == 'NaN') ? null:$value;
+				array_push($results->values->$j,array($row->t,$value));
+			}
+		}
+
+		$this->response->headers('Content-Type','application/json');
+		$this->response->body(Zend_Json::encode($results));
+	}
+
+	public function action_gJson() {
+		$this->auto_render = false;
+		//$source = $_POST['source'];
+		//$destination = $_POST['destination'];
+
+		$source = 3; $destination = 4;
+
+		$pair = Pair::instance($source,$destination);
+		//$metric = $_POST['metric'];
+		//$source='143.54.10.199';$destination='143.54.10.122';$metric='owd';
+
+		/*$start = (isset($_POST['start']))?$_POST['start']:date("U", time() - 24*3600);
+		$end = (isset($_POST['end']))?$_POST['end']:date("U");
+
+		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
+		$profile = $metricModel->profiles->current();
+
+		$json = Rrd::instance($source,$destination)->json($profile->id,'owd',$start,$end);
+
+		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
+
+		$results = new stdClass();
+		$results->labels = $obj->meta->legend->entry;
+		$results->values = new stdClass();
+
+		foreach($obj->meta->legend->entry as $x => $z) {
+			$results->values->$x = array();
+		}
+
+		foreach($obj->data->row as $k => $row) {
+			foreach($row->v as $j => $value) {
+				$value = ($value == 'NaN') ? null:$value;
+				array_push($results->values->$j,array($row->t,$value));
+			}
+		}
+
+		$this->response->headers('Content-Type','application/json');
+		$this->response->body(Zend_Json::encode($results);*/
+	}
 }
