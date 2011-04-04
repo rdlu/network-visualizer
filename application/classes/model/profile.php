@@ -12,7 +12,7 @@ class Model_Profile extends Sprig {
              *  Coluna que define o intervalo entre uma rajada e outra
              * Unidade: segundos
              */
-            'polling'=>new Sprig_Field_Integer(array('rules'=>array('polling'=>array()),
+            'polling'=>new Sprig_Field_Integer(array('rules'=>array('polling'=>array('')),
                                                     'label'=>'Intervalo de Polling (segundos)')),
             /*
              *  Coluna que define a quantidade de trens na rajada
