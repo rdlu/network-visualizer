@@ -15,7 +15,7 @@ class Model_Entity extends Sprig {
             'ipaddress' => new Sprig_Field_Char(array('label'=>'Endereço IP',
                     'min_length'=>7,
                     'max_length'=>255,
-                    'rules' => array('ipOrHostname'),
+                    'rules' => array('ipOrHostname'=>array('')),
 	                  'unique' => true,
             )),
             'name' => new Sprig_Field_Char(array('unique' => true,'label'=>'Nome da entidade')),
@@ -31,11 +31,11 @@ class Model_Entity extends Sprig {
             'district' => new Sprig_Field_Char(array('null' => true,'label'=>'Bairro')),
             'latitude' => new Sprig_Field_Char(array(
 	            'null' => true,
-	            'rules' => array('numeric')
+	            'rules' => array('numeric'=>array(''))
             )),
             'longitude' => new Sprig_Field_Char(array(
 	            'null' => true,
-	            'rules' => array('numeric')
+	            'rules' => array('numeric'=>array(''))
             )),
             'added' => new Sprig_Field_Timestamp(array('auto_now_create' => TRUE, 'editable'=>false,'format' => "d.m.Y H:i:s")),
             'updated' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false,'format' => "d.m.Y H:i:s")),
