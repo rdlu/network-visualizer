@@ -1,180 +1,112 @@
 <table id="filterMenu">
-    <tr>
-        <td>
-            <a href="<?=url::base().Request::current()->controller?>" class="filterMenu">Voltar</a>
-        </td>
-        <td>
-            <i>Cadastro de Novo Processo de Medição</i>
-        </td>
-    </tr>
+	<tr>
+		<td>
+			<a href="<?=url::base() . Request::current()->controller()?>" class="filterMenu">Voltar</a>
+		</td>
+		<td>
+			<i>Cadastro de Novo Processo de Medição</i>
+		</td>
+	</tr>
 </table>
-<?php if($errors): ?>
+<?php if ($errors): ?>
 <ul>
-    <?php foreach($errors as $error): ?>
-    <li><?=$error?></li>
-    <?php endforeach; ?>
+	<?php foreach ($errors as $error): ?>
+	<li><?=$error?></li>
+	<?php endforeach; ?>
 </ul>
 <?php endif ?>
 
-<?=Form::open(Request::current()->controller.'/setup/'.$sourceEntity->id,array('id'=>'newEntity','class'=>'bForms'))?>
+<?= Form::open(Request::current()->controller() . '/setup/' . $sourceEntity->id, array('id' => 'newEntity', 'class' => 'bForms')) ?>
 <fieldset title="Dados da Sonda de Origem">
-    <legend>Dados da Sonda de Origem</legend>
-    <img src="<?=url::site('images/boardMenu/source.png')?>" alt="Sonda de Origem" style="float:left"/>
-    <table class="bForms">
-        <tr>
-            <td class="input">Nome: </td>
-            <td><?=$sourceEntity->name?></td>
-            <td class="input">Endereço IPv4: </td>
-            <td><?=$sourceEntity->ipaddress?></td>
-        </tr>
-        <tr>
-            <td class="input">Cidade: </td>
-            <td><?=$sourceEntity->city?></td>
-            <td class="input">Estado: </td>
-            <td><?=$sourceEntity->state?></td>
-        </tr>
-    </table>
+	<legend>Dados da Sonda de Origem</legend>
+	<img src="<?=url::site('images/boardMenu/source.png')?>" alt="Sonda de Origem" style="vertical-align:middle;"/>
+
+	<div style="vertical-align:middle; display:inline-block;">
+		<span class="label nice big">Sonda de Origem da Medição</span><span
+			class="input nice big"><strong><?=$sourceEntity->name?> (<?=$sourceEntity->ipaddress?>)</strong></span>
+	</div>
 </fieldset>
 <fieldset title="Dados da Sonda de Destino">
-    <legend>Dados da Sonda de Destino</legend>
-    <img src="<?=url::site('images/boardMenu/destination.png')?>" alt="Sonda de Destino" style="float:left"/>
-    <table class="bForms">
-        <tr>
-            <td><label for="cidade">Cidade de Destino:</label>
-                <input type="text" name="cidade" id="cidade" size="30"/>
-            </td>
-            <td><label for="sonda" style="width:200px">Sonda de Destino da Medição:</label><select name="sonda" id="sonda" disabled>
-            <option value="0">-- Informe a cidade primeiro -- </option></select></td>
-        </tr>
-    </table>
+	<legend>Dados da Sonda de Destino</legend>
+	<img src="<?=url::site('images/boardMenu/destination.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
+	<span style="vertical-align:middle;"><label for="sonda" class="nice big"><strong>Sonda de Destino da Medição</strong></label>
+	<input type="text" name="sonda" id="sonda" class="nice big" size="40"></span>
+	<input type="hidden" name="destination" id="destination">
 </fieldset>
 <fieldset title="Dados do Perfil a ser utilizado">
-    <legend>Dados do Perfil a ser utilizado</legend>
-    <img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="float:left"/>
-    <table class="bForms">
-        <tr>
-            <td width="50%"><label for="profile">Perfil de Medição: </label>
-                <select name="profile" id="profile">
-                    <option value="0">-- Selecione um perfil --</option>
-                    <?php foreach($profiles as $profile) {
-                        echo "<option value='$profile->id'>$profile->name</option>";
-                    }?>
-                </select>
-            </td>
-            <td width="50%">
-                Métricas cobertas: <span id="metricas">&nbsp;</span><br />
-                Descrição: <span id="description">&nbsp;</span>
-            </td>
-        </tr>
-    </table>
+	<legend>Métricas a serem utilizadas</legend>
+	<div style="float:left;margin-right:15px;"><img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
+<span class="label nice big"><strong>Métricas</strong></span></div>
+	<div class="nice" id="metricas">
+		<?php foreach($metrics as $key => $metric): ?>
+		<span class="nice checkbox">
+			<input type="checkbox" id="metrics[<?=$key?>]" name="metrics[]" class="nice medium" value="<?=$metric->id?>" checked="checked">
+			<label for="metrics[<?=$key?>]" class="nice little"><?=$metric->name?></label>
+		</span>
+		<?php endforeach ?>
+	</div>
 </fieldset>
-<?=Form::submit('submit_'.Request::current()->controller(),'OK')?>
-<?=Form::close()?>
+<?= Form::submit('submit_process', 'OK', array('id'=>'submit_process','disabled' => true)) ?>
+<?= Form::close() ?>
 
 <script type="text/javascript">
-$(function() {
-	function log( message ) {
-			console.info(message);
-	}
-
-	$( "#cidade" ).autocomplete({
-		source: function( request, response ) {
-			$.ajax({
-				url: "<?=url::site('tools/cities')?>",
-                type: 'post',
-				data: {
-				    maxRows: 5,
-					startsWith: request.term,
-                    country: 'br'
-                },
-				success: function( data ) {
-                    console.log(data);
-                    response( $.map( data.geonames, function( item ) {
-					    return {
-					        label: item.city + (item.state ? ", " + item.state : ""),
-						    value: item.city + (item.state ? ", " + item.state : ""),
-                            city: item.city,
-                            state: item.state
-                        }
-                    }));
-                },
-                error: function(status,msg,error) {
-                    console.error(msg);
-                    $("#sonda").html("");
-                    $("<option value='0'>-- Informe a cidade primeiro -- </option>").appendTo("#sonda");
-                }
-            });
-        },
-		minLength: 2,
-		select: function( event, ui ) {
-				log( ui.item ?
-					"Selected: " + ui.item.label :
-					"Nothing selected, input was " + this.value);
-                sondaCity(ui.item.city, ui.item.state);
+	$(function() {
+		$("#sonda").autocomplete({
+			source: function(request, response) {
+				$.ajax({
+					url: "<?=url::site('entities/list')?>",
+					type: 'post',
+					data: {
+						name: request.term,
+						excludeId: <?=$sourceEntity->id?>
+					},
+					success: function(data) {
+						console.log(data);
+						response($.map(data.entities, function(item) {
+							return {
+								label: item.name+' ('+item.ipaddress+')',
+								value: item.name+' ('+item.ipaddress+')',
+								city: item.city,
+								state: item.state,
+								id: item.id
+							}
+						}));
+					},
+					error: function(status, msg, error) {
+						console.error(msg);
+						$("#sonda").value = '';
+					}
+				});
+			},
+			minLength: 2,
+			select: function(event, ui) {
+				console.log(ui.item ?
+						"Selected: " + ui.item.label :
+						"Nothing selected, input was " + this.value);
+				jQuery('#destination')[0].value = ui.item.id;
+				enableOK();
 			},
 			open: function() {
-				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+				$(this).removeClass("ui-corner-all").addClass("ui-corner-top");
 			},
 			close: function() {
-				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+				$(this).removeClass("ui-corner-top").addClass("ui-corner-all");
 			}
 		});
 
-    function sondaCity(city,state) {
-        $.ajax({
-		    url: "<?=url::site('entities/byCity')?>",
-            type: 'post',
-            data: {
-                city: city,
-                state: state
-            },
-			success: function( data ) {
-                console.log(data);
-                $("#sonda").html("");
-                $("<option value='0'>-- Selecione a sonda -- </option>").appendTo("#sonda");
-                jQuery.each(data.entities,function(idx,el) {
-                    $("<option value='"+el.id+"'>"+el.name+" ("+el.ipaddress+")</option>").appendTo("#sonda");
-                });
-                $('#sonda')[0].disabled = false;
-                $('#sonda')[0].focus();
-            },
-            error: function(status,msg,error) {
-                console.log(error);
-                $("#sonda").html("");
-                $('#sonda')[0].disabled = true;
-                $("<option value='0'>-- Informe a cidade primeiro -- </option>").appendTo("#sonda");
-            }
-        });
-    }
+		var enableOK = function() {
+			jQuery('#submit_process')[0].disabled = true;
+			if(parseInt(jQuery('#destination')[0].value) > 0) {
+				jQuery("#metricas input").each(function(idx,obj) {
+					if(obj.checked) jQuery('#submit_process')[0].disabled = false;
+				});
+			}
+		};
 
-    jQuery('#profile').change(function(obj) {
-        var pid = obj.target.value;
-        if(obj.target.value!=0)
-            jQuery.ajax({
-                url: "<?=url::site('profiles/info')?>",
-                type: 'post',
-                data: {
-                    profile: pid
-                },
-                success: function( data ) {
-                    console.log(data);
-                    $("#metricas").html("");
-                    jQuery.each(data.metrics,function(idx,el) {
-                        console.log(el);
-                        $('#metricas').append("&nbsp;"+el);
-                    });
-                    $("#description").html(data.description);
-                },
-                error: function(status,msg,error) {
-                    console.log(error);
-                    jQuery('#metricas').html('&nbsp;');
-                    jQuery('#description').html('&nbsp;');
-                }
-            });
-        else {
-            jQuery('#metricas').html('&nbsp;');
-            jQuery('#description').html('&nbsp;');
-        }
-    });
-});
+		enableOK();
+
+		jQuery("#metricas input").bind('click',function(evt) {
+			enableOK();
+		});
+	});
 </script>

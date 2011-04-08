@@ -1,129 +1,138 @@
-<?php if(!$errors): ?>
+<?php if (!$errors): ?>
 <form class="bForms">
-    <fieldset>
-        <legend>Configuração da Sonda de Destino</legend>
-        <ul class="info"  id="confDest">
-            <li class="loading">Configurando sonda de destino "<?=$destination->name.' ('.$destination->ipaddress.')'?>", aguarde...</li>
-        </ul>
-    </fieldset>
-    <fieldset>
-        <legend>Configuração da Sonda de Origem</legend>
-        <ul class="info" id="confSource">
-            <li class="loading">
-                Configurando sonda de origem "<?=$source->name.' ('.$source->ipaddress.')'?>", aguarde...
-            </li>
-        </ul>
-    </fieldset>
-    <fieldset>
-        <legend>Checagem final e ativação</legend>
-        <ul class="info" id="confDB">
-            <li class="loading">Aguardando as configurações acima serem concluídas...</li>
-        </ul>
-    </fieldset>
+	<fieldset>
+		<legend>Configuração da Sonda de Destino</legend>
+		<ul class="info" id="confDest">
+			<li class="loading">Configurando sonda de destino
+				"<?=$destination->name . ' (' . $destination->ipaddress . ')'?>", aguarde...
+			</li>
+		</ul>
+	</fieldset>
+	<fieldset>
+		<legend>Configuração da Sonda de Origem</legend>
+		<ul class="info" id="confSource">
+			<li class="loading">
+				Configurando sonda de origem "<?=$source->name . ' (' . $source->ipaddress . ')'?>", aguarde...
+			</li>
+		</ul>
+	</fieldset>
+	<fieldset>
+		<legend>Checagem final e ativação</legend>
+		<ul class="info" id="confDB">
+			<li class="loading">Aguardando as configurações acima serem concluídas...</li>
+		</ul>
+	</fieldset>
 	<fieldset id="nextTasks" style="display:none;">
 		<legend>Próximas tarefas</legend>
 		<ul class="tasks">
-			<li class="back"><a class="button p24" href="<?=url::base()?>processes/">Voltar à listagem de processos</a></li>
-			<li class="retry"><a class="button p24" href="<?=url::base()?>processes/new/<?=$source->ipaddress?>">Configurar outro processo de mesma origem</a></li>
-			<li class="viewSource"><a class="button p24" href="<?=url::base()?>entities/view/<?=$source->id?>">Visualizar informações da entidade de origem</a></li>
-			<li class="viewDestination"><a class="button p24" href="<?=url::base()?>entities/view/<?=$destination->id?>">Visualizar informações da entidade de destino</a></li>
+			<li class="back"><a class="button p24" href="<?=url::base()?>processes/">Voltar à listagem de processos</a>
+			</li>
+			<li class="retry"><a class="button p24" href="<?=url::base()?>processes/new/<?=$source->ipaddress?>">Configurar
+				outro processo de mesma origem</a></li>
+			<li class="viewSource"><a class="button p24" href="<?=url::base()?>entities/view/<?=$source->id?>">Visualizar
+				informações da entidade de origem</a></li>
+			<li class="viewDestination"><a class="button p24" href="<?=url::base()?>entities/view/<?=$destination->id?>">Visualizar
+				informações da entidade de destino</a></li>
 
 		</ul>
-    </fieldset>
+	</fieldset>
 </form>
 
 <script type="text/javascript">
-$(function() {
+	$(function() {
 
-    setupDestination(<?=$process->id?>);
-	setupSource(<?=$process->id?>);
-	var finalcount=0;
+		setupDestination(<?=json_encode($profiles)?>);
+		setupSource(<?=json_encode($profiles)?>);
+		var finalcount = 0;
 
-    function setupDestination(id){
-         $.ajax({
-		    url: "<?=url::site('processes/setupDestination')?>/"+id,
-            type: 'get',
-			success: function( data ) {
-                $("#confDest").html("");
-                $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confDest');
-                $('#confDest').removeClass('info').removeClass('errors').addClass(data.class);
-                activeFinal(4);
-            },
-            error: function(status,msg,error) {
-                console.log(error);
-                $("#confDest").html("");
-                $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDest');
-                $('#confDest').removeClass('info').removeClass('errors').addClass('error');
-                activeFinal(4);
-            }
-        });
-    }
-
-    function setupSource(id) {
-         $.ajax({
-		    url: "<?=url::site('processes/setupSource')?>/"+id,
-            type: 'get',
-			success: function( data ) {
-                $("#confSource").html("");
-                $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confSource');
-                $('#confSource').removeClass('info').removeClass('errors').addClass(data.class);
-                activeFinal(5);
-            },
-            error: function(status,msg,error) {
-                console.log(error);
-                $("#confSource").html("");
-                $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confSource');
-                $('#confSource').removeClass('info').removeClass('errors').addClass('error');
-	            activeFinal(5);
-            }
-        });
-    }
-
-	function activeFinal(num) {
-		finalcount += num;
-		if(finalcount>8) {
-			finalCheck(<?=$process->id?>);
+		function setupDestination(profiles) {
+			$.ajax({
+				url: "<?=url::site('processes/setupDestination')?>/",
+				type: 'post',
+				data: {'profiles':profiles},
+				success: function(data) {
+					$("#confDest").html("");
+					$("<li class=" + data.class + ">" + data.message + "</li>").appendTo('#confDest');
+					$('#confDest').removeClass('info').removeClass('errors').addClass(data.class);
+					activeFinal(4);
+				},
+				error: function(status, msg, error) {
+					console.log(error);
+					$("#confDest").html("");
+					$("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDest');
+					$('#confDest').removeClass('info').removeClass('errors').addClass('error');
+					activeFinal(4);
+				}
+			});
 		}
-	}
 
-    function finalCheck(id) {
-         $.ajax({
-		    url: "<?=url::site('processes/FinalCheck')?>/"+id,
-            type: 'get',
-			success: function( data ) {
-                $("#confDB").html("");
-                $("<li class="+data.class+">"+data.message+"</li>").appendTo('#confDB');
-                $('#confDB').removeClass('info').removeClass('errors').addClass(data.class);
-						$('#nextTasks').show('slow');
-            },
-            error: function(status,msg,error) {
-                console.log(error);
-                $("#confDB").html("");
-                $("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDB');
-                $('#confDB').removeClass('info').removeClass('errors').addClass('error');
-	            $('#nextTasks').show('slow');
-            }
-        });
-    }
+		function setupSource(profiles) {
+			$.ajax({
+				url: "<?=url::site('processes/setupSource')?>/",
+				type: 'post',
+				data: {'profiles':profiles},
+				success: function(data) {
+					$("#confSource").html("");
+					$("<li class=" + data.class + ">" + data.message + "</li>").appendTo('#confSource');
+					$('#confSource').removeClass('info').removeClass('errors').addClass(data.class);
+					activeFinal(5);
+				},
+				error: function(status, msg, error) {
+					console.log(error);
+					$("#confSource").html("");
+					$("<li class='error'>Erro interno antes do envio</li>").appendTo('#confSource');
+					$('#confSource').removeClass('info').removeClass('errors').addClass('error');
+					activeFinal(5);
+				}
+			});
+		}
 
-    function setupDestinationFailed() {
-        $("#confSource").html("");
-        $("<li class='error'>Não é possível configurar a sonda de origem, pois o pré-requisito acima falhou.</li>").appendTo('#confSource');
-        $('#confSource').removeClass('info').removeClass('errors').addClass('error');
-        setupSourceFailed();
-    }
+		function activeFinal(num) {
+			finalcount += num;
+			if (finalcount > 8) {
+				finalCheck(<?=json_encode($profiles)?>);
+			}
+		}
 
-    function setupSourceFailed() {
-        $("#confDB").html("");
-        $("<li class='error'>Não é possível salvar as configurações no banco de dados, pois o pré-requisito acima falhou.</li>").appendTo('#confDB');
-        $('#confDB').removeClass('info').removeClass('errors').addClass('error');
-    }
-});
+		function finalCheck(profiles) {
+			$.ajax({
+				url: "<?=url::site('processes/FinalCheck')?>/",
+				type: 'post',
+				data: {'profiles':profiles},
+				success: function(data) {
+					$("#confDB").html("");
+					$("<li class=" + data.class + ">" + data.message + "</li>").appendTo('#confDB');
+					$('#confDB').removeClass('info').removeClass('errors').addClass(data.class);
+					$('#nextTasks').show('slow');
+				},
+				error: function(status, msg, error) {
+					console.log(error);
+					$("#confDB").html("");
+					$("<li class='error'>Erro interno antes do envio</li>").appendTo('#confDB');
+					$('#confDB').removeClass('info').removeClass('errors').addClass('error');
+					$('#nextTasks').show('slow');
+				}
+			});
+		}
+
+		function setupDestinationFailed() {
+			$("#confSource").html("");
+			$("<li class='error'>Não é possível configurar a sonda de origem, pois o pré-requisito acima falhou.</li>").appendTo('#confSource');
+			$('#confSource').removeClass('info').removeClass('errors').addClass('error');
+			setupSourceFailed();
+		}
+
+		function setupSourceFailed() {
+			$("#confDB").html("");
+			$("<li class='error'>Não é possível salvar as configurações no banco de dados, pois o pré-requisito acima falhou.</li>").appendTo('#confDB');
+			$('#confDB').removeClass('info').removeClass('errors').addClass('error');
+		}
+	});
 </script>
 <?php else: ?>
 <ul class="errors">
-<?php foreach($errors as $k => $error): ?>
-	<li class="error"><?=$error?></li>
-<?php endforeach ?>
-	</ul>
+	<?php foreach ($errors as $k => $error): ?>
+	<li class="<?=$error['class']?>"><?=$error['message']?></li>
+	<?php endforeach ?>
+</ul>
 <?php endif; ?>

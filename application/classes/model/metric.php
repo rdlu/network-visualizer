@@ -9,7 +9,7 @@ class Model_Metric extends Sprig {
 			'id' => new Sprig_Field_Auto(),
 			'name' => new Sprig_Field_Char(array('max_lenght' => 20)),
 			'desc' => new Sprig_Field_Char(array('max_lenght' => 50)),
-			'profiles' => new Sprig_Field_ManyToMany(array('model' => 'Profile', 'label' => __('Perfis'))),
+			'profile' => new Sprig_Field_BelongsTo(array('model' => 'Profile', 'label' => __('Perfis'))),
 		);
 	}
 }

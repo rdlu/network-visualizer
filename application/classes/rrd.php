@@ -63,41 +63,40 @@ class Rrd {
 		else return Network::getAddress($this->source);
 	}
 
-	public function path($profileId) {
+	public function path() {
 		$source = $this->getSource();
 		$destination = $this->getDestination();
-		return DATAPATH . "rrd/$source/$destination/$profileId/";
+		return DATAPATH . "rrd/$source/$destination/";
 	}
 
-	public function imgPath($profileId) {
+	public function imgPath() {
 		$source = $this->getSource();
 		$destination = $this->getDestination();
-		return DOCROOT . "images/rrd/$source/$destination/$profileId/";
+		return DOCROOT . "images/rrd/$source/$destination/";
 	}
 
-	public function imgSrc($profileId, $metric, $type) {
+	public function imgSrc($metric, $type) {
 		$source = $this->getSource();
 		$destination = $this->getDestination();
-		return "images/rrd/$source/$destination/$profileId/" . $this->filename($metric, $type, 'png');
+		return "images/rrd/$source/$destination/" . $this->filename($metric, $type, 'png');
 	}
 
 	public function filename($metric, $type, $ext = 'rrd') {
 		return "$metric$type.$ext";
 	}
 
-	public function fullPath($profileId, $metric, $type) {
-		return $this->path($profileId) . "$metric$type.rrd";
+	public function fullPath($metric, $type) {
+		return $this->path() . "$metric$type.rrd";
 	}
 
 	/**
 	 * Funcao para a criacao dos arquivos RRD para um determinado perfil e metrica
 	 * @throws Kohana_Exception
-	 * @param  int $profileId
 	 * @param  string $metric
 	 * @param  int $step
 	 * @return Rrd
 	 */
-	public function create($profileId, $metric, $step) {
+	public function create($metric, $step) {
 		$heartbeat = 2 * $step;
 		$mainPrecision = 1209600 / $step; //1 semana
 		$secondaryPrecision = 2628000 / $step; //1 mes
@@ -124,7 +123,7 @@ class Rrd {
 		//$opts[] = "RRA:MIN:0.5:16:$thirdPrecision";
 		//$opts[] = "RRA:MIN:0.5:100:$fourthPrecision";
 		Fire::group('Created RRD Files: ');
-		$path = $this->path($profileId);
+		$path = $this->path();
 		if (!is_dir($path)) {
 			Fire::info('Creating Directory ' . $path);
 			mkdir($path, 0774, true);
@@ -154,13 +153,13 @@ class Rrd {
 	 * @param  array $data
 	 * @return Rrd
 	 */
-	public function update($profileId, $metric, array $data, $timestamp = 'N') {
+	public function update($metric, array $data, $timestamp = 'N') {
 		if ($timestamp == 'N') {
 			$ts = date("d.m.Y H:i:s T");
 			$timestamp = date("U");
 		} else $ts = date("d.m.Y H:i:s T", $timestamp);
-		Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId TS:$ts");
-		$path = $this->path($profileId);
+		Fire::group("Updating RRD Files - S:$this->source D:$this->destination TS:$ts");
+		$path = $this->path();
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
 				$filename = $this->filename($metric, $l1 . $l2);
@@ -196,11 +195,11 @@ class Rrd {
 	 * @param bool $measure
 	 * @return string
 	 */
-	public function graph($profileId, $metric, $start, $end, $measure = false) {
-		$rrdPath = $this->path($profileId);
-		$path = $this->imgPath($profileId);
+	public function graph($metric, $start, $end, $measure = false) {
+		$rrdPath = $this->path();
+		$path = $this->imgPath();
 
-		Fire::group("Creating RRD $metric graph from $this->source to $this->destination, profile $profileId", array('Collapsed' => "true"));
+		Fire::group("Creating RRD $metric graph from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
 		if (!is_dir($path)) {
 			Fire::info('Creating Directory ' . $path);
 			mkdir($path, 0774, true);
@@ -284,10 +283,10 @@ class Rrd {
 		return false;
 	}
 
-	public function xml($profileId, $metric, $start, $end, $m = 'Avg') {
-		$path = $this->path($profileId);
+	public function xml($metric, $start, $end, $m = 'Avg') {
+		$path = $this->path();
 
-		Fire::group("Creating RRD $metric xml from $this->source to $this->destination, profile $profileId", array('Collapsed' => "true"));
+		Fire::group("Creating RRD $metric xml from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
 		$measures = Kohana::config("measure.$metric");
 
 		//if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
@@ -311,8 +310,8 @@ class Rrd {
 		return implode("\n", $resp);
 	}
 
-	public function json($profileId, $metric, $start, $end, $m = 'Avg') {
-		$xml = $this->xml($profileId, $metric, $start, $end, $m);
+	public function json($metric, $start, $end, $m = 'Avg') {
+		$xml = $this->xml($metric, $start, $end, $m);
 		return Zend_Json::fromXml($xml);
 	}
 }

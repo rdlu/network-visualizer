@@ -26,6 +26,7 @@ class Controller_Entities extends Controller_Skeleton {
 		if(isset($_POST['city'])) $query = $query->where('city','like',$_POST['city'].'%');
 		if(isset($_POST['name'])) $query = $query->where('name','like','%'.$_POST['name'].'%');
 		if(isset($_POST['maxRows'])) $query = $query->limit((int) $_POST['maxRows']);
+		if(isset($_POST['excludeId'])) $query = $query->where('id','!=',$_POST['excludeId']);
 		$response['entities'] = $query->execute()->as_array();
 		$this->response->headers('Content-Type','application/json');
 		$this->response->headers('Cache-Control','no-cache');

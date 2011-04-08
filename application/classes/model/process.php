@@ -19,7 +19,7 @@ class Model_Process extends Sprig {
                                                             'model'=>'Entity',
                                                             'column'=>'destination_id',
                                                             'null' => false,
-                                                            'rules'=>array('isId'=>array()))),
+                                                            'rules'=>array('isId'=>array('')))),
             'profile' => new Sprig_Field_BelongsTo(array('model'=>'Profile')),
             /*
              *  Define o estado dessa entidade, valores:

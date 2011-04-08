@@ -41,10 +41,6 @@
     <?=$profile->input('qosValue',array('id'=>'qosValue'));?><br />
 	<?=$profile->label('description');?>
     <?=$profile->input('description',array('id'=>'description', 'rows'=>2, 'style'=>'vertical-align:baseline;'));?><br />
-    <fieldset class="group left">
-        <legend>Métricas cobertas por este perfil</legend>
-        <?=$profile->input('metrics');?>
-    </fieldset>
 	Status:&nbsp;
     <?=$profile->input('status',array('id'=>'status'));?>
 
