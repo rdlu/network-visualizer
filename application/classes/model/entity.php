@@ -15,7 +15,7 @@ class Model_Entity extends Sprig {
             'ipaddress' => new Sprig_Field_Char(array('label'=>'Endereço IP',
                     'min_length'=>7,
                     'max_length'=>255,
-                    'rules' => array('ipOrHostname'=>array()),
+                    'rules' => array('ipOrHostname'=>array('')),
 	                  'unique' => true,
             )),
             'name' => new Sprig_Field_Char(array('unique' => true,'label'=>'Nome da entidade')),
