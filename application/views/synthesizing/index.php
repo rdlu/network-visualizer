@@ -8,10 +8,15 @@
         <div>
             <span>Sonda de Origem</span>
             <select id="synth_dropdown" name="origem">
-                <!-- povoado via javascript -->
-                <option value="4">nm2 (143.54.10.122)</option>
+                <!-- povoado no oontroller synthesizing.php -->
+                <?php foreach($entities as $k => $entity): ?>
+                    <?php Fire::info($entity); ?>
+                    <option id="<?="synth_opt_".$entity->id?>" value="<?=$entity->id?>">
+                       <?php echo "$entity->name ($entity->ipaddress)" ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
-            <span id="" class="synth_secao">
+            <span id="synth_select_add" class="synth_secao">
                 <a href="#" id="null"> <!-- ADD -->
                     <img alt="Adiciona uma sonda para visualização" src="images/actions/add.png" />
                 </a>
