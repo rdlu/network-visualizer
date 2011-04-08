@@ -624,17 +624,27 @@ return array(
 	    )
     ),
 	'removeAgent' => array(
-	    'entryStatus' => array(
+		'status' => array(
+		   'type' => 'int',
+		    'oid' => NMMIB.'.0.0.10.id',
+		    'default' => 0
+	    ),
+	   'entryStatus' => array(
           'oid'=>NMMIB.'.0.0.9.id',
           'type'=>'int',
-		    'default' => 6
+		    'default' => 2
+       ),
+		'finalEntryStatus' => array(
+          'oid'=>NMMIB.'.0.0.9.id',
+          'type'=>'int',
+		    'default' => 5
        ),
 	),
 	'removeManager' => array(
 	    'entryStatus' => array(
 		    'oid'=>NMMIB.'.10.0.3.id',
 		    'type'=>'int',
-		    'default' => 6
+		    'default' => 5
        ),
 	)
 );

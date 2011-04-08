@@ -164,8 +164,8 @@ class Controller_Processes extends Controller_Skeleton {
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$profiles = array($_POST['profiles']);
-			$procSql = DB::select()->where('profile_id', 'IN', $profiles);
-			$processes = Sprig::factory('process')->load($procSql, false);
+			//$procSql = DB::select()->or_where('profile_id', 'IN', $profiles);
+			$processes = Sprig::factory('process',array('profile_id'=>$profiles))->load(null,false);
 			$source = $processes->current()->source->load();
 			$destination = $processes->current()->destination->load();
 
@@ -205,8 +205,8 @@ class Controller_Processes extends Controller_Skeleton {
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$profiles = array($_POST['profiles']);
-			$procSql = DB::select()->where('profile_id', 'IN', $profiles);
-			$processes = Sprig::factory('process')->load($procSql, false);
+			//$procSql = DB::select()->or_where('profile_id', 'IN', $profiles);
+			$processes = Sprig::factory('process',array('profile_id'=>$profiles))->load(null,false);
 			$source = $processes->current()->source->load();
 			$destination = $processes->current()->destination->load();
 
@@ -268,8 +268,8 @@ class Controller_Processes extends Controller_Skeleton {
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$profiles = array($_POST['profiles']);
-			$procSql = DB::select()->where('profile_id', 'IN', $profiles);
-			$processes = Sprig::factory('process')->load($procSql, false);
+			//$procSql = DB::select()->or_where('profile_id', '=', $profiles);
+			$processes = Sprig::factory('process',array('profile_id'=>$profiles))->load(null,false);
 
 			foreach ($processes as $i => $process) {
 				$source = $process->source->load();
@@ -282,7 +282,7 @@ class Controller_Processes extends Controller_Skeleton {
 						$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
 
 						foreach ($profile->metrics as $metric) {
-							$rrd->create($profile->id, $metric->name, $profile->polling);
+							$rrd->create($metric->name, $profile->polling);
 						}
 
 						if ($rrd->errors) {
@@ -292,7 +292,12 @@ class Controller_Processes extends Controller_Skeleton {
 					} else {
 						$response['message'] = "A sonda de destino $destination->ipaddress não respondeu ao teste de verificação, abortando a configuração";
 						$response['class'] = 'error';
-						$process->delete();
+						$values['entryStatus'] = 2;
+						foreach($processes as $proc) {
+							$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic')->setGroup('removeAgent', $values, array('id' => $proc->id));
+							$proc->delete();
+
+						}
 						break;
 					}
 				} else {

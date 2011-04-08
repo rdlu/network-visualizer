@@ -76,7 +76,7 @@ class Controller_Entities extends Controller_Skeleton {
         if ($_POST) {
             try {
                 $entity->values($_POST)->create();
-                Request::current()->redirect(Request::current()->controller.'/view/'.$entity->id);
+                Request::current()->redirect(Request::current()->controller().'/view/'.$entity->id);
                 $sucess  = true;
             } catch (Validation_Exception $e) {
                 $errors = $e->array->errors('entities/new');
