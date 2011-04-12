@@ -260,8 +260,8 @@ class Rrd {
 
 
 				$filename = $this->filename($metric, $l1 . $l2, 'png');
-				$imgs[] = $this->imgSrc($profileId, $metric, $l1 . $l2);
-				Fire::info($this->imgSrc($profileId, $metric, $l1 . $l2));
+				$imgs[] = $this->imgSrc($metric, $l1 . $l2);
+				Fire::info($this->imgSrc($metric, $l1 . $l2));
 				$ret = rrd_graph($path . $filename, $opts, count($opts));
 
 				if (!is_array($ret)) {
