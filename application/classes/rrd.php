@@ -30,12 +30,18 @@ class Rrd {
 		if (!isset(Rrd::$instances[$source . ':' . $destination])) {
 			$newinstance = new Rrd();
 			$newinstance->setAddress($source);
-			$newinstance->setAddress($destination, false);
+			$newinstance->setDestination($destination, false);
 
 			Rrd::$instances[$source . ':' . $destination] = $newinstance;
 		}
 
 		return Rrd::$instances[$source . ':' . $destination];
+	}
+
+	public function setDestination($address) {
+		if (Valid::ipOrHostname($address)) {
+				$this->destination = $address;
+		} else throw new Kohana_Exception("Invalid DESTINATION address in RRD class $address");
 	}
 
 	public function setAddress($address, $source = true) {
@@ -58,8 +64,8 @@ class Rrd {
 	}
 
 	public function getDestination() {
-		if (Valid::Ip($this->source))
-			return $this->source;
+		if (Valid::Ip($this->destination))
+			return $this->destination;
 		else return Network::getAddress($this->source);
 	}
 
@@ -131,15 +137,15 @@ class Rrd {
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
 				$filename = $this->filename($metric, $l1 . $l2);
-				Fire::info($filename);
+				Fire::info($path.$filename);
 				$ret = rrd_create($path . $filename, $opts, count($opts));
 
 				if ($ret == 0) {
 					Fire::error($opts, 'RRD File Create Error: ' . rrd_error());
-					Kohana_Log::instance()->add('error', "RRD File Create Error: $path.$filename", $opts);
+					Log::instance()->add('error', "RRD File Create Error: $path.$filename", $opts);
 					$this->errors = true;
 				} else {
-					Kohana_Log::instance()->add('INFO', "RRD File Created $path$filename with $step second step");
+					Log::instance()->add('INFO', "RRD File Created $path$filename with $step second step");
 				}
 			}
 		Fire::groupEnd();

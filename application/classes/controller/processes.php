@@ -142,6 +142,8 @@ class Controller_Processes extends Controller_Skeleton {
 
 				try {
 					$process->create();
+					$resultModels[$k] = $process->load();
+					$resultIds[$k] = $resultModels[$k]->id;
 				} catch (Exception $e) {
 					$msg = $e->getMessage();
 					$errors[$k]['message'] = "Exceção no banco de dados, $msg";
@@ -150,7 +152,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 			}
 
-			$view->bind('process', $process)
+			$view->bind('process', $process)->bind('processes',$resultModels)->bind('processIDs',$resultIds)
 					->bind('destination', $destinationModel)
 					->bind('source', $sourceModel)
 					->bind('profiles', $profiles)->bind('errors', $errors);
@@ -163,13 +165,13 @@ class Controller_Processes extends Controller_Skeleton {
 	public function action_setupDestination() {
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
-			$profiles = array($_POST['profiles']);
-			//$procSql = DB::select()->or_where('profile_id', 'IN', $profiles);
-			$processes = Sprig::factory('process',array('profile_id'=>$profiles))->load(null,false);
-			$source = $processes->current()->source->load();
-			$destination = $processes->current()->destination->load();
+			$procs = (array) $_POST['processes'];
 
-			foreach ($processes as $i => $process) {
+			foreach ($procs as $i => $proc) {
+				$process = Sprig::factory('process',array('id'=>$proc))->load();
+				Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
+				$source = $process->source->load();
+				$destination = $process->destination->load();
 				$profile = $process->profile->load();
 				$values = array(
 					'managerEntryStatus' => 6,
@@ -204,13 +206,13 @@ class Controller_Processes extends Controller_Skeleton {
 	public function action_setupSource() {
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
-			$profiles = array($_POST['profiles']);
-			//$procSql = DB::select()->or_where('profile_id', 'IN', $profiles);
-			$processes = Sprig::factory('process',array('profile_id'=>$profiles))->load(null,false);
-			$source = $processes->current()->source->load();
-			$destination = $processes->current()->destination->load();
+			$procs = (array) $_POST['processes'];
 
-			foreach ($processes as $i => $process) {
+			foreach ($procs as $i => $proc) {
+				$process = Sprig::factory('process',array('id'=>$proc))->load();
+				Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
+				$source = $process->source->load();
+				$destination = $process->destination->load();
 				$profile = $process->profile->load();
 				//Checar se o destino esta OK
 				$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic');
@@ -229,6 +231,7 @@ class Controller_Processes extends Controller_Skeleton {
 				$avalues = array_merge($avalues, $destination->as_array());
 				$avalues['profile'] = $profile->id;
 				$avalues['port'] = $process->port;
+				$avalues['status'] = 1;
 				$atable = $sourceSnmp->setGroup('agentTable', $avalues, array('pid' => $process->id));
 
 				if (count($ptable)) {
@@ -267,11 +270,11 @@ class Controller_Processes extends Controller_Skeleton {
 	public function action_FinalCheck() {
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
-			$profiles = array($_POST['profiles']);
-			//$procSql = DB::select()->or_where('profile_id', '=', $profiles);
-			$processes = Sprig::factory('process',array('profile_id'=>$profiles))->load(null,false);
+			$procs = (array) $_POST['processes'];
 
-			foreach ($processes as $i => $process) {
+			foreach ($procs as $i => $proc) {
+				$process = Sprig::factory('process',array('id'=>$proc))->load();
+				Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
 				$source = $process->source->load();
 				$destination = $process->destination->load();
 				$profile = $process->profile->load();
@@ -279,7 +282,8 @@ class Controller_Processes extends Controller_Skeleton {
 					if (Snmp::instance($destination->ipaddress)->isReachable(NMMIB . '.10.0.0.' . $process->id)) {
 						$response['message'] = "Configurações salvas com sucesso no banco de dados do MoM";
 						$response['class'] = 'success';
-						$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
+						$dest = $destination->as_array();
+						$rrd = Rrd::instance($source->ipaddress, $dest['ipaddress']);
 
 						foreach ($profile->metrics as $metric) {
 							$rrd->create($metric->name, $profile->polling);
@@ -293,18 +297,15 @@ class Controller_Processes extends Controller_Skeleton {
 						$response['message'] = "A sonda de destino $destination->ipaddress não respondeu ao teste de verificação, abortando a configuração";
 						$response['class'] = 'error';
 						$values['entryStatus'] = 2;
-						foreach($processes as $proc) {
-							$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic')->setGroup('removeAgent', $values, array('id' => $proc->id));
-							$proc->delete();
-
-						}
-						break;
+						$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic')->setGroup('removeAgent', $values, array('id' => $process->id));
+						$process->delete();
+						//break;
 					}
 				} else {
 					$response['message'] = "A sonda de origem $source->ipaddress não respondeu ao teste de verificação, abortando a configuração.";
 					$response['class'] = 'error';
 					$process->delete();
-					break;
+					//break;
 				}
 			}
 

@@ -41,18 +41,23 @@
 <script type="text/javascript">
 	$(function() {
 
-		setupDestination(<?=json_encode($profiles)?>);
-		setupSource(<?=json_encode($profiles)?>);
+		setupDestination(<?=json_encode($processIDs)?>);
+		setupSource(<?=json_encode($processIDs)?>);
 		var finalcount = 0;
 
-		function setupDestination(profiles) {
+		function setupDestination(processes) {
 			$.ajax({
 				url: "<?=url::site('processes/setupDestination')?>/",
 				type: 'post',
-				data: {'profiles':profiles},
+				data: {'processes':processes},
 				success: function(data) {
 					$("#confDest").html("");
-					$("<li class=" + data.class + ">" + data.message + "</li>").appendTo('#confDest');
+					var errStr = '';
+					if(data.errors)
+						jQuery.each(data.errors, function(key,value) {
+							errStr += "<br />Campo \'"+key+"\' acusou: "+value;
+						});
+					$("<li class=" + data.class + "><strong>" + data.message+"</strong>" + errStr+"</li>").appendTo('#confDest');
 					$('#confDest').removeClass('info').removeClass('errors').addClass(data.class);
 					activeFinal(4);
 				},
@@ -66,11 +71,11 @@
 			});
 		}
 
-		function setupSource(profiles) {
+		function setupSource(processes) {
 			$.ajax({
 				url: "<?=url::site('processes/setupSource')?>/",
 				type: 'post',
-				data: {'profiles':profiles},
+				data: {'processes':processes},
 				success: function(data) {
 					$("#confSource").html("");
 					$("<li class=" + data.class + ">" + data.message + "</li>").appendTo('#confSource');
@@ -90,15 +95,15 @@
 		function activeFinal(num) {
 			finalcount += num;
 			if (finalcount > 8) {
-				finalCheck(<?=json_encode($profiles)?>);
+				finalCheck(<?=json_encode($processIDs)?>);
 			}
 		}
 
-		function finalCheck(profiles) {
+		function finalCheck(processes) {
 			$.ajax({
 				url: "<?=url::site('processes/FinalCheck')?>/",
 				type: 'post',
-				data: {'profiles':profiles},
+				data: {'processes':processes},
 				success: function(data) {
 					$("#confDB").html("");
 					$("<li class=" + data.class + ">" + data.message + "</li>").appendTo('#confDB');
