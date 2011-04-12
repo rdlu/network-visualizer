@@ -201,7 +201,7 @@ class Rrd {
 	 * @param bool $measure
 	 * @return string
 	 */
-	public function graph($metric, $start, $end, $measure = false) {
+	public function graph($metric, $start, $end) {
 		$rrdPath = $this->path();
 		$path = $this->imgPath();
 
@@ -217,13 +217,9 @@ class Rrd {
 
 		Fire::info("Fetched range from $start to $end");
 
-		if ($measure) {
-
-		} else {
-			$choosenMeasure = $measures['default'];
-			$choosenView = __($measures['view']);
-			$choosenFactor = $measures['factor'];
-		}
+		$choosenMeasure = $measures['default'];
+		$choosenView = __($measures['view']);
+		$choosenFactor = $measures['factor'];
 
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
