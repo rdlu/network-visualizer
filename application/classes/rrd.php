@@ -29,7 +29,7 @@ class Rrd {
 	public static function instance($source, $destination) {
 		if (!isset(Rrd::$instances[$source . ':' . $destination])) {
 			$newinstance = new Rrd();
-			$newinstance->setAddress($source);
+			$newinstance->setSource($source);
 			$newinstance->setDestination($destination, false);
 
 			Rrd::$instances[$source . ':' . $destination] = $newinstance;
@@ -44,27 +44,20 @@ class Rrd {
 		} else throw new Kohana_Exception("Invalid DESTINATION address in RRD class $address");
 	}
 
-	public function setAddress($address, $source = true) {
-		if ($source) {
+	public function setSource($address) {
 			if (Valid::ipOrHostname($address)) {
 				$this->source = $address;
 			} else throw new Kohana_Exception("Invalid SOURCE address in RRD class $address");
-		} else {
-			if (Valid::ipOrHostname($address)) {
-				$this->destination = $address;
-			} else throw new Kohana_Exception("Invalid DESTINATION address in RRD class $address");
-		}
-
 	}
 
 	public function getSource() {
-		if (Valid::Ip($this->source))
+		if (Valid::ip($this->source))
 			return $this->source;
 		else return Network::getAddress($this->source);
 	}
 
 	public function getDestination() {
-		if (Valid::Ip($this->destination))
+		if (Valid::ip($this->destination))
 			return $this->destination;
 		else return Network::getAddress($this->source);
 	}
