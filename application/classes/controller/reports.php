@@ -61,7 +61,7 @@ class Controller_Reports extends Controller_Skeleton {
 				$profile = $process->profile->load();
 				$metrics = $profile->metrics;
 				foreach($metrics as $metric) {
-					$img[$profile->id][$metric->name] = $rrd->graph($metric->name,$inicio,$fim);
+					$img[$metric->name] = $rrd->graph($metric->name,$inicio,$fim);
 				}
 			}
 
