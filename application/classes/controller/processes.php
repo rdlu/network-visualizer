@@ -310,6 +310,7 @@ class Controller_Processes extends Controller_Skeleton {
 			}
 
 
+
 			$this->response->headers('Content-Type', 'application/json');
 			$this->response->body(json_encode($response));
 

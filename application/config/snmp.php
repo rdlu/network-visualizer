@@ -589,7 +589,7 @@ return array(
 	     ),
         'metrics' => array(
             'type' => 'ssv',
-            'origin' => 'name',
+            'origin' => 'plugin',
             'oid' => NMMIB.'.1.0.10.id'
         ),
 	    'finalEntryStatus' => array(
