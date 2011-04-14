@@ -8,6 +8,7 @@ class Model_Metric extends Sprig {
 		$this->_fields += array(
 			'id' => new Sprig_Field_Auto(),
 			'name' => new Sprig_Field_Char(array('max_lenght' => 20)),
+			'plugin' => new Sprig_Field_Char(array('max_lenght' => 20)),
 			'desc' => new Sprig_Field_Char(array('max_lenght' => 50)),
 			'profile' => new Sprig_Field_BelongsTo(array('model' => 'Profile', 'label' => __('Perfis'))),
 			'processes' => new Sprig_Field_ManyToMany(array('model' => 'Process', 'through'=>'metrics_processes')),
