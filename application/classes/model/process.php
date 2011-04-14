@@ -34,7 +34,7 @@ class Model_Process extends Sprig {
                          1=>'Ativo',2=>'Bloqueado',0=>'Inativo'),
                      'default'=>1)),
 	         'port'=> new Sprig_Field_Integer(array('min_value'=>10000,'max_value'=>20000)),
-	        'metrics' => new Sprig_Field_ManyToMany(array('model' => 'Process', 'through'=>'metrics_processes'))
+	         'metrics' => new Sprig_Field_ManyToMany(array('model' => 'Metric', 'through'=>'metrics_processes'))
         );
     }
 }
