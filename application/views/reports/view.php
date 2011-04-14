@@ -13,7 +13,8 @@
 		$("#metricsAccordion").accordion({
 			collapsible: true,
 			active: <?=count($images)-1 ?>,
-			fillSpace: true
+			fillSpace: true,
+			clearStyle: true
 		});
 	});
 </script>
