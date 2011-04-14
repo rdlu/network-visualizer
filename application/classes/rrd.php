@@ -135,10 +135,10 @@ class Rrd {
 
 				if ($ret == 0) {
 					Fire::error($opts, 'RRD File Create Error: ' . rrd_error());
-					Log::instance()->add('error', "RRD File Create Error: $path.$filename", $opts);
+					Log::instance()->add(Log::ERROR, "RRD File Create Error: $path.$filename", $opts);
 					$this->errors = true;
 				} else {
-					Log::instance()->add('INFO', "RRD File Created $path$filename with $step second step");
+					Log::instance()->add(Log::INFO, "RRD File Created $path$filename with $step second step");
 				}
 			}
 		Fire::groupEnd();
@@ -178,7 +178,7 @@ class Rrd {
 
 				if ($ret == 0) {
 					$erf = rrd_error();
-					Kohana_Log::instance()->add("WARN", "RRD Update Failed :: $filename TIME $timestamp : $numbers :: " . $erf);
+					Log::instance()->add(Log::WARNING, "RRD Update Failed :: $filename TIME $timestamp : $numbers :: " . $erf);
 					Fire::error(array($path . $filename, $numbers), 'RRD Update Failed: ' . $erf);
 				}
 			}
@@ -259,7 +259,7 @@ class Rrd {
 
 				if (!is_array($ret)) {
 					Fire::error($opts, 'RRD Graph File Create Error: ' . rrd_error());
-					Kohana_Log::instance()->add('ERROR', "RRD Graph Create Error: $path$filename");
+					Log::instance()->add(Log::ERROR, "RRD Graph Create Error: $path$filename");
 				}
 			}
 		Fire::groupEnd();

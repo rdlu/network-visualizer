@@ -518,7 +518,7 @@ label.nice, span.label.nice {
     vertical-align: middle;
 }
 
-span.input.nice {
+span.input.nice, li.input.nice {
     border-radius: 3px;
     padding: 6px 10px;
     margin: 1px;
@@ -526,7 +526,7 @@ span.input.nice {
     background-color: #CCC;
 }
 
-span.nice.checkbox {
+span.nice.checkbox, li.nice.checkbox {
     border-radius: 3px;
     background-color: #CCC;
     display: inline-block;

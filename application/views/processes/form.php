@@ -37,14 +37,14 @@
 	<legend>Métricas a serem utilizadas</legend>
 	<div style="float:left;margin-right:15px;"><img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
 <span class="label nice big"><strong>Métricas</strong></span></div>
-	<div class="nice" id="metricas">
+	<ul class="nice" id="metricas">
 		<?php foreach($metrics as $key => $metric): ?>
-		<span class="nice checkbox">
+		<li class="nice checkbox">
 			<input type="checkbox" id="metrics[<?=$key?>]" name="metrics[]" class="nice medium" value="<?=$metric->id?>" checked="checked">
-			<label for="metrics[<?=$key?>]" class="nice little"><?=$metric->name?></label>
-		</span>
+			<label for="metrics[<?=$key?>]" class="nice little"><?=$metric->desc?> (<?=$metric->name?>)</label>
+		</li>
 		<?php endforeach ?>
-	</div>
+	</ul>
 </fieldset>
 <?= Form::submit('submit_process', 'OK', array('id'=>'submit_process','disabled' => true)) ?>
 <?= Form::close() ?>

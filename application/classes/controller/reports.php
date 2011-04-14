@@ -41,7 +41,6 @@ class Controller_Reports extends Controller_Skeleton {
 	   if(!Valid::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
 
 	   $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
-	   //array('destination_id'=>$dId,'source_id'=>$sId)
 	   $source = Sprig::factory('entity',array('id'=>$sId))->load();
 	   $destination = Sprig::factory('entity',array('id'=>$dId))->load();
 
@@ -56,20 +55,26 @@ class Controller_Reports extends Controller_Skeleton {
 			$inicio = Rrd::converteData($start)." ".$stime;
 			$fim = Rrd::converteData($end)." ".$etime;
 
+			$metrics2 = array();
+
 			foreach($processes as $process) {
 				Fire::info($process->as_array(),"Process 1, ID: $process->id");
 				$profile = $process->profile->load();
 				$metrics = $profile->metrics;
 				foreach($metrics as $metric) {
 					$img[$metric->name] = $rrd->graph($metric->name,$inicio,$fim);
+					$metrics2[$metric->name] = array('order' => $metric->order, 'desc' => $metric->desc);
+					$order[] = $metric->order;
 				}
 			}
+
+			array_multisort($order, $metrics2);
 
 		   Fire::group("Images path")->info($img)->groupEnd();
 		   Fire::groupEnd();
 
 		   if(Request::current()->is_ajax()) {
-			   $view->bind('images',$img)
+			   $view->bind('images',$img)->bind('metrics',$metrics2)
 			      ->bind('processes',$processes);
 			   $this->response->headers('Cache-Control',"no-cache");
 			   $this->response->body($view);

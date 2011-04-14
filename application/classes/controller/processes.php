@@ -77,7 +77,7 @@ class Controller_Processes extends Controller_Skeleton {
 			Fire::group('Models Loaded', array('Collapsed' => 'true'))->info($process)->info($sourceEntity)->groupEnd();
 		}
 
-		$db = DB::select()->where('id', 'IS NOT', null);
+		$db = DB::select()->where('profile_id', 'IS NOT', null)->order_by('order');
 
 		$metrics = Sprig::factory('metric')->load($db, false);
 
@@ -117,7 +117,7 @@ class Controller_Processes extends Controller_Skeleton {
 			$destination = $_POST['destination'];
 			$metrics = (array) $_POST['metrics'];
 
-			$rows = DB::select()->from('metrics')->group_by('profile_id')->or_where('id', 'IN', $metrics)->execute();
+			$rows = DB::select()->from('metrics')->group_by('profile_id')->where('profile_id',"!=",null)->or_where('id', 'IN', $metrics)->execute();
 
 			$profiles = array();
 			foreach ($rows as $row) {
@@ -134,6 +134,7 @@ class Controller_Processes extends Controller_Skeleton {
 				$process->source = $sourceModel;
 				$process->destination = $destinationModel;
 				$process->profile = $profile;
+				$process->metrics = $metrics;
 				$q = Db::select('port')->from('processes')->where('source_id', '=', $source)->where('destination_id', '=', $destination)->order_by('port', 'DESC')->execute();
 				if ($q->count())
 					$process->port = $q->get('port') + 1;
