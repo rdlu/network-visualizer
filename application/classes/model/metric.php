@@ -13,7 +13,12 @@ class Model_Metric extends Sprig {
 			'profile' => new Sprig_Field_BelongsTo(array('model' => 'Profile', 'label' => __('Perfis'))),
 			'processes' => new Sprig_Field_ManyToMany(array('model' => 'Process', 'through'=>'metrics_processes')),
 			'order' => new Sprig_Field_Integer(),
-			'reverse' => new Sprig_Field_Boolean()
+			'reverse' => new Sprig_Field_Boolean(),
+			'thresholdProfiles' => new Sprig_Field_ManyToMany(array('model' => 'thresholdProfile', 'through' => 'thresholdvalues')),
+			'thresholdValues' => new Sprig_Field_HasMany(
+				array(
+				     'model' => 'ThresholdValue',
+				     'null' => false)),
 		);
 	}
 }

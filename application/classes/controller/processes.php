@@ -135,7 +135,7 @@ class Controller_Processes extends Controller_Skeleton {
 				$process->destination = $destinationModel;
 				$process->profile = $profile;
 				$process->metrics = $metrics;
-				$q = Db::select('port')->from('processes')->where('source_id', '=', $source)->where('destination_id', '=', $destination)->order_by('port', 'DESC')->execute();
+				$q = Db::select('port')->from('processes')->where('destination_id', '=', $destination)->order_by('port', 'DESC')->execute();
 				if ($q->count())
 					$process->port = $q->get('port') + 1;
 				else

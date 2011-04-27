@@ -21,6 +21,7 @@ class Model_Process extends Sprig {
                                                             'null' => false,
                                                             'rules'=>array('isId'=>array('')))),
             'profile' => new Sprig_Field_BelongsTo(array('model'=>'Profile')),
+	         'thresholdProfile' => new Sprig_Field_BelongsTo(array('model'=>'ThresholdProfile', 'column'=>'threshold_id')),
             /*
              *  Define o estado dessa entidade, valores:
              * 1, ativo normal, aceitando novos cadastros de processos

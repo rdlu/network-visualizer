@@ -190,22 +190,15 @@ class Controller_Reports extends Controller_Skeleton {
 	public function action_json() {
 		$this->auto_render = false;
 
-		$source = $_POST['source'];
+		/*$source = $_POST['source'];
 		$destination = $_POST['destination'];
-		$metric = $_POST['metric'];
-		//$source='143.54.10.199';$destination='143.54.10.122';$metric='owd';
+		$metric = $_POST['metric'];*/
+		$source=5;$destination=8;$metric='capacity';
 
-		$start = (isset($_POST['start']))?$_POST['start']:date("U", time() - 600);
-		$end = (isset($_POST['end']))?$_POST['end']:date("U");
+		$pair = Pair::instance($source,$destination);
 
-		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
-		$profile = $metricModel->profiles->current();
-
-		$json = Rrd::instance($source,$destination)->json($profile->id,$metric,$start,$end);
-		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
-
-		$this->response->headers('Content-Type','application/json');
-		$this->response->body(Zend_Json::encode($obj));
+//		$this->response->headers('Content-Type','application/json');
+		$this->response->body(Zend_Json::encode($pair->getResult($metric)));
 	}
 
 	public function action_flot() {
@@ -221,7 +214,7 @@ class Controller_Reports extends Controller_Skeleton {
 		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
 		$profile = $metricModel->profiles->current();
 
-		$json = Rrd::instance($source,$destination)->json($profile->id,'owd',$start,$end);
+		$json = Rrd::instance($source,$destination)->json($metric,$start,$end);
 
 		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
 
@@ -244,43 +237,36 @@ class Controller_Reports extends Controller_Skeleton {
 		$this->response->body(Zend_Json::encode($results));
 	}
 
-	public function action_gJson() {
+	public function action_lastResultsFromPair($source,$destination) {
 		$this->auto_render = false;
+
 		//$source = $_POST['source'];
 		//$destination = $_POST['destination'];
 
-		$source = 3; $destination = 4;
-
 		$pair = Pair::instance($source,$destination);
-		//$metric = $_POST['metric'];
-		//$source='143.54.10.199';$destination='143.54.10.122';$metric='owd';
 
-		/*$start = (isset($_POST['start']))?$_POST['start']:date("U", time() - 24*3600);
-		$end = (isset($_POST['end']))?$_POST['end']:date("U");
+		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
+		$this->response->body(Zend_Json::encode($pair->lastResults()));
+	}
 
-		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
-		$profile = $metricModel->profiles->current();
+	public function action_lastResultsFromSource($source) {
+		$this->auto_render = false;
 
-		$json = Rrd::instance($source,$destination)->json($profile->id,'owd',$start,$end);
+		//$source = $_POST['source'];
 
-		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
-
-		$results = new stdClass();
-		$results->labels = $obj->meta->legend->entry;
-		$results->values = new stdClass();
-
-		foreach($obj->meta->legend->entry as $x => $z) {
-			$results->values->$x = array();
+		$source = Sprig::factory('entity',array('id'=>$source))->load();
+		$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id','=',$source->id),null);
+		$resp = array();
+		foreach($processes as $process) {
+			$resp[] = $process->destination->load();
 		}
 
-		foreach($obj->data->row as $k => $row) {
-			foreach($row->v as $j => $value) {
-				$value = ($value == 'NaN') ? null:$value;
-				array_push($results->values->$j,array($row->t,$value));
-			}
+		foreach($resp as $destination) {
+			$pair = Pair::instance($source->id,$destination->id);
+			$resultss[$destination->id] = $pair->lastResults();
 		}
 
-		$this->response->headers('Content-Type','application/json');
-		$this->response->body(Zend_Json::encode($results);*/
+		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
+		$this->response->body(Zend_Json::encode($resultss));
 	}
 }

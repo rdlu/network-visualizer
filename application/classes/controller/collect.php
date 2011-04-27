@@ -29,7 +29,8 @@ class Controller_Collect extends Controller {
 		       $dip = $simple['ipaddress'];
 		       if($destination->ipaddress == $dip) {
 			       $data = $snmp->group($metric,array('id'=>$id));
-			       $timestamp = Snmp::convertTimestamp($simple['timestamp']);
+			       //$timestamp = Snmp::convertTimestamp($simple['timestamp']);
+			       $timestamp = date('U');
 		          $rrd = Rrd::instance($source->ipaddress,$destination->ipaddress)->update($metric,$data,$timestamp);
 		          $destination->updated = $timestamp;
 			       $source->updated = $timestamp;

@@ -309,4 +309,10 @@ class Rrd {
 		$xml = $this->xml($metric, $start, $end, $m);
 		return Zend_Json::fromXml($xml);
 	}
+
+	public function last($metric, $m = 'Avg') {
+		$path = $this->path();
+		$filename = $this->filename($metric, "Last" . $m);
+		return exec("rrdtool last $path$filename", $resp, $code);
+	}
 }
