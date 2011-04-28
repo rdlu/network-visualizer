@@ -22,7 +22,7 @@ return array(
                     'title'=>__('Sondas e Agentes'),
                     'href'=>'entities/'),
                'profiles'=>array(
-                    'title'=>__('Perfis de Teste'),
+                    'title'=>__('Métricas e Perfis de Teste'),
                     'href'=>'profiles/'),
 	            'logviewer'=>array(
 		            'title'=>__('Registro de Eventos (Log)'),

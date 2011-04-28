@@ -141,7 +141,7 @@ a.boardMenu img {
     vertical-align: middle;
 }
 
-table#filterMenu {
+table#filterMenu, table.filterMenu {
     background-color:#CDCDCD;
     font-family: Ubuntu, Corbel, "Segoe UI", Tahoma, Arial;
     font-size:14px;
@@ -152,7 +152,7 @@ table#filterMenu {
     border-radius: 7px;
 }
 
-table#filterMenu td {
+table#filterMenu td, table.filterMenu td {
     padding: 5px 10px 8px;
     text-shadow:3px 3px 2px #666;
 }
@@ -176,7 +176,7 @@ form.bForms fieldset legend {
     font-family: Ubuntu, Arial, sans-serif;
 }
 
-form.bForms label, table.bForms td.input {
+table.bForms td.input {
     font-size: 13px;
     font-family: Ubuntu, Arial, sans-serif;
     width: 120px;
@@ -370,36 +370,48 @@ ul.tasks li.viewDestination {
 }
 
 .synth_secao {
-    margin: 10px;
-    min-height: 800px;
-    
+    margin: 10px;    
+    border: thin solid #999;
+    -moz-border-radius:8px;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    background-color: #ddd;
 }
 
 .synth_secao h2 {
     text-align: center;
 }
 
+.synth_title {
+    margin-top: 2px;
+    height: 22px;
+    vertical-align: center;    
+}
+
 .synth_box {    
-    width: 145px;
+    width: 143px;
     height: 55px;
     margin: 10px;
-    background-color: #ccc;
-
-    border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-
+    background-color: #cdcdcd;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border: 1px solid #999;
     float: left;
 }
 
 #synth_select {
-     border: thin solid #999999;
+     border: 1px solid #999999;
      padding: 10px 20px 10px 20px;
      margin: 10px;
      background-color: #cdcdcd;
      border-radius: 8px;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
+}
+
+#synth_select {
+    white-space: nowrap;
 }
 
 .synth_form {
@@ -413,11 +425,18 @@ ul.tasks li.viewDestination {
 
 .synth_menu {
     margin-left: 10px;
+    vertical-align: middle;
+}
+
+.synth_menu2 {
+    margin-right: 8px;
+    margin-top: 3px;
+    float: right;
 }
 
 .synth_bar_bg { /*fundo da barra de medição*/
     margin-top: 20px;
-    width: 60px;
+    width: 58px;
     background: white;
     float: left;
     margin: 2px 5px 2px 5px;
@@ -441,8 +460,7 @@ ul.tasks li.viewDestination {
 }
 
 .synth_bar_inner {
-    width: 20px;
-    background: yellow;
+    width: 58px;
     border-radius: 4px;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -467,10 +485,10 @@ div.loadingBig {
     background-image: url("../images/loading/42.gif");
     background-repeat: no-repeat;
     background-position: center;
-<<<<<<< HEAD
-=======
 }
 
+<<<<<<< HEAD
+=======
 span.iblock.status {
     padding: 5px 10px 5px 25px;
     -moz-border-radius:5px;
@@ -497,9 +515,47 @@ input.nice {
     padding: 5px;
     text-decoration: none;
     text-shadow: 1px 1px 1px #AAAAAA;
+    margin: 2px !important;
+    vertical-align: middle;
 }
 
-input.nice.big {
+input.nice.big, span.nice.big, label.nice.big {
     font-size: 1.2em;
->>>>>>> 34d3cf6de33e0a9d45921823c9f98849945f7f0d
 }
+
+input.nice.medium, span.nice.medium, label.nice.medium {
+    font-size: 1.1em;
+}
+
+input.nice.little, span.nice.little, label.nice.little {
+    font-size: 1em;
+}
+
+label.nice, span.label.nice {
+    text-shadow: 1px 1px 1px #AAAAAA;
+    color: #111;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+span.input.nice, li.input.nice {
+    border-radius: 3px;
+    padding: 6px 10px;
+    margin: 1px;
+    text-shadow: 1px 1px 1px #AAAAAA;
+    background-color: #CCC;
+}
+
+span.nice.checkbox, li.nice.checkbox {
+    border-radius: 3px;
+    background-color: #CCC;
+    display: inline-block;
+    padding: 3px;
+    margin: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+div.nice {
+    padding: 5px;
+}
+>>>>>>> 06208f08d6e127cc65f11db0ee45bc0693fc7f73

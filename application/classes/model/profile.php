@@ -49,9 +49,9 @@ class Model_Profile extends Sprig {
              */
             'processes'=>new Sprig_Field_HasMany(array('model'=>'Process')),
             /**
-             * Relacionamento ManyToMany com Metricas
+             * Relacionamento HasMany com Metricas
              */
-            'metrics'=>new Sprig_Field_ManyToMany(array('model'=>'Metric','label'=>__('Métricas'))),
+            'metrics'=>new Sprig_Field_HasMany(array('model'=>'Metric','label'=>__('Métricas'))),
             /*
              *  Define o estado desse perfil, valores:
              * 1, ativo normal

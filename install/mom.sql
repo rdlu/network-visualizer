@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 3.3.7deb3build0.10.10.1
+-- version 3.3.7deb5build0.10.10.1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 18, 2011 at 10:33 AM
+-- Generation Time: Apr 08, 2011 at 03:44 PM
 -- Server version: 5.1.49
 -- PHP Version: 5.3.3-1ubuntu9.3
 
@@ -57,22 +57,12 @@ CREATE TABLE IF NOT EXISTS `metrics` (
   `id` int(1) NOT NULL AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,
   `desc` varchar(50) DEFAULT NULL,
+  `profile_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `metrics_profiles`
---
-
-CREATE TABLE IF NOT EXISTS `metrics_profiles` (
-  `metric_id` int(1) NOT NULL,
-  `profile_id` int(11) NOT NULL,
-  UNIQUE KEY `uniqueMetricProfile` (`metric_id`,`profile_id`),
+  UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `uniqueProfileMetric` (`id`,`profile_id`),
   KEY `profile_id` (`profile_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -95,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `processes` (
   KEY `processes_source_id_idx` (`source_id`),
   KEY `processes_destination_id_idx` (`destination_id`),
   KEY `processes_profile_id_idx` (`profile_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=358 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=365 ;
 
 -- --------------------------------------------------------
 
@@ -128,25 +118,12 @@ CREATE TABLE IF NOT EXISTS `profiles` (
 --
 
 CREATE TABLE IF NOT EXISTS `roles` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `description` varchar(100) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL,
+  `description` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `roles_name_uniq` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `roles_tasks`
---
-
-CREATE TABLE IF NOT EXISTS `roles_tasks` (
-  `task_id` int(11) NOT NULL,
-  `role_id` int(11) NOT NULL,
-  PRIMARY KEY (`task_id`,`role_id`),
-  KEY `roles_tasks_role_id_idx` (`role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `uniq_name` (`name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -155,41 +132,10 @@ CREATE TABLE IF NOT EXISTS `roles_tasks` (
 --
 
 CREATE TABLE IF NOT EXISTS `roles_users` (
-  `user_id` int(11) NOT NULL,
-  `role_id` int(11) NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `role_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`user_id`,`role_id`),
-  KEY `roles_users_role_id_idx` (`role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tasks`
---
-
-CREATE TABLE IF NOT EXISTS `tasks` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `path` varchar(128) DEFAULT NULL,
-  `description` varchar(128) NOT NULL,
-  `added` datetime NOT NULL,
-  `updated` datetime NOT NULL,
-  `conditions` longtext,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `tasks_name_uniq` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tasks_users`
---
-
-CREATE TABLE IF NOT EXISTS `tasks_users` (
-  `user_id` int(11) NOT NULL,
-  `task_id` int(11) NOT NULL,
-  PRIMARY KEY (`user_id`,`task_id`),
-  KEY `tasks_users_task_id_idx` (`task_id`)
+  KEY `fk_role_id` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -199,29 +145,44 @@ CREATE TABLE IF NOT EXISTS `tasks_users` (
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user` varchar(50) NOT NULL,
-  `pass` varchar(64) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `email` varchar(128) NOT NULL,
-  `added` datetime NOT NULL,
-  `updated` datetime NOT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(127) NOT NULL,
+  `username` varchar(32) NOT NULL DEFAULT '',
+  `password` char(50) NOT NULL,
+  `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `last_login` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name_idx` (`name`),
-  UNIQUE KEY `username_idx` (`user`),
-  KEY `user_idx` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+  UNIQUE KEY `uniq_username` (`username`),
+  UNIQUE KEY `uniq_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_tokens`
+--
+
+CREATE TABLE IF NOT EXISTS `user_tokens` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `user_agent` varchar(40) NOT NULL,
+  `token` varchar(32) NOT NULL,
+  `created` int(10) unsigned NOT NULL,
+  `expires` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_token` (`token`),
+  KEY `fk_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `metrics_profiles`
+-- Constraints for table `metrics`
 --
-ALTER TABLE `metrics_profiles`
-  ADD CONSTRAINT `metrics_profiles_ibfk_1` FOREIGN KEY (`metric_id`) REFERENCES `metrics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `metrics_profiles_ibfk_2` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `metrics`
+  ADD CONSTRAINT `metrics_ibfk_1` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `processes`
@@ -232,22 +193,14 @@ ALTER TABLE `processes`
   ADD CONSTRAINT `processes_ibfk_3` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`);
 
 --
--- Constraints for table `roles_tasks`
---
-ALTER TABLE `roles_tasks`
-  ADD CONSTRAINT `roles_tasks_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`),
-  ADD CONSTRAINT `roles_tasks_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
-
---
 -- Constraints for table `roles_users`
 --
 ALTER TABLE `roles_users`
-  ADD CONSTRAINT `roles_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `roles_users_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
+  ADD CONSTRAINT `roles_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `roles_users_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `tasks_users`
+-- Constraints for table `user_tokens`
 --
-ALTER TABLE `tasks_users`
-  ADD CONSTRAINT `tasks_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `tasks_users_ibfk_2` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`);
+ALTER TABLE `user_tokens`
+  ADD CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

@@ -29,8 +29,8 @@ class Rrd {
 	public static function instance($source, $destination) {
 		if (!isset(Rrd::$instances[$source . ':' . $destination])) {
 			$newinstance = new Rrd();
-			$newinstance->setAddress($source);
-			$newinstance->setAddress($destination, false);
+			$newinstance->setSource($source);
+			$newinstance->setDestination($destination, false);
 
 			Rrd::$instances[$source . ':' . $destination] = $newinstance;
 		}
@@ -38,66 +38,64 @@ class Rrd {
 		return Rrd::$instances[$source . ':' . $destination];
 	}
 
-	public function setAddress($address, $source = true) {
-		if ($source) {
+	public function setDestination($address) {
+		if (Valid::ipOrHostname($address)) {
+				$this->destination = $address;
+		} else throw new Kohana_Exception("Invalid DESTINATION address in RRD class $address");
+	}
+
+	public function setSource($address) {
 			if (Valid::ipOrHostname($address)) {
 				$this->source = $address;
 			} else throw new Kohana_Exception("Invalid SOURCE address in RRD class $address");
-		} else {
-			if (Valid::ipOrHostname($address)) {
-				$this->destination = $address;
-			} else throw new Kohana_Exception("Invalid DESTINATION address in RRD class $address");
-		}
-
 	}
 
 	public function getSource() {
-		if (Valid::Ip($this->source))
+		if (Valid::ip($this->source))
 			return $this->source;
 		else return Network::getAddress($this->source);
 	}
 
 	public function getDestination() {
-		if (Valid::Ip($this->source))
-			return $this->source;
+		if (Valid::ip($this->destination))
+			return $this->destination;
 		else return Network::getAddress($this->source);
 	}
 
-	public function path($profileId) {
+	public function path() {
 		$source = $this->getSource();
 		$destination = $this->getDestination();
-		return DATAPATH . "rrd/$source/$destination/$profileId/";
+		return DATAPATH . "rrd/$source/$destination/";
 	}
 
-	public function imgPath($profileId) {
+	public function imgPath() {
 		$source = $this->getSource();
 		$destination = $this->getDestination();
-		return DOCROOT . "images/rrd/$source/$destination/$profileId/";
+		return DOCROOT . "images/rrd/$source/$destination/";
 	}
 
-	public function imgSrc($profileId, $metric, $type) {
+	public function imgSrc($metric, $type) {
 		$source = $this->getSource();
 		$destination = $this->getDestination();
-		return "images/rrd/$source/$destination/$profileId/" . $this->filename($metric, $type, 'png');
+		return "images/rrd/$source/$destination/" . $this->filename($metric, $type, 'png');
 	}
 
 	public function filename($metric, $type, $ext = 'rrd') {
 		return "$metric$type.$ext";
 	}
 
-	public function fullPath($profileId, $metric, $type) {
-		return $this->path($profileId) . "$metric$type.rrd";
+	public function fullPath($metric, $type) {
+		return $this->path() . "$metric$type.rrd";
 	}
 
 	/**
 	 * Funcao para a criacao dos arquivos RRD para um determinado perfil e metrica
 	 * @throws Kohana_Exception
-	 * @param  int $profileId
 	 * @param  string $metric
 	 * @param  int $step
 	 * @return Rrd
 	 */
-	public function create($profileId, $metric, $step) {
+	public function create($metric, $step) {
 		$heartbeat = 2 * $step;
 		$mainPrecision = 1209600 / $step; //1 semana
 		$secondaryPrecision = 2628000 / $step; //1 mes
@@ -124,7 +122,7 @@ class Rrd {
 		//$opts[] = "RRA:MIN:0.5:16:$thirdPrecision";
 		//$opts[] = "RRA:MIN:0.5:100:$fourthPrecision";
 		Fire::group('Created RRD Files: ');
-		$path = $this->path($profileId);
+		$path = $this->path();
 		if (!is_dir($path)) {
 			Fire::info('Creating Directory ' . $path);
 			mkdir($path, 0774, true);
@@ -132,15 +130,15 @@ class Rrd {
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
 				$filename = $this->filename($metric, $l1 . $l2);
-				Fire::info($filename);
+				Fire::info($path.$filename);
 				$ret = rrd_create($path . $filename, $opts, count($opts));
 
 				if ($ret == 0) {
 					Fire::error($opts, 'RRD File Create Error: ' . rrd_error());
-					Kohana_Log::instance()->add('error', "RRD File Create Error: $path.$filename", $opts);
+					Log::instance()->add(Log::ERROR, "RRD File Create Error: $path.$filename", $opts);
 					$this->errors = true;
 				} else {
-					Kohana_Log::instance()->add('INFO', "RRD File Created $path$filename with $step second step");
+					Log::instance()->add(Log::INFO, "RRD File Created $path$filename with $step second step");
 				}
 			}
 		Fire::groupEnd();
@@ -154,13 +152,13 @@ class Rrd {
 	 * @param  array $data
 	 * @return Rrd
 	 */
-	public function update($profileId, $metric, array $data, $timestamp = 'N') {
+	public function update($metric, array $data, $timestamp = 'N') {
 		if ($timestamp == 'N') {
 			$ts = date("d.m.Y H:i:s T");
 			$timestamp = date("U");
 		} else $ts = date("d.m.Y H:i:s T", $timestamp);
-		Fire::group("Updating RRD Files - S:$this->source D:$this->destination P:$profileId TS:$ts");
-		$path = $this->path($profileId);
+		Fire::group("Updating RRD Files - S:$this->source D:$this->destination TS:$ts");
+		$path = $this->path();
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
 				$filename = $this->filename($metric, $l1 . $l2);
@@ -180,7 +178,7 @@ class Rrd {
 
 				if ($ret == 0) {
 					$erf = rrd_error();
-					Kohana_Log::instance()->add("WARN", "RRD Update Failed :: $filename TIME $timestamp : $numbers :: " . $erf);
+					Log::instance()->add(Log::WARNING, "RRD Update Failed :: $filename TIME $timestamp : $numbers :: " . $erf);
 					Fire::error(array($path . $filename, $numbers), 'RRD Update Failed: ' . $erf);
 				}
 			}
@@ -196,11 +194,11 @@ class Rrd {
 	 * @param bool $measure
 	 * @return string
 	 */
-	public function graph($profileId, $metric, $start, $end, $measure = false) {
-		$rrdPath = $this->path($profileId);
-		$path = $this->imgPath($profileId);
+	public function graph($metric, $start, $end) {
+		$rrdPath = $this->path();
+		$path = $this->imgPath();
 
-		Fire::group("Creating RRD $metric graph from $this->source to $this->destination, profile $profileId", array('Collapsed' => "true"));
+		Fire::group("Creating RRD $metric graph from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
 		if (!is_dir($path)) {
 			Fire::info('Creating Directory ' . $path);
 			mkdir($path, 0774, true);
@@ -212,13 +210,9 @@ class Rrd {
 
 		Fire::info("Fetched range from $start to $end");
 
-		if ($measure) {
-
-		} else {
-			$choosenMeasure = $measures['default'];
-			$choosenView = __($measures['view']);
-			$choosenFactor = $measures['factor'];
-		}
+		$choosenMeasure = $measures['default'];
+		$choosenView = __($measures['view']);
+		$choosenFactor = $measures['factor'];
 
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
@@ -259,13 +253,13 @@ class Rrd {
 
 
 				$filename = $this->filename($metric, $l1 . $l2, 'png');
-				$imgs[] = $this->imgSrc($profileId, $metric, $l1 . $l2);
-				Fire::info($this->imgSrc($profileId, $metric, $l1 . $l2));
+				$imgs[] = $this->imgSrc($metric, $l1 . $l2);
+				Fire::info($this->imgSrc($metric, $l1 . $l2));
 				$ret = rrd_graph($path . $filename, $opts, count($opts));
 
 				if (!is_array($ret)) {
 					Fire::error($opts, 'RRD Graph File Create Error: ' . rrd_error());
-					Kohana_Log::instance()->add('ERROR', "RRD Graph Create Error: $path$filename");
+					Log::instance()->add(Log::ERROR, "RRD Graph Create Error: $path$filename");
 				}
 			}
 		Fire::groupEnd();
@@ -284,10 +278,10 @@ class Rrd {
 		return false;
 	}
 
-	public function xml($profileId, $metric, $start, $end, $m = 'Avg') {
-		$path = $this->path($profileId);
+	public function xml($metric, $start, $end, $m = 'Avg') {
+		$path = $this->path();
 
-		Fire::group("Creating RRD $metric xml from $this->source to $this->destination, profile $profileId", array('Collapsed' => "true"));
+		Fire::group("Creating RRD $metric xml from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
 		$measures = Kohana::config("measure.$metric");
 
 		//if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
@@ -311,8 +305,14 @@ class Rrd {
 		return implode("\n", $resp);
 	}
 
-	public function json($profileId, $metric, $start, $end, $m = 'Avg') {
-		$xml = $this->xml($profileId, $metric, $start, $end, $m);
+	public function json($metric, $start, $end, $m = 'Avg') {
+		$xml = $this->xml($metric, $start, $end, $m);
 		return Zend_Json::fromXml($xml);
+	}
+
+	public function last($metric, $m = 'Avg') {
+		$path = $this->path();
+		$filename = $this->filename($metric, "Last" . $m);
+		return exec("rrdtool last $path$filename", $resp, $code);
 	}
 }

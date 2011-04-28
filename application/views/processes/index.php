@@ -62,7 +62,7 @@
 	});
 
 	function listProcesses(sonda) {
-		if (sonda.id != 0) $('#newlink').attr('href', newlink + sonda.ipaddress);
+		if (sonda.id != 0) $('#newlink').attr('href', newlink + sonda.id);
 		else $('#newlink').attr('href', newlink);
 		jQuery.ajax({
 			url: "<?=url::site('processes/list')?>/" + sonda.ipaddress,

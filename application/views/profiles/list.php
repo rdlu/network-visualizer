@@ -1,6 +1,6 @@
 <table id="filterMenu">
     <tr>
-        <td>Filtro <select id="das"></select></td>
+        <td><strong>Perfis de Teste</strong></td>
         <td><a href="<?=url::base()?>profiles/new/" class="filterMenu"><img src="<?=url::site('images/actions/add.png')?>" alt="Adicionar novo perfil" />&nbsp;&nbsp;&nbsp;Novo Perfil de Teste</a></td>
     </tr>
 </table>
@@ -21,10 +21,58 @@
             <td><?php foreach($profile->metrics as $metric): ?>
                     <?=$metric->name?> 
                 <?php endforeach; ?>
+	             <?php if($profile->metrics->count() == 0): ?>
+			            Este perfil não possui nenhuma métrica associada.
+					<?php endif ?>
              </td>
             <td><?=$profile->verbose('status')?></td>
             <td>
+	            <?php if($profile->metrics->count() == 0): ?>
                 <a href="<?=url::site('profiles/remove').'/'.$profile->id?>"><img src="<?=url::site('images/actions/delete.png')?>" alt="Remover" /></a>
+			<?php endif ?>
+            </td>
+        </tr>
+    <? endforeach ?>
+<?php else: ?>
+<tr>
+    <td colspan="4">Nenhum perfil encontrado, configure um perfil antes de configurar as métricas</td>
+</tr>
+<?php endif ?>
+        </tbody>
+</table>
+
+<table class="filterMenu">
+    <tr>
+        <td><strong>Métricas</strong></td>
+        <td><a href="<?=url::base()?>metrics/new/" class="filterMenu"><img src="<?=url::site('images/actions/add.png')?>" alt="Adicionar novo perfil" />&nbsp;&nbsp;&nbsp;Nova Métrica</a></td>
+    </tr>
+</table>
+
+<table id="metricList" class="tablesorter">
+    <thead>
+    <tr>
+        <th>Nome da métrica</th>
+        <th>Descrição</th>
+        <th>Perfil associado</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+<tbody>
+<?php if(count($metrics) > 0): ?>
+    <?php foreach($metrics as $metric): ?>
+        <tr>
+            <td><a href="<?=Url::site('profiles/view').'/'.$metric->id?>"><?=$metric->name?></a></td>
+	        <td><?=$metric->desc?></td>
+            <td><?php if($metric->profile->id!=0): ?>
+	            <?=$metric->profile->load()->name?>
+	            <?php else: ?>
+	            Esta métrica não está associada à nenhum perfil.
+					<?php endif ?>
+             </td>
+	        <td>
+		        <?php if($metric->profile->id==0): ?>
+                <a href="<?=url::site('metrics/remove').'/'.$metric->id?>"><img src="<?=url::site('images/actions/delete.png')?>" alt="Remover" /></a>
+				<?php endif ?>
             </td>
         </tr>
     <? endforeach ?>
@@ -35,3 +83,13 @@
 <?php endif ?>
         </tbody>
 </table>
+<script type="text/javascript">
+$(function(){
+	$('#metricList').tablesorter({
+		'headers': {
+			3: {sorter: false}
+		},
+		'widgets': ['zebra']
+	});
+});
+</script>

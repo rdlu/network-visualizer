@@ -9,7 +9,12 @@ return array(
         'view' => '',
 	     'factor' => 1
     ),
-    'bandwith' => array(
+	 'throughputTCP' => array(
+        'default' => 'bps',
+        'view' => '',
+	     'factor' => 1
+    ),
+    'capacity' => array(
         'default' => 'bps',
         'view' => '',
 	     'factor' => 1

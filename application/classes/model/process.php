@@ -19,8 +19,9 @@ class Model_Process extends Sprig {
                                                             'model'=>'Entity',
                                                             'column'=>'destination_id',
                                                             'null' => false,
-                                                            'rules'=>array('isId'=>array()))),
+                                                            'rules'=>array('isId'=>array('')))),
             'profile' => new Sprig_Field_BelongsTo(array('model'=>'Profile')),
+	         'thresholdProfile' => new Sprig_Field_BelongsTo(array('model'=>'ThresholdProfile', 'column'=>'threshold_id')),
             /*
              *  Define o estado dessa entidade, valores:
              * 1, ativo normal, aceitando novos cadastros de processos
@@ -34,6 +35,7 @@ class Model_Process extends Sprig {
                          1=>'Ativo',2=>'Bloqueado',0=>'Inativo'),
                      'default'=>1)),
 	         'port'=> new Sprig_Field_Integer(array('min_value'=>10000,'max_value'=>20000)),
+	         'metrics' => new Sprig_Field_ManyToMany(array('model' => 'Metric', 'through'=>'metrics_processes'))
         );
     }
 }

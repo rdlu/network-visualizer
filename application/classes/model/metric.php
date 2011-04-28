@@ -8,8 +8,17 @@ class Model_Metric extends Sprig {
 		$this->_fields += array(
 			'id' => new Sprig_Field_Auto(),
 			'name' => new Sprig_Field_Char(array('max_lenght' => 20)),
+			'plugin' => new Sprig_Field_Char(array('max_lenght' => 20)),
 			'desc' => new Sprig_Field_Char(array('max_lenght' => 50)),
-			'profiles' => new Sprig_Field_ManyToMany(array('model' => 'Profile', 'label' => __('Perfis'))),
+			'profile' => new Sprig_Field_BelongsTo(array('model' => 'Profile', 'label' => __('Perfis'))),
+			'processes' => new Sprig_Field_ManyToMany(array('model' => 'Process', 'through'=>'metrics_processes')),
+			'order' => new Sprig_Field_Integer(),
+			'reverse' => new Sprig_Field_Boolean(),
+			'thresholdProfiles' => new Sprig_Field_ManyToMany(array('model' => 'thresholdProfile', 'through' => 'thresholdvalues')),
+			'thresholdValues' => new Sprig_Field_HasMany(
+				array(
+				     'model' => 'ThresholdValue',
+				     'null' => false)),
 		);
 	}
 }

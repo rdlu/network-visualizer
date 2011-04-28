@@ -83,7 +83,6 @@ class Snmp {
 	}
 
 	public function setGroup($name,array $values,$subst=null) {
-		Fire::info($values);
 		$oids = Kohana::config('snmp.'.$name);
 
 		if($oids === NULL) {
@@ -95,6 +94,7 @@ class Snmp {
 		}
 
 		Fire::group('SNMP Data on '.$this->address,array('Collapsed'=>'true'));
+		Fire::info($values,"Received array to be set via SNMP:");
 
 		$data = array();
 		foreach($oids as $key => $oid) {
@@ -137,13 +137,13 @@ class Snmp {
 				$code = $err->getCode();
 				$msg = $err->getMessage();                $oe = $oid['oid'];
 				Fire::error($err,"Exception on SNMP SET $code");
-				/*if($key == 'entryStatus' || $key == 'managerEntryStatus') {
+				if($key == 'entryStatus' || $key == 'managerEntryStatus') {
 
-				} else {*/
+				} else {
 					Kohana::$log->add(Log::ERROR,"Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
 					$data[$key] = $msg;
 					break;
-				//}
+				}
 			}
 		}
 
