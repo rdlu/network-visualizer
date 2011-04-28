@@ -2,6 +2,7 @@
 /**
  * @author Rodrigo Dlugokenski
  * @copyright PRAV - Inf UFRGS
+ * @depends RRD, SNMP, Kohana_Sprig, Kohana_Database
  */
 
 class Pair {
@@ -168,7 +169,7 @@ class Pair {
 
 		$return = array();
 		foreach($results[$type] as $metric => $result) {
-			$return[$metric] = end($result);
+			$return[$metric] = Rrd::sci2num(end($result));
 		}
 
 		if($type == 'sd') {
