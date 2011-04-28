@@ -49,10 +49,8 @@ class Controller_Skeleton extends Controller_Template {
 			$this->template->header = View::factory('templates/mainmenu');
 			$footer = View::factory('templates/footer');
 			$this->template->footer = $footer;
-
 			$this->template->styles = array();
 			$this->template->scripts = array();
-
 		}
 	}
 

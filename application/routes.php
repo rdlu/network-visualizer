@@ -2,7 +2,17 @@
 /**
  * Arquivo com as rotas do aplicativo
  */
- 
+//Route::set('synthpopup', 'synth/popup(/<source>)')
+//    ->defaults(array(
+//                    'controller'=>'synthesizing',
+//                    'action'=>'popup'
+//               ));
+Route::set('synthpopup', 'synthpopup(/<id>)')
+     ->defaults(array(
+           'controller'=>'synthesizing',
+           'action'=>'popup'
+));
+
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'welcome',
@@ -39,4 +49,5 @@ Route::set('reportsSpec', '(<controller>(/<action>/<source>/<destination>))')
 		'controller' => 'reports',
 		'action'     => 'json',
 	));
+
 

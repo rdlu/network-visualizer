@@ -72,7 +72,7 @@ var Template = {
         });
         link.attr('id', 'sblink'+id).addClass('sondaLink').addClass('sondaBg');
         template.appendTo('#entities');                                          //coloca o template no HTML
-        //alert(template.text());       
+        //alert(template.text());
     },
     //retorna o template para a sonda que fica em destaque
     sondaDestaque: function(id, ip, nome, status, endereco, localidade){
@@ -94,7 +94,7 @@ var Template = {
         });
         template.appendTo('#sondaDestaque'); 
     }
-}
+};
 
 /******************************************************************************/
 /* Right bar: exibe a informção das sondas na barra do lado direito ***********/
