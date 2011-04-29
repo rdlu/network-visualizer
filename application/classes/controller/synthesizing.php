@@ -36,10 +36,11 @@ class Controller_Synthesizing extends Controller_Skeleton {
  * Retorna as informações JSON sobre as sondas de destino
  */
     public function action_destsondas($source){
+        // Antes de Rodrigo
+/*
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
-// Antes de Rodrigo
-/*
+
             $sonda1 = array(
                    'resultados' => array(
                         "id" => 6,
@@ -162,6 +163,7 @@ class Controller_Synthesizing extends Controller_Skeleton {
             //após Rodrigo
            
 		//$source = $_POST['source'];
+        $this->auto_render = false;		
 
 		$source = Sprig::factory('entity',array('id'=>$source))->load();
 		$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id','=',$source->id),null);
@@ -174,11 +176,10 @@ class Controller_Synthesizing extends Controller_Skeleton {
 			$pair = Pair::instance($source->id,$destination->id);
 			$resultss[$destination->id] = $pair->lastResults();
 		}
-
-		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
-		$this->response->body(Zend_Json::encode($resultss));
-
-       }
+                if(!empty($resultss)){
+                    if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
+                    $this->response->body(Zend_Json::encode($resultss));
+                }
     }
 
 //recebe o id da sonda de origem e retorna informações sobre a sonda de origem
