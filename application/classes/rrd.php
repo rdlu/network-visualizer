@@ -315,4 +315,18 @@ class Rrd {
 		$filename = $this->filename($metric, "Last" . $m);
 		return exec("rrdtool last $path$filename", $resp, $code);
 	}
+
+	public static function sci2num($value) {
+		$float = sprintf('%f', $value);
+		$integer = sprintf('%d', $value);
+		if ($float == $integer) {
+		// this is a whole number, so remove all decimals
+			$output = $integer;
+		} else {
+		// remove trailing zeroes from the decimal portion
+			$output = rtrim($float,'0');
+		}
+
+		return $output;
+	}
 }
