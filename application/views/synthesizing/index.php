@@ -11,7 +11,7 @@
                 <!-- povoado no oontroller synthesizing.php -->
                 
                 <?php 
-                    if(Arr::is_array($resp) && ($entity['status'] == 2 || $entity['status'] == 1)) //só
+                    if(Arr::is_array($resp)) //só
                         foreach($resp as $entity): ?>
                         <option id="<?="synth_opt_".$entity['id']; ?>" value="<?=$entity['id'];?>">
                            <?=$entity['name'] ." (".$entity['ipaddress'] .")"; ?>
