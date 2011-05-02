@@ -1,4 +1,10 @@
 //to do:
+//
+// não deve carregar na caixa de select sondas que realizam medição porém estão inativas
+// não deve tentar fazer Zend_encode em um array com valores null.
+//
+////----------------
+//to do:
 
 //connect => OK
 //template loader => ok
@@ -84,9 +90,10 @@ var SYNTH = {
         //console.log("em newBoxes, sondasDestino: ", sondasDestino);
         $.each(sondasDestino, function(){
             var sonda = $(this)[0];
-            var resultados = sonda.resultados;
-            var limiares = sonda.limiares;
-            SYNTH_TEMPLATE.buildNewBox(sondaOrigemId, resultados, limiares);
+            var resultados = sonda.results;
+            var limiares = sonda.thresholds;
+            var target = sonda.target;
+            SYNTH_TEMPLATE.buildNewBox(sondaOrigemId, resultados, limiares, target);
             //template.find('.synth_destino span').text(sonda.nome);
         })
     },
@@ -138,17 +145,19 @@ var SYNTH_TEMPLATE = {
         });
     },
 
-    buildNewBox: function(sondaOrigemId, resultados, limiares){
+//recebe o id da sonda de origem, um objeto com os resultados, um com os limiares e um com informções da sonda de destino
+//constrói o box com as informações da sonda e uma barra colorida indicando o status
+    buildNewBox: function(sondaOrigemId, resultados, limiares, target){
         //html
         var template = $('#synth_template_box').clone().removeClass('template').addClass('synth_box');
 
         //prepara o template                                   //coloca os dados nas tags do template
-        var id = resultados.id;
-        var nome = resultados.nome;
+        var id = target.id;
+        var nome = target.name; //suporte à internacionalização entre scripts já! __("#chupafelhadapulta!")
         var rtt = resultados.rtt;
         var loss = resultados.loss;
-        var tpTCP = resultados.tpTCP;
-        var tpUDP = resultados.tpUDP;
+        var tpTCP = resultados.throughputTCP;
+        var tpUDP = resultados.throughput;
 
         //console.log("em SYNTH_TEMPLATE, sondaDestId: ", id); OK
         //
@@ -159,10 +168,10 @@ var SYNTH_TEMPLATE = {
             template.attr('id', 'synthBox_'+id); //coloca dinâmicamente o id único para cada sonda substituindo o id do template
 
             //adiciona as cores às barras
-            template.find('.rtt_bar').css('background-color', SYNTH_BAR.color(rtt, limiares.rttMin, limiares.rttMax));
-            template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, limiares.lossMin, limiares.lossMax));
-            template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, limiares.tpTcpMin, limiares.tpTcpMax));
-            template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, limiares.tpUdpMin, limiares.tpUdpMax));
+            template.find('.rtt_bar').css('background-color', SYNTH_BAR.color(rtt, limiares.rtt.min, limiares.rtt.max));
+            template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, limiares.loss.min, limiares.loss.max));
+            template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, limiares.throughputTCP.min, limiares.throughputTCP.max));
+            template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, limiares.throughput.min, limiares.throughput.max));
 
 
 

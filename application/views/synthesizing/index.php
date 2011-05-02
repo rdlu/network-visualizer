@@ -10,7 +10,9 @@
             <select id="synth_dropdown" name="origem">
                 <!-- povoado no oontroller synthesizing.php -->
                 
-                <?php if(Arr::is_array($resp))foreach($resp as $entity): ?>
+                <?php 
+                    if(Arr::is_array($resp)) //só
+                        foreach($resp as $entity): ?>
                         <option id="<?="synth_opt_".$entity['id']; ?>" value="<?=$entity['id'];?>">
                            <?=$entity['name'] ." (".$entity['ipaddress'] .")"; ?>
                         </option>

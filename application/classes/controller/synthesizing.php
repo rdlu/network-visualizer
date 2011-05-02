@@ -35,7 +35,9 @@ class Controller_Synthesizing extends Controller_Skeleton {
  * Recebe o id de uma sonda e
  * Retorna as informações JSON sobre as sondas de destino
  */
-    public function action_destsondas($idorigem){
+    public function action_destsondas($source){
+        // Antes de Rodrigo
+/*
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
 
@@ -83,7 +85,7 @@ class Controller_Synthesizing extends Controller_Skeleton {
                 );
             $JSONresponse[] = $sonda1;
             $JSONresponse[] = $sonda2;
-
+*/
             /*
             $JSONresponse = array(
                 0 => array(
@@ -149,13 +151,38 @@ class Controller_Synthesizing extends Controller_Skeleton {
                  "loss" => "5.972",
                  "tpUDP" => "7.92972",
                  "tpTCP" =>  "1.2233"                
-            );
-            */
+            );                  
+
+            $JSONresponse = Reports::lastResultsFromSource($sondaOrigemId);
+
             $this->response->headers('Content-Type', 'application/json');
             $this->response->body(json_encode($JSONresponse));
-       }
+             *
+             *
+             */
+            //após Rodrigo
+           
+		//$source = $_POST['source'];
+        $this->auto_render = false;		
+
+		$source = Sprig::factory('entity',array('id'=>$source))->load();
+		$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id','=',$source->id),null);
+		$resp = array();
+		foreach($processes as $process) {
+			$resp[] = $process->destination->load();
+		}
+
+		foreach($resp as $destination) {
+			$pair = Pair::instance($source->id,$destination->id);
+			$resultss[$destination->id] = $pair->lastResults();
+		}
+                if(!empty($resultss)){
+                    if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
+                    $this->response->body(Zend_Json::encode($resultss));
+                }
     }
 
+//recebe o id da sonda de origem e retorna informações sobre a sonda de origem
      public function action_origsondas($idorigem){
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
