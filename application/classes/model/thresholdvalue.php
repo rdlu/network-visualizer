@@ -12,8 +12,8 @@ class Model_ThresholdValue extends Sprig {
 	protected function _init() {
 		$this->_fields += array(
 			'id' => new Sprig_Field_Auto(),
-			'min' => new Sprig_Field_Integer(),
-			'max' => new Sprig_Field_Integer(),
+			'min' => new Sprig_Field_Float(),
+			'max' => new Sprig_Field_Float(),
 			'thresholdProfile' => new Sprig_Field_BelongsTo(array(
 			                                                'model' => 'thresholdProfile',
 			                                                'column' => 'thresholdprofile_id',

@@ -69,6 +69,7 @@ class Controller_Processes extends Controller_Skeleton {
 		$this->template->title .= 'Criando novo processo de medição';
 		$process = Sprig::factory('process');
 		$profiles = Sprig::factory('profile')->load(NULL, FALSE);
+		$thresholds = Sprig::factory('thresholdProfile')->load(NULL, FALSE);
 
 		if ($source != 0) {
 			$sourceEnt = Sprig::factory('entity', array('id' => $source))->load();
@@ -90,12 +91,41 @@ class Controller_Processes extends Controller_Skeleton {
 				Fire::group('Form Validation Results')->warn($errors)->groupEnd();
 			}
 		}
+
+		$measure = Kohana::config('measure');
+		$conversion = new conversion();
+
+		foreach($thresholds as $threshold) {
+			$tvalues = $threshold->thresholdValues;
+			$tarr = array();
+			foreach($tvalues as $tvalue) {
+				$tmet = $tvalue->metric->load();
+				$tarr[$tmet->name] = $tvalue->as_array();
+				$tarr[$tmet->name]['reverse'] = (int) $tmet->reverse;
+				$type = $measure[$tmet->name]['type'];
+
+				//Faz a conversao dos valores em bps/segundos para um formato mais humano (Kbps/Mbps/ms)
+				if($type) {
+					$tarr[$tmet->name]['max'] = $conversion->{$type}($tarr[$tmet->name]['max']);
+					$tarr[$tmet->name]['min'] = $conversion->{$type}($tarr[$tmet->name]['min']);
+				} else {
+					//Caso nao precise de conversao só concatena a unidade de medida
+					$tarr[$tmet->name]['max'] = $tarr[$tmet->name]['max']." ".$measure[$tmet->name]['default'];
+					$tarr[$tmet->name]['min'] = $tarr[$tmet->name]['min']." ".$measure[$tmet->name]['default'];
+				}
+
+			}
+			$tvals[$threshold->id] =$tarr;
+		}
+		
 		$view = View::factory('processes/form');
 		$view->bind('process', $process)
 				->bind('errors', $errors)
 				->bind('source', $source)
 				->bind('sourceEntity', $sourceEntity)
 				->bind('profiles', $profiles)
+				->bind('thresholds',$thresholds)
+				->bind('thresholdsValues',$tvals)
 				->bind('metrics', $metrics);
 		$this->template->content = $view;
 	}
@@ -114,8 +144,9 @@ class Controller_Processes extends Controller_Skeleton {
 
 		if ($validado) {
 			$source = (int) $source;
-			$destination = $_POST['destination'];
+			$destination = (int) $_POST['destination'];
 			$metrics = (array) $_POST['metrics'];
+			$thresholdProfile = (int) $_POST['threshold'];
 
 			$rows = DB::select()->from('metrics')->group_by('profile_id')->where('profile_id',"!=",null)->or_where('id', 'IN', $metrics)->execute();
 
@@ -126,6 +157,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 			$sourceModel = Sprig::factory('entity', array('id' => $source))->load();
 			$destinationModel = Sprig::factory('entity', array('id' => $destination))->load();
+			$thresholdModel = Sprig::factory('thresholdProfile', array('id' => $thresholdProfile))->load();
 
 			$errors = false;
 
@@ -135,11 +167,7 @@ class Controller_Processes extends Controller_Skeleton {
 				$process->destination = $destinationModel;
 				$process->profile = $profile;
 				$process->metrics = $metrics;
-				$q = Db::select('port')->from('processes')->where('destination_id', '=', $destination)->order_by('port', 'DESC')->execute();
-				if ($q->count())
-					$process->port = $q->get('port') + 1;
-				else
-					$process->port = 12000;
+				$process->thresholdProfile = $thresholdModel;
 
 				try {
 					$process->create();
@@ -177,9 +205,11 @@ class Controller_Processes extends Controller_Skeleton {
 				$values = array(
 					'managerEntryStatus' => 6,
 					'managerAddress' => $source->ipaddress,
-					'managerPort' => $process->port,
+					'managerPort' => 12000 + $profile->id,
 					'managerProtocol' => $profile->protocol
 				);
+
+				Fire::info($values,"To do on Manager Table");
 
 				$snmp = Snmp::instance($destination->ipaddress, 'suppublic')->setGroup('managerTable', $values, array('id' => $process->id));
 
@@ -231,7 +261,7 @@ class Controller_Processes extends Controller_Skeleton {
 				$avalues = array('entryStatus' => 6);
 				$avalues = array_merge($avalues, $destination->as_array());
 				$avalues['profile'] = $profile->id;
-				$avalues['port'] = $process->port;
+				$avalues['port'] = 12000 + $profile->id;
 				$avalues['status'] = 1;
 				$atable = $sourceSnmp->setGroup('agentTable', $avalues, array('pid' => $process->id));
 
@@ -336,7 +366,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 				$source = $process->source->load();
 				$destination = $process->destination->load();
-				$values['entryStatus'] = 6;
+				$values = array();
 
 				$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic')->setGroup('removeAgent', $values, array('id' => $process->id));
 				$destinationSnmp = Snmp::instance($destination->ipaddress, 'suppublic')->setGroup('removeManager', $values, array('id' => $process->id));

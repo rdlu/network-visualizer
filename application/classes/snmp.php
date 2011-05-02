@@ -100,7 +100,7 @@ class Snmp {
 		foreach($oids as $key => $oid) {
 			if(isset($oid['readonly']) && $oid['readonly']) continue;
 
-			if(isset($values[$key])) $value = $values[$key];
+			if(count($values) && isset($values[$key])) $value = $values[$key];
 			elseif(isset($oid['default'])) $value = $oid['default'];
 			else continue;
 

@@ -506,7 +506,7 @@ div#content .centerBox {
     width: 98%;
 }
 
-input.nice {
+input.nice, select.nice {
     border: thin solid #999999;
     border-radius: 3px;
     font-size: 1em;
@@ -517,7 +517,7 @@ input.nice {
     vertical-align: middle;
 }
 
-input.nice.big, span.nice.big, label.nice.big {
+input.nice.big, span.nice.big, label.nice.big, select.nice.big {
     font-size: 1.2em;
 }
 

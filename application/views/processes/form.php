@@ -46,11 +46,41 @@
 		<?php endforeach ?>
 	</ul>
 </fieldset>
+
+<fieldset title="Conjunto dos limiares a serem considerados">
+	<legend>Limiares a serem utilizadas</legend>
+	<div style="float:left;margin-right:15px;"><img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
+<span class="label nice big"><strong>Limiares</strong></span></div>
+	<div style="float:left;margin-right:15px;">
+		<select name="threshold" id="threshold" class="nice big">
+		<?php foreach($thresholds as $key => $threshold): ?>
+			<option value="<?=$threshold->id?>" class="nice big"><?=$threshold->name?></option>
+		<?php endforeach ?>
+		</select>
+	</div>
+	<div id="limiaresInfo">
+		<ul id="limiares" class="nice checkbox">
+		<?php foreach(reset($thresholdsValues) as $mName => $tValues): ?>
+			<li class="nice checkbox" style="padding:8px;"><?=$mName?>:
+				<?php if($tValues['reverse']): ?>
+					<span style="color:#336600;"><?=$tValues['max']?></span> <span style="color:#993b3b"><?=$tValues['min']?></span>
+				<?php else: ?>
+					<span style="color:#993b3b"><?=$tValues['min']?></span> <span style="color:#336600;"><?=$tValues['max']?></span>
+				<?php endif;?>
+			</li>
+		<?php endforeach; ?>
+		</ul>
+	</div>
+</fieldset>
 <?= Form::submit('submit_process', 'OK', array('id'=>'submit_process','disabled' => true)) ?>
 <?= Form::close() ?>
 
 <script type="text/javascript">
 	$(function() {
+		var limiares = <?=json_encode($thresholdsValues)?>;
+
+		//jQuery('#threshold').change(function(evt))
+
 		$("#sonda").autocomplete({
 			source: function(request, response) {
 				$.ajax({
