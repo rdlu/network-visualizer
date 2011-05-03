@@ -30,7 +30,7 @@ class Rrd {
 		if (!isset(Rrd::$instances[$source . ':' . $destination])) {
 			$newinstance = new Rrd();
 			$newinstance->setSource($source);
-			$newinstance->setDestination($destination, false);
+			$newinstance->setDestination($destination);
 
 			Rrd::$instances[$source . ':' . $destination] = $newinstance;
 		}
@@ -51,15 +51,15 @@ class Rrd {
 	}
 
 	public function getSource() {
-		if (Valid::ip($this->source))
+		//if (Valid::ip($this->source))
 			return $this->source;
-		else return Network::getAddress($this->source);
+		//else return Network::getAddress($this->source);
 	}
 
 	public function getDestination() {
-		if (Valid::ip($this->destination))
+		//if (Valid::ip($this->destination))
 			return $this->destination;
-		else return Network::getAddress($this->source);
+		//else return Network::getAddress($this->destination);
 	}
 
 	public function path() {

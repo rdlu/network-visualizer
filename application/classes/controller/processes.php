@@ -308,13 +308,13 @@ class Controller_Processes extends Controller_Skeleton {
 				Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
 				$source = $process->source->load();
 				$destination = $process->destination->load();
+
 				$profile = $process->profile->load();
 				if (Snmp::instance($source->ipaddress)->isReachable(NMMIB . '.0.0.0.' . $process->id)) {
 					if (Snmp::instance($destination->ipaddress)->isReachable(NMMIB . '.10.0.0.' . $process->id)) {
 						$response['message'] = "Configurações salvas com sucesso no banco de dados do MoM";
 						$response['class'] = 'success';
-						$dest = $destination->as_array();
-						$rrd = Rrd::instance($source->ipaddress, $dest['ipaddress']);
+						$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
 
 						foreach ($profile->metrics as $metric) {
 							$rrd->create($metric->name, $profile->polling);

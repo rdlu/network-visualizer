@@ -263,7 +263,7 @@ class Controller_Reports extends Controller_Skeleton {
 
 		foreach($resp as $destination) {
 			$pair = Pair::instance($source->id,$destination->id);
-			$resultss[$destination->id] = $pair->lastResults();
+			$resultss[] = $pair->lastResults();
 		}
 
 		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');

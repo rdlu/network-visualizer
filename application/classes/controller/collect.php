@@ -21,17 +21,19 @@ class Controller_Collect extends Controller {
 		    }
 		    $destination = $process->destination->load();
 		    $source = $process->source->load();
-		    Fire::info($source->as_array());
 		    $profile = $process->profile->load();
+		    $metric = Sprig::factory('metric')->load(Db::select()->where('plugin','=',$metric));
+
+		    Fire::info($metric->as_array());
 	       if(true || $source->ipaddress == $ip) {
 		       $snmp = Snmp::instance($source->ipaddress);
 		       $simple = $snmp->group('agentSimple',array('pid'=>$id));
 		       $dip = $simple['ipaddress'];
 		       if($destination->ipaddress == $dip) {
-			       $data = $snmp->group($metric,array('id'=>$id));
+			       $data = $snmp->group($metric->name,array('id'=>$id));
 			       //$timestamp = Snmp::convertTimestamp($simple['timestamp']);
 			       $timestamp = date('U');
-		          $rrd = Rrd::instance($source->ipaddress,$destination->ipaddress)->update($metric,$data,$timestamp);
+		          $rrd = Rrd::instance($source->ipaddress,$destination->ipaddress)->update($metric->name,$data,$timestamp);
 		          $destination->updated = $timestamp;
 			       $source->updated = $timestamp;
 			       $process->updated = $timestamp;
