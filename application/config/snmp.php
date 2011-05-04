@@ -70,6 +70,69 @@ return array(
 		    'readonly' => true
 	    ),
     ),
+    'throughputTCP' => array(
+	    'LastDSMax' => array(
+		    'oid' => NMMIB.'.3.8.0.0.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'LastDSMin' => array(
+		    'oid' => NMMIB.'.3.8.0.1.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'LastDSAvg' => array(
+		    'oid' => NMMIB.'.3.8.0.2.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'LastSDMax' => array(
+		    'oid' => NMMIB.'.3.8.0.3.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'LastSDMin' => array(
+		    'oid' => NMMIB.'.3.8.0.4.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'LastSDAvg' => array(
+		    'oid' => NMMIB.'.3.8.0.5.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'AverageDSMax' => array(
+		    'oid' => NMMIB.'.3.8.0.6.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'AverageDSMin' => array(
+		    'oid' => NMMIB.'.3.8.0.7.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'AverageDSAvg' => array(
+		    'oid' => NMMIB.'.3.8.0.8.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'AverageSDMax' => array(
+		    'oid' => NMMIB.'.3.8.0.9.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'AverageSDMin' => array(
+		    'oid' => NMMIB.'.3.8.0.10.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+	    'AverageSDAvg' => array(
+		    'oid' => NMMIB.'.3.8.0.11.id',
+		    'type' => 'int',
+		    'readonly' => true
+	    ),
+    ),
+
 	'mos' => array(
 	    'LastDSMax' => array(
 		    'oid' => NMMIB.'.3.6.0.0.id',

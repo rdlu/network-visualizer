@@ -30,7 +30,7 @@ class Rrd {
 		if (!isset(Rrd::$instances[$source . ':' . $destination])) {
 			$newinstance = new Rrd();
 			$newinstance->setSource($source);
-			$newinstance->setDestination($destination, false);
+			$newinstance->setDestination($destination);
 
 			Rrd::$instances[$source . ':' . $destination] = $newinstance;
 		}
@@ -51,15 +51,15 @@ class Rrd {
 	}
 
 	public function getSource() {
-		if (Valid::ip($this->source))
+		//if (Valid::ip($this->source))
 			return $this->source;
-		else return Network::getAddress($this->source);
+		//else return Network::getAddress($this->source);
 	}
 
 	public function getDestination() {
-		if (Valid::ip($this->destination))
+		//if (Valid::ip($this->destination))
 			return $this->destination;
-		else return Network::getAddress($this->source);
+		//else return Network::getAddress($this->destination);
 	}
 
 	public function path() {
@@ -96,7 +96,7 @@ class Rrd {
 	 * @return Rrd
 	 */
 	public function create($metric, $step) {
-		$heartbeat = 2 * $step;
+		$heartbeat = 3 * $step;
 		$mainPrecision = 1209600 / $step; //1 semana
 		$secondaryPrecision = 2628000 / $step; //1 mes
 		$thirdPrecision = 15768000 / $step; //6 meses

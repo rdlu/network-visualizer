@@ -124,7 +124,10 @@ class Pair {
 
 		}
 
+
+		if($obj->meta->rows > 1) //n linhas
 		foreach($obj->data->row as $k => $row) {
+			//n colunas
 			if(count($obj->meta->legend->entry) > 1)
 				foreach($row->v as $j => $value) {
 					$value = ($value == 'NaN') ? null:$value;
@@ -132,11 +135,24 @@ class Pair {
 					$af[$row->t] = $value;
 					$results->values[$mn] = $af;
 				}
+			//1 coluna
 			else {
 				$value = ($row->v == 'NaN') ? null:$row->v;
 				$af[$row->t] = $value;
 				$results->values['sds'] = $af;
 
+			}
+		}
+		else {
+			//1 linha e n colunas
+			if(count($obj->meta->legend->entry) > 1)
+				foreach($obj->data->row->v as $j => $value) {
+					$value = ($value == 'NaN') ? null:$value;
+					$mn = $mm[$j][1];
+					$af[$obj->data->row->t] = $value;
+					$results->values[$mn] = $af;
+				}
+			else { //1linha e 1 coluna
 			}
 		}
 
@@ -164,7 +180,6 @@ class Pair {
 	public function lastResults($type = 'sd') {
 		$results = $this->getResults(false,false);
 
-		Fire::info($results[$type]);
 		$thresholds = $this->getThresholds();
 
 		$return = array();
@@ -172,17 +187,19 @@ class Pair {
 			$return[$metric] = Rrd::sci2num(end($result));
 		}
 
+		Fire::info($return);
+
 		if($type == 'sd') {
 			$target = array(
 				'id' => $this->destination->id,
 				'ip' => $this->destination->ipaddress,
-				'name' => $this->destination->name
+				'name' => Kohana_UTF8::transliterate_to_ascii($this->destination->name)
 			);
 		} else {
 			$target = array(
 				'id' => $this->source->id,
 				'ip' => $this->source->ipaddress,
-				'name' => $this->source->name
+				'name' => Kohana_UTF8::transliterate_to_ascii($this->source->name)
 			);
 		}
 

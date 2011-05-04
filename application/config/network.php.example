@@ -3,6 +3,6 @@
 return array(
 
 	'ddns' => array(
-		'server' => 'vlad.inf.ufrgs.br'
+		'server' => '143.54.10.145'
 	)
 );

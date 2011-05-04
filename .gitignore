@@ -3,3 +3,4 @@
 /public/images/rrd/*
 .idea
 /application/config/database.php
+/application/config/network.php
