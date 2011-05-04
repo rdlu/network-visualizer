@@ -28,10 +28,21 @@ class Controller_Reports extends Controller_Skeleton {
 			$this->auto_render = false;
 			$sId = (int) $_POST['source'];
 		   $dId = (int) $_POST['destination'];
-			$start = $_POST['startDate'];
-		   $end = $_POST['endDate'];
-		   $stime = $_POST['startHour'];
-		   $etime = $_POST['endHour'];
+
+			$relative = (isset($_POST['relative']))?$_POST['relative']:false;
+
+			if($relative) {
+				$inicio = strtotime($relative);
+				$end = Date("U");
+			} else {
+				$start = $_POST['startDate'];
+		      $end = $_POST['endDate'];
+		      $stime = $_POST['startHour'];
+		      $etime = $_POST['endHour'];
+				$inicio = Rrd::converteData($start)." ".$stime;
+				$fim = Rrd::converteData($end)." ".$etime;
+			}
+
 		}
 
 	   //Valida dados
@@ -52,8 +63,6 @@ class Controller_Reports extends Controller_Skeleton {
 		Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
 
 		if($count) {
-			$inicio = Rrd::converteData($start)." ".$stime;
-			$fim = Rrd::converteData($end)." ".$etime;
 
 			$metrics2 = array();
 

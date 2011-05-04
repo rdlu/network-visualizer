@@ -1,6 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /* controller para a aba Sintetização */
-class Controller_Synthesizing extends Controller_Skeleton {
+class Controller_Synthesizing extends Controller_Skeleton
+{
 
     public function before() {
         parent::before();
@@ -11,10 +12,10 @@ class Controller_Synthesizing extends Controller_Skeleton {
         $view = View::factory('synthesizing/index');
         //$entities = Sprig::factory('entity')->load(null, FALSE);
         $processes = Sprig::factory('process')->load(Db::select()->group_by('source_id'),null);
-	$resp = array();
-	foreach($processes as $process) {
-            $resp[] = $process->source->load()->as_array();
-	}
+        $resp = array();
+        foreach($processes as $process) {
+	        $resp[] = $process->source->load()->as_array();
+        }
         //Fire::info($resp, 'Array com os dados de origem: ');
         $view->bind('resp', $resp);
         $this->template->content = $view;
@@ -171,9 +172,72 @@ class Controller_Synthesizing extends Controller_Skeleton {
        }
     }
 
-    public function action_popup($sondaOrigemId){
-        $view = View::factory('synthesizing/popup');
-	$view->bind('sondaOrigemId', $sondaOrigemId);
-        $this->template->content = $view;
-    }
+	public function action_popup($sondaOrigemId)
+	{
+		$view = View::factory('synthesizing/popup');
+		$view->bind('sondaOrigemId', $sondaOrigemId);
+		$this->template->content = $view;
+	}
+
+	public function action_Modal($sId=0,$dId=0,$relative=0) {
+		$sId = (int) $sId;
+		$dId = (int) $dId;
+		$view = View::factory('synthesizing/modal');
+		if(Request::current()->is_ajax()) {
+			$this->auto_render = false;
+			$sId = (int) $_POST['source'];
+		   $dId = (int) $_POST['destination'];
+			$relative = isset($_POST['relative'])?$_POST['relative']:"7 days";
+		}
+
+		$inicio = strtotime("-".$relative);
+		Fire::error($inicio,"$relative");
+		$fim = date("U");
+
+	   $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
+	   $source = Sprig::factory('entity',array('id'=>$sId))->load();
+	   $destination = Sprig::factory('entity',array('id'=>$dId))->load();
+
+	   //Gerando os graficos
+		$rrd = Rrd::instance($source->ipaddress,$destination->ipaddress);
+		$count = $processes->count();
+
+		Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
+
+		if($count) {
+			$metrics2 = array();
+
+			foreach($processes as $process) {
+				Fire::info($process->as_array(),"Process 1, ID: $process->id");
+				$profile = $process->profile->load();
+				$metrics = $profile->metrics;
+				foreach($metrics as $metric) {
+					$img[$metric->name] = $rrd->graph($metric->name,$inicio,$fim);
+					$metrics2[$metric->name] = array('order' => $metric->order, 'desc' => $metric->desc);
+					$order[] = $metric->order;
+				}
+			}
+
+			array_multisort($order, $metrics2);
+
+		   Fire::group("Images path")->info($img)->groupEnd();
+		   Fire::groupEnd();
+
+		   $view->bind('images',$img)
+				   ->bind('metrics',$metrics2)
+					->bind('processes',$processes)
+			      ->bind('source',$source)
+			      ->bind('destination',$destination)
+			      ->set('header',true); //isset($_POST['relative'])
+			if(Request::current()->is_ajax()) {
+				$this->response->headers('Cache-Control',"no-cache");
+			   $this->response->body($view);
+		   } else {
+			   $this->template->content = $view;
+		   }
+
+		} else {
+			$this->template->content = "Não há nenhum processo de medição entre $source->name ($source->ipaddress) e $destination->name ($destination->ipaddress)";
+		}
+	}
 }
