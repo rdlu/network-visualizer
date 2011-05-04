@@ -235,6 +235,9 @@ var SYNTH_BAR = { //Retorna a cor do background
          * 1 - green
          * 2 - yellow
          */
+        valor = parseFloat(valor);
+        limMin = parseFloat(valor);
+        limMax = parseFloat(valor);
         if(valor <= limMin){return SYNTH_BAR.vermelho;}
         else if(valor >= limMax){return SYNTH_BAR.verde;}
         else {
