@@ -40,7 +40,7 @@ class Controller_Collect extends Controller {
 		          $destination->update();
 			       $source->update();
 			       $process->update();
-		          $response = 'Updated';
+		          $response = "Updated $timestamp";
 		       } else {
 			       throw new Kohana_Exception("Source IP $ip for id $id on Destination IP $ip does not match the records on DB",$simple);
 		       }

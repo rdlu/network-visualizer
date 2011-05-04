@@ -96,7 +96,7 @@ class Rrd {
 	 * @return Rrd
 	 */
 	public function create($metric, $step) {
-		$heartbeat = 2 * $step;
+		$heartbeat = 3 * $step;
 		$mainPrecision = 1209600 / $step; //1 semana
 		$secondaryPrecision = 2628000 / $step; //1 mes
 		$thirdPrecision = 15768000 / $step; //6 meses

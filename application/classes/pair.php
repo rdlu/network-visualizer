@@ -127,7 +127,6 @@ class Pair {
 
 		if($obj->meta->rows > 1) //n linhas
 		foreach($obj->data->row as $k => $row) {
-			Fire::info($k,"$metric");
 			//n colunas
 			if(count($obj->meta->legend->entry) > 1)
 				foreach($row->v as $j => $value) {
@@ -181,7 +180,6 @@ class Pair {
 	public function lastResults($type = 'sd') {
 		$results = $this->getResults(false,false);
 
-		Fire::info($results[$type]);
 		$thresholds = $this->getThresholds();
 
 		$return = array();
@@ -189,17 +187,19 @@ class Pair {
 			$return[$metric] = Rrd::sci2num(end($result));
 		}
 
+		Fire::info($return);
+
 		if($type == 'sd') {
 			$target = array(
 				'id' => $this->destination->id,
 				'ip' => $this->destination->ipaddress,
-				'name' => $this->destination->name
+				'name' => Kohana_UTF8::transliterate_to_ascii($this->destination->name)
 			);
 		} else {
 			$target = array(
 				'id' => $this->source->id,
 				'ip' => $this->source->ipaddress,
-				'name' => $this->source->name
+				'name' => Kohana_UTF8::transliterate_to_ascii($this->source->name)
 			);
 		}
 
