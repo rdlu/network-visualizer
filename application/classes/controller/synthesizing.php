@@ -131,12 +131,11 @@ class Controller_Synthesizing extends Controller_Skeleton {
 
             $this->response->headers('Content-Type', 'application/json');
             $this->response->body(Zend_Json::encode($JSONresponse));
- } */
-            //após Rodrigo
+ } */            
            
 /* ESSE É O QUE DEVE ESTAR FUNCIONANDO */
 
-        $this->auto_render = false;		
+        $this->auto_render = false;
 
 		$source = Sprig::factory('entity',array('id'=>$source))->load();
 		$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id','=',$source->id),null);
@@ -147,10 +146,11 @@ class Controller_Synthesizing extends Controller_Skeleton {
 
 		foreach($resp as $destination) {
 			$pair = Pair::instance($source->id,$destination->id);
-			$resultss[$destination->id] = $pair->lastResults();
+			$resultss[] = $pair->lastResults();
 		}
-                if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
-                $this->response->body(Zend_Json::encode($resultss));
+
+		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
+		$this->response->body(Zend_Json::encode($resultss));
                    
 
  }
