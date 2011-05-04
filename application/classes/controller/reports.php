@@ -257,7 +257,7 @@ class Controller_Reports extends Controller_Skeleton {
 		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
 		$this->response->body(Zend_Json::encode($pair->lastResults()));
 	}
-
+//Rodrigo, se possível, altera essa função sempre em synthesizing - action_destsondas. Vlw
 	public function action_lastResultsFromSource($source) {
 		$this->auto_render = false;
 
