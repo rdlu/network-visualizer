@@ -49,7 +49,7 @@
 				console.log(ui.item ?
 						"Selected: " + ui.item.label :
 						"Nothing selected, input was " + this.value);
-				$("#sonda").data("id", ui.item.id);
+				$("#sonda").data("id", ui.item);
 				listProcesses(ui.item);
 			},
 			open: function() {
