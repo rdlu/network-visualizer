@@ -7,12 +7,12 @@
 //to do:
 
 //connect => OK
-//template loader => ok
-//template builder => ok
-//ajax => ok
+//template loader => OK
+//template builder => OK
+//ajax => OK
 
 //em desordem de prioridade:
-////fazer pegar medições das sondas via SNMP
+////fazer pegar medições das sondas via SNMP => via Rodrigo, Ok
 //SYNTH.update
 //gradiente da barra => OK
 //evitar duplicação de seções => OK
@@ -90,9 +90,11 @@ var SYNTH = {
         //console.log("em newBoxes, sondasDestino: ", sondasDestino);
         $.each(sondasDestino, function(){
             var sonda = $(this)[0];
+            console.log('$(this)[0]: ',$(this)[0]);
             var resultados = sonda.results;
             var limiares = sonda.thresholds;
             var target = sonda.target;
+            console.log("sonda.target: ", sonda.target);
             SYNTH_TEMPLATE.buildNewBox(sondaOrigemId, resultados, limiares, target);
             //template.find('.synth_destino span').text(sonda.nome);
         })
@@ -266,7 +268,7 @@ var SYNTH_BAR = { //Retorna a cor do background
             //console.log('g: ', g);
             b = base_b + Math.round(offset_b * (valor/limite));
             //console.log('b: ', b);
-
+            
             return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
         }
     }
