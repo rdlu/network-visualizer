@@ -29,19 +29,19 @@ class Controller_Processes extends Controller_Skeleton {
 
 		if (Valid::ipOrHostname($sourceAddr)) {
 			$sourceEntity = Sprig::factory('entity', array('ipaddress' => $sourceAddr))->load();
-			$entities = Sprig::factory('entity')->load(NULL, FALSE);
+			$processes = Sprig::factory('process', array('source' => $sourceEntity->id))->load(NULL, FALSE);
 
-			if ($sourceEntity->id) {
-				Fire::info(array('source_id' => $sourceEntity->id));
-				$processes = Sprig::factory('process', array('source' => $sourceEntity->id))->load(NULL, FALSE);
-			} else {
-				$processes = null;
+			foreach($processes as $process) {
+				$destination = $process->destination->load();
+				$destinations[$destination->id] = $destination;
+				$pair = Pair::instance($sourceEntity->id,$destination->id);
+				$metrics[$destination->id] = $pair->getMetrics();
 			}
 
 			Fire::group('Models Loaded')
 					->info($processes)
 					->info($sourceEntity)
-					->info($entities)
+					->info($destinations)
 					->groupEnd();
 		} else {
 			$errors[] = "A origem $sourceAddr não é um IP válido. Você deve informar um IP válido.";
@@ -52,7 +52,8 @@ class Controller_Processes extends Controller_Skeleton {
 				->bind('errors', $errors)
 				->bind('source', $sourceEntity)
 				->bind('sourceAddr', $sourceAddr)
-				->bind('entities', $entities);
+				->bind('metrics',$metrics)
+				->bind('destinations', $destinations);
 		$this->response->body($view);
 	}
 
@@ -351,64 +352,16 @@ class Controller_Processes extends Controller_Skeleton {
 	public function action_remove() {
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
-			$process = Sprig::factory('process');
 
-			$id = (int) $_POST['id'];
-
+			$source = (int) $_POST['source'];
+			$destination = (int) $_POST['destination'];
 			$force = (boolean) (isset($_POST['force'])) ? $_POST['force'] : false;
 
-			if ($id != 0) {
-				$process->id = $id;
-				$process->load();
-			}
-
-			if ($process->loaded()) {
-
-				$source = $process->source->load();
-				$destination = $process->destination->load();
-				$values = array();
-
-				$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic')->setGroup('removeAgent', $values, array('id' => $process->id));
-				$destinationSnmp = Snmp::instance($destination->ipaddress, 'suppublic')->setGroup('removeManager', $values, array('id' => $process->id));
-
-
-				$c = 0;
-				$c += count($sourceSnmp);
-				if ($c > 0) {
-					$errors[] = "A sonda de origem \"$source->name\" ($source->ipaddress) não pode ser contactada para reconfiguração.";
-				}
-
-				$c += count($destinationSnmp);
-				if ($c > 0) {
-					$errors[] = "A sonda de destino \"$destination->name\" ($destination->ipaddress) não pode ser contactada para reconfiguração";
-				}
-
-
-				if ($c == 0 || $force) {
-					$process->delete();
-					if ($process->state() == 'deleted') {
-						$response = array(
-							'errors' => 0,
-							'messages' => array("O processo $process->id, com origem $source->name e destino $destination->name foi desconfigurado com sucesso")
-						);
-					}
-				} else {
-					$response = array(
-						'errors' => $c,
-						'messages' => $errors
-					);
-				}
-
-
-			} else {
-				$response = array(
-					'errors' => 1,
-					'messages' => array("O processo $id, não existe")
-				);
-			}
+			$pair = Pair::instance($source,$destination);
+			$responses = $pair->removeProcesses($force);
 
 			$this->response->headers('Content-Type', 'application/json');
-			$this->response->body(json_encode($response));
+			$this->response->body(json_encode($responses));
 		}
 	}
 

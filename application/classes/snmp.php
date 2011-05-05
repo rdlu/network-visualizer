@@ -1,5 +1,7 @@
 <?php
 
+class Snmp_Exception extends Exception {}
+
 class Snmp {
 
 	protected $default = '127.0.0.1';
