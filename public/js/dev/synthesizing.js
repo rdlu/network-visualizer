@@ -113,11 +113,8 @@ var SYNTH = {
         console.log($('#synth_opt_'+sondaOrigemId));
         (SYNTH.onScreen).pop(sondaOrigemId);
         console.log('SYNTH.onScreen: ', SYNTH.onScreen);
-    },
-    popupSection: function(sondaOrigemId){
-        window.open('synthpopup/'+sondaOrigemId, '' , 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 0,top = 0, modal=yes, alwaysRaised=yes');
-        //window.open(URL, '" + id + "', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=1360,height=768,left = 0,top = 0');
     }
+    
 };
 
 SYNTH.onScreen = []; //vou precisar de um array com as sondas medidas.
@@ -143,7 +140,7 @@ var SYNTH_TEMPLATE = {
         });
         template.find('.synth_popup').bind('click', sondaOrigemId, function(e){
             e.preventDefault();
-            SYNTH.popupSection(sondaOrigemId)
+            SYNTH.popupSection(sondaOrigemId);
         });
     },
 
@@ -161,7 +158,13 @@ var SYNTH_TEMPLATE = {
         var tpTCP = resultados.throughputTCP;
         var tpUDP = resultados.throughput;
 
-        //console.log("em SYNTH_TEMPLATE, sondaDestId: ", id); OK
+        console.log("------------ Debug de SYNTH_TEMPLATE --------------");
+        console.log('id: ', id);
+        console.log('nome: ', nome);
+        console.log('rtt: ', rtt);
+        console.log('loss: ', loss);
+        console.log('tpTCP: ', tpTCP);
+        console.log('tpUDP: ', tpUDP);
         //
             //console.log('DEBUG do template build New Box: ', template);
             template.find('.nome').text(nome);
@@ -175,6 +178,10 @@ var SYNTH_TEMPLATE = {
             template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, limiares.throughputTCP.min, limiares.throughputTCP.max));
             template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, limiares.throughput.min, limiares.throughput.max));
 
+        template.bind('click', sondaOrigemId, function(e){
+            e.preventDefault();
+            SYNTH.popupRelatorios(sondaOrigemId, id);
+        });
 
 
         //atach to secao
@@ -235,10 +242,17 @@ var SYNTH_BAR = { //Retorna a cor do background
          * 1 - green
          * 2 - yellow
          */
+        console.log('------------Debug da função color --------------- ');
         valor = parseFloat(valor);
+        console.log("valor: ", valor);
         limMin = parseFloat(valor);
+        console.log("limMin: ", limMin);
         limMax = parseFloat(valor);
-        if(valor <= limMin){return SYNTH_BAR.vermelho;}
+        console.log("limMax: ", limMax);
+
+        if(valor <= limMin){
+            return SYNTH_BAR.vermelho;
+        }
         else if(valor >= limMax){return SYNTH_BAR.verde;}
         else {
             var media = (limMax + limMin) / 2;
@@ -271,7 +285,7 @@ var SYNTH_BAR = { //Retorna a cor do background
             //console.log('g: ', g);
             b = base_b + Math.round(offset_b * (valor/limite));
             //console.log('b: ', b);
-            
+            console.log();
             return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
         }
     }
