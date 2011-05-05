@@ -1,9 +1,6 @@
 <?php if($header): ?>
 <table class="filterMenu">
 	<tr>
-		<td colspan="3" style="text-align:center;">Relatório Gráfico da Sintetização</td>
-	</tr>
-	<tr>
 		<td>Origem: <?=$source->name?> (<?=$source->ipaddress?>)</td>
 		<td>Destino: <?=$destination->name?> (<?=$destination->ipaddress?>)</td>
 		<td>

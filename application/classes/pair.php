@@ -61,11 +61,81 @@ class Pair {
 		return $this->metrics;
 	}
 
+	/**
+	 * @return Database_MySQL_Result
+	 */
 	public function getProcesses() {
 		if($this->processes->count() == 0) {
 			$this->processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$this->destination->id)->where('source_id','=',$this->source->id),false);
 		}
 		return $this->processes;
+	}
+
+	public function removeProcess(Model_Process $process,$force=false) {
+		if ($process->loaded()) {
+			$source = $process->source->load();
+			$destination = $process->destination->load();
+			$values = array();
+
+			$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic')->setGroup('removeAgent', $values, array('id' => $process->id));
+			$destinationSnmp = Snmp::instance($destination->ipaddress, 'suppublic')->setGroup('removeManager', $values, array('id' => $process->id));
+
+			$c = 0; $return = 0;
+			$c += count($sourceSnmp);
+			if ($c > 0) {
+				$return = 1;
+				//$errors[0] = "A sonda de origem \"$source->name\" ($source->ipaddress) não pode ser contactada para reconfiguração.";
+			}
+
+			$d = 0;
+			$d += count($destinationSnmp);
+			if ($d > 0) {
+				$return = 2;
+				//$errors[1] = "A sonda de destino \"$destination->name\" ($destination->ipaddress) não pode ser contactada para reconfiguração";
+			}
+
+			$c = $c + $d;
+			if ($c == 0 || $force) {
+				try {
+					$process->delete();
+				} catch (Database_Exception $e) {
+					$return = 4;
+				}
+
+			}
+		} else {
+			$return = 5;
+		}
+
+		return $return;
+	}
+
+	public function removeProcesses($force = false) {
+		foreach($this->getProcesses() as $process) {
+			$responses[$process->id] = $this->removeProcess($process,$force);
+		}
+
+		$return['errors'] = 0;
+		$return['message'] = array("Os processos de medição entre {$this->source->name} ({$this->source->ipaddress}) e {$this->destination->name} ({$this->destination->ipaddress}) foram removidos com sucesso");
+
+		foreach($responses as $procid => $response) {
+			switch($response) {
+				case 1:
+					$return['errors'] += 1;
+					$return['message'][$response] = "A sonda de origem \"{$this->source->name}\" ({$this->source->ipaddress}) não pode ser contactada para reconfiguração.";
+					break;
+				case 2:
+					$return['errors'] += 1;
+					$return['message'][$response] = "A sonda de destino \"{$this->destination->name}\" ({$this->destination->ipaddress}) não pode ser contactada para reconfiguração";
+					break;
+				default:
+					$return['errors'] += 1;
+					$return['message'][$response] = "Erro $response no processo $procid";
+					break;
+			}
+		}
+
+		return $return;
 	}
 
 	public function getThresholds() {

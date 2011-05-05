@@ -47,6 +47,10 @@ class Controller_Skeleton extends Controller_Template {
 			$this->template->title = 'NetmetricMoM :: ';
 			$this->template->content = '';
 			$this->template->header = View::factory('templates/mainmenu');
+			$this->template->header->menus = Kohana::config('menus.main');
+			if (true ||Auth::instance()->logged_in()) {
+				$this->template->header->menus['logoff'] = array('title'=>__('Logout'),'href'=>'account/signout');
+			}
 			$footer = View::factory('templates/footer');
 			$this->template->footer = $footer;
 			$this->template->styles = array();
@@ -77,6 +81,7 @@ class Controller_Skeleton extends Controller_Template {
 
 			$scripts = array(
 				'js/dev/jquery-1.5.1.js',
+				'js/jquery.tools.min.js',
 				'js/dev/dummyConsole.js',
 				'js/jquery-ui-1.8.6.custom.min.js',
 				'js/jquery.tablesorter.min.js',

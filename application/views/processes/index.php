@@ -82,12 +82,12 @@
 		});
 	}
 
-	function removeProcess(id, src, dest, pName) {
-		var dialog = $('<div></div>').html('Deseja remover o processo de medição, com perfil ' + pName + ',  entre ' + src + ' e ' + dest + '?').dialog({
+	function removeProcess(sid, src, did, dest) {
+		var dialog = $('<div></div>').html('Deseja remover os processos de medição, entre ' + src + ' e ' + dest + '?').dialog({
 			autoOpen: true,
 			modal: true,
 			minWidth: 500,
-			title: 'Remover processo de medição (ID:' + id + ')',
+			title: 'Remover processo de medição (S:'+sid+' D:'+did+')',
 			buttons: {
 				Cancelar: function() {
 					$(this).dialog("close");
@@ -96,7 +96,7 @@
 					jQuery.ajax({
 						url: "<?=url::site('processes/remove')?>",
 						type: 'post',
-						data: {'id':id},
+						data: {'source':sid,'destination':did},
 						beforeSend: function() {
 							dialog.html("Removendo processo, aguarde...");
 							dialog.dialog("option", "buttons", {});
@@ -117,7 +117,7 @@
 										jQuery.ajax({
 											url: "<?=url::site('processes/remove')?>",
 											type: 'post',
-											data: {'id':id,'force':true},
+											data: {'source':sid,'destination':did,'force':true},
 											beforeSend: function() {
 												dialog.html("Removendo processo em modo forçado, aguarde...");
 												dialog.dialog("option", "buttons", {});
@@ -146,7 +146,7 @@
 													});
 
 												}
-											},
+											}
 										});
 									}
 								});
@@ -172,7 +172,7 @@
 </script>
 <style type="text/css">
 	.ui-autocomplete-loading {
-		background: white url('images/loading/16.gif') right center no-repeat;
+		background: white url('<?=url::site()?>images/loading/16.gif') right center no-repeat;
 	}
 </style>
 

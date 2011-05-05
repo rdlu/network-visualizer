@@ -78,7 +78,7 @@ class Controller_Account extends Controller_Skeleton {
 
 			if ($auth->login($_POST['username'],$_POST['password'])) {
 				#redirect to the user account
-				Request::current()->redirect('account/myaccount');
+				Request::current()->redirect('welcome');
 			} else {
 				#Get errors for display in view
 				$errors[] = array('class'=>'error','message'=>'Usuário e/ou senha inválidos.');
@@ -94,7 +94,7 @@ class Controller_Account extends Controller_Skeleton {
 		Auth::instance()->logout();
 
 		#redirect to the user account and then the signin page if logout worked as expected
-		Request::current()->redirect('account/myaccount');
+		Request::current()->redirect('welcome');
 	}
 
 }

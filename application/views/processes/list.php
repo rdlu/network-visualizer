@@ -11,25 +11,21 @@
     <tr>
         <th>Origem</th>
         <th>Destino</th>
-        <th>Perfil</th>
         <th>Métricas cobertas</th>
 	     <th>Última atualização</th>
         <th>Ações</th>
     </tr>
     </thead>
 <tbody>
-<?php if(count($processes) > 0): ?>
-    <?php foreach($processes as $process): ?>
-            <?php $destination = $process->destination->load();
-                  $source = $process->source->load(); ?>
+<?php if(count($destinations) > 0): ?>
+    <?php foreach($destinations as $destination): ?>
         <tr>
             <td><a href="<?=Url::site('entities/view').'/'.$source->id?>"><?=$source->name.' ('.$source->ipaddress?>)</a></td>
             <td><a href="<?=Url::site('entities/view').'/'.$destination->id?>"><?=$destination->name.' ('.$destination->ipaddress?>)</a></td>
-            <td><?=$process->profile->load()->name?></td>
-            <td><?php foreach($process->profile->metrics as $metric) echo $metric->name.' '; ?></td>
-	         <td><?=$process->verbose('updated')?></td>
+            <td><?php foreach($metrics[$destination->id] as $metric) echo $metric->name.' '; ?></td>
+	         <td><?=$destination->verbose('updated')?></td>
             <td>
-                <a href="#"><img src="<?=url::site('images/actions/clock_delete.png')?>" alt="Remover" onclick="removeProcess(<?=$process->id?>,'<?=$source->name.' ('.$source->ipaddress.')'?>','<?=$destination->name.' ('.$destination->ipaddress.')'?>','<?=$process->profile->load()->name?>')" /></a>
+                <a href="#"><img src="<?=url::site('images/actions/clock_delete.png')?>" alt="Remover" onclick="removeProcess(<?=$source->id?>,'<?=$source->name.' ('.$source->ipaddress.')'?>',<?=$destination->id?>,'<?=$destination->name.' ('.$destination->ipaddress.')'?>')" /></a>
             </td>
         </tr>
 
