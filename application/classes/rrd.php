@@ -317,6 +317,7 @@ class Rrd {
 	}
 
 	public static function sci2num($value) {
+		if($value === null) return $value;
 		$float = sprintf('%f', $value);
 		$integer = sprintf('%d', $value);
 		if ($float == $integer) {
