@@ -193,7 +193,7 @@ var SYNTH_TEMPLATE = {
         //for(i = 0; i < (resultados.length -1); i++){
         //    _html = _html+'<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
         //}
-
+        var texto;
         $.each(resultados, function(key, value){
              texto = texto+'<span>'+key+': '+value+'</span><br />';
         });
