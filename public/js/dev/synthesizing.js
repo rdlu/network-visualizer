@@ -142,6 +142,7 @@ var SYNTH_TEMPLATE = {
         console.log('loss: ', loss);
         console.log('tpTCP: ', tpTCP);
         console.log('tpUDP: ', tpUDP);
+        console.log('limiares: ', limiares);
         //
             //console.log('DEBUG do template build New Box: ', template);
             template.find('.nome').text(nome);
@@ -150,10 +151,10 @@ var SYNTH_TEMPLATE = {
             template.attr('id', 'synthBox_'+id); //coloca dinâmicamente o id único para cada sonda substituindo o id do template
 
             //adiciona as cores às barras
-            template.find('.rtt_bar').css('background-color', SYNTH_BAR.color(rtt, limiares.rtt.min, limiares.rtt.max));
-            template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, limiares.loss.min, limiares.loss.max));
-            template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, limiares.throughputTCP.min, limiares.throughputTCP.max));
-            template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, limiares.throughput.min, limiares.throughput.max));
+            template.find('.rtt_bar').css('background-color', SYNTH_BAR.color(rtt, (limiares.rtt).min, (limiares.rtt).max));
+            template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, (limiares.loss).min, (limiares.loss).max));
+            template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, (limiares.throughputTCP).min, (limiares.throughputTCP).max));
+            template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max));
 /*
         template.bind('click', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
             e.preventDefault();
