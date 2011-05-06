@@ -204,7 +204,7 @@ var SYNTH_TEMPLATE = {
         template.bind('mouseover', function(e){
             e.preventDefault();
             //window.setTimeout(function() {
-                texto.dialog('open');
+                $(texto).dialog('open');
             //}, 1000);//time to wait in milliseconds
         });
 
