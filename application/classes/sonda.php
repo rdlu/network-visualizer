@@ -65,6 +65,10 @@ class Sonda {
 				}
 
 			}
+			else {
+				$newinstance->sonda->status = 0;
+				$newinstance->message = 'Entidade desativada ou sem processos de medição';
+			}
 			Sonda::$instances[$id] = $newinstance;
 		}
 

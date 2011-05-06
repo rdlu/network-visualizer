@@ -43,10 +43,10 @@ class Controller_Collect extends Controller {
 			       $asd = date('U');
 		          $response = "Updated S: {$source->ipaddress} D: {$destination->ipaddress}  with TS: $timestamp @$asd";
 		       } else {
-			       $response = "Source IP $ip for id $id on Destination IP $ip does not match the records on DB";
+			       $response = "Source IP $ip for id $id on Destination IP $ip does not match the records on DB\n";
 		       }
 	       } else {
-		       $response = "Requester IP $ip not found in database";
+		       $response = "Requester IP $ip not found in database\n";
 	       }
 
 	    } else {

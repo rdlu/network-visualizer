@@ -40,7 +40,7 @@
 	<ul class="nice" id="metricas">
 		<?php foreach($metrics as $key => $metric): ?>
 		<li class="nice checkbox">
-			<input type="checkbox" id="metrics[<?=$key?>]" name="metrics[]" class="nice medium" value="<?=$metric->id?>" checked="checked">
+			<input type="checkbox" id="metrics[<?=$key?>]" name="metrics[]" class="nice medium" value="<?=$metric->id?>" <?=($metric->order>6)?'':'checked=checked'?>>
 			<label for="metrics[<?=$key?>]" class="nice little"><?=$metric->desc?> (<?=$metric->name?>)</label>
 		</li>
 		<?php endforeach ?>

@@ -120,6 +120,8 @@ class Pair {
 
 		foreach($responses as $procid => $response) {
 			switch($response) {
+				case 0:
+					break;
 				case 1:
 					$return['errors'] += 1;
 					$return['message'][$response] = "A sonda de origem \"{$this->source->name}\" ({$this->source->ipaddress}) não pode ser contactada para reconfiguração.";

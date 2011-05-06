@@ -17,7 +17,7 @@
     </tr>
     </thead>
 <tbody>
-<?php if(count($destinations) > 0): ?>
+<?php if(isset($destinations) > 0): ?>
     <?php foreach($destinations as $destination): ?>
         <tr>
             <td><a href="<?=Url::site('entities/view').'/'.$source->id?>"><?=$source->name.' ('.$source->ipaddress?>)</a></td>
