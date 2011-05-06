@@ -211,7 +211,7 @@ var SYNTH_TEMPLATE = {
      keys : function  (o) {
         var accumulator = [];
         for (var propertyName in o) {
-          arr.push(propertyName);
+          accumulator.push(propertyName);
           }
         return accumulator;
       },
@@ -220,7 +220,7 @@ var SYNTH_TEMPLATE = {
      values : function (o) {
         var accumulator = [];
         for (var propertyName in o) {
-          arr.push(o[propertyName]);
+          accumulator.push(o[propertyName]);
           }
         return accumulator;
     }
