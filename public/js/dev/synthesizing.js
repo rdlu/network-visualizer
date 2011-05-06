@@ -1,7 +1,7 @@
 //to do:
 //
-// não deve carregar na caixa de select sondas que realizam medição porém estão inativas
-// não deve tentar fazer Zend_encode em um array com valores null.
+// não deve carregar na caixa de select sondas que realizam medição porém estão 
+// inativas não deve tentar fazer Zend_encode em um array com valores null.
 //
 ////----------------
 //to do:
@@ -20,7 +20,6 @@
 
 /******************************************************************************/
 
-
 var SYNTH_AVISOS = {
     escreve: function(numeroDoerro){
         var msgErro = getMensagem(numeroDoerro);
@@ -37,7 +36,7 @@ var SYNTH_AVISOS = {
     }
 }
 
-var SYNTH = {    
+var SYNTH = {
     // faz uma nova seção na página com as medições a partir de uma origem
     newSection: function(sondaOrigemId){
         //conecta e recebe os dados das sondas destino
@@ -59,7 +58,7 @@ var SYNTH = {
             SYNTH_TEMPLATE.buildNewSection(sondaOrigemId, nome, ip, status);
         }
         else
-            console.log('~~~~~~~~~~~~do nothing~~~~~~~~~~~~~~~~~~~~');
+            console.log('~~~~~~ Its on Screen dumb ass: do nothing');
     },
     newBoxes: function(sondaOrigemId){
         SYNTH_AJAX.getInfoSondasDestino(sondaOrigemId);
@@ -135,19 +134,19 @@ var SYNTH_TEMPLATE = {
         var tpTCP = resultados.throughputTCP;
         var tpUDP = resultados.throughput;
 
-        console.log("------------ Debug de SYNTH_TEMPLATE --------------");
-        console.log('id: ', id);
-        console.log('nome: ', nome);
-        console.log('rtt: ', rtt);
-        console.log('loss: ', loss);
-        console.log('tpTCP: ', tpTCP);
-        console.log('tpUDP: ', tpUDP);
-        console.log('limiares: ', limiares);
+        //console.log("------------ Debug de SYNTH_TEMPLATE --------------");
+        //console.log('id: ', id);
+        //console.log('nome: ', nome);
+        //console.log('rtt: ', rtt);
+        //console.log('loss: ', loss);
+        //console.log('tpTCP: ', tpTCP);
+        //console.log('tpUDP: ', tpUDP);
+        //console.log('limiares: ', limiares);
 
-        console.log('teste de limiares em SYBTH_TEMPLATE');
-        console.log('limiares.rtt: ', limiares.rtt);
-        console.log('limiares.rtt.min: ', limiares.rtt.min);
-        console.log('limiares.rtt.max: ', limiares.rtt.max);
+        //console.log('teste de limiares em SYBTH_TEMPLATE');
+        //console.log('limiares.rtt: ', limiares.rtt);
+        //console.log('limiares.rtt.min: ', limiares.rtt.min);
+        //console.log('limiares.rtt.max: ', limiares.rtt.max);
         //
             //console.log('DEBUG do template build New Box: ', template);
             template.find('.nome').text(nome);
@@ -186,12 +185,44 @@ var SYNTH_TEMPLATE = {
                 });
             }, 1000);//time to wait in milliseconds
         })
+*/
+        //prepara o html para colocar no bind abaixo
+        var _html = '';
+        var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
+        var resultadosValues = SYNTH_TEMPLATE.values(resultados);
+        for(i = 0; i < (resultados.length -1); i++){
+            _html += '<p>'+resultadosKeys[i]+': '+resultadosValues[i]+'</p';
+        }
+/*
+        template.bind('mouseover', function(e){
+            e.preventDefault();
+            window.setTimout(function() {
+                _html.tooltip();
+            }, 1000);//time to wait in milliseconds
+        });
+*/
 
-        */
         //atach to secao
         //console.log('Fazer um appendTo para: ', $('#synthSecao_'+sondaOrigemId+" .synth_sondas_dest"));
         template.appendTo('#synthSecao_'+sondaOrigemId);        //CONTINUE DAQUI: refazer CSS : +".synth_sondas_dest")
         
+    },
+    //do the same thing as the Perl "keys" subroutine
+     keys : function  (o) {
+        var accumulator = [];
+        for (var propertyName in o) {
+          arr.push(propertyName);
+          }
+        return accumulator;
+      },
+
+     //get values instead of keys
+     values : function (o) {
+        var accumulator = [];
+        for (var propertyName in o) {
+          arr.push(o[propertyName]);
+          }
+        return accumulator;
     }
 }
 
@@ -257,33 +288,33 @@ var SYNTH_BAR = { //Retorna a cor do background
             limMin = tmp;
         }
 
-        console.log('------------Debug da função color --------------- ');
-        console.log("valor: ", valor);
-        console.log("limMax: ", limMax);
-        console.log("limMin: ", limMin);
-        console.log("tipo: ", tipo);
+        //console.log('------------Debug da função color --------------- ');
+        //console.log("valor: ", valor);
+        //console.log("limMax: ", limMax);
+        //console.log("limMin: ", limMin);
+        //console.log("tipo: ", tipo);
 /* Valores estourando o valor dos limiares */
         if(valor <= limMin){
             if(tipo == 'reversa'){
-                console.log('Metrica reversa');
-                console.log('O programa acha que valor <= limMin');
+                //console.log('Metrica reversa');
+                //console.log('O programa acha que valor <= limMin');
                 return SYNTH_BAR.verde;
             }
             else {
-                console.log('Metrica normal');
-                console.log('O programa acha que valor <= limMin')
+                //console.log('Metrica normal');
+                //console.log('O programa acha que valor <= limMin')
                 return SYNTH_BAR.vermelho;
             }
         }
         else if(valor >= limMax){
             if(tipo == 'reversa'){
-                console.log('Metrica reversa');
-                console.log('O programa acha que valor >= limMax');
+                //console.log('Metrica reversa');
+                //console.log('O programa acha que valor >= limMax');
                 return SYNTH_BAR.vermelho;
             }
             else {
-                console.log('Metrica normal');
-                console.log('O programa acha que valor >= limMax')
+                //console.log('Metrica normal');
+                //console.log('O programa acha que valor >= limMax')
                 return SYNTH_BAR.verde;
             }
         }
@@ -303,8 +334,8 @@ var SYNTH_BAR = { //Retorna a cor do background
                         base_r = SYNTH_BAR.vermelho_r;
                         base_g = SYNTH_BAR.vermelho_g;
                         base_b = SYNTH_BAR.vermelho_b;
-                        console.log('Metrica normal');
-                        console.log('O programa acha que valor <= media');
+                        //console.log('Metrica normal');
+                        //console.log('O programa acha que valor <= media');
                     }
                     else { //if(valor > media) //transition from yellow to green
                         offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
@@ -314,8 +345,8 @@ var SYNTH_BAR = { //Retorna a cor do background
                         base_r = SYNTH_BAR.amarelo_r;
                         base_g = SYNTH_BAR.amarelo_g;
                         base_b = SYNTH_BAR.amarelo_b;
-                        console.log('Metrica normal');
-                        console.log('O programa acha que valor > media');
+                        //console.log('Metrica normal');
+                        //console.log('O programa acha que valor > media');
                 }
             }
             else{ //if (tipo == 'reversa')
@@ -327,8 +358,8 @@ var SYNTH_BAR = { //Retorna a cor do background
                     base_r = SYNTH_BAR.vermelho_r;
                     base_g = SYNTH_BAR.vermelho_g;
                     base_b = SYNTH_BAR.vermelho_b;
-                    console.log('Metrica reversa');
-                    console.log('O programa acha que valor >= media');
+                    //console.log('Metrica reversa');
+                    //console.log('O programa acha que valor >= media');
                 }
                 else { //if(valor > media) //transition from yellow to green
                     offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
@@ -338,8 +369,8 @@ var SYNTH_BAR = { //Retorna a cor do background
                     base_r = SYNTH_BAR.amarelo_r;
                     base_g = SYNTH_BAR.amarelo_g;
                     base_b = SYNTH_BAR.amarelo_b;
-                    console.log('Metrica reversa');
-                    console.log('O programa acha que valor < media');
+                    //console.log('Metrica reversa');
+                    //console.log('O programa acha que valor < media');
                 }
             }
             r = base_r + Math.round(offset_r * (valor/limite));
@@ -348,7 +379,7 @@ var SYNTH_BAR = { //Retorna a cor do background
             
             b = base_b + Math.round(offset_b * (valor/limite));
             var rgb = 'rgb('+r+','+g+','+b+')';
-            console.log('rgb: ', rgb);
+            //console.log('rgb: ', rgb);
             
             return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
         }
