@@ -200,17 +200,13 @@ var SYNTH_TEMPLATE = {
         texto = texto+'</div>';
         //console.log('resultadosKeys', resultadosKeys);
         //console.log('resultadosValues', resultadosValues);
-        console.log('tooltip texto: ', texto);
-        $(texto).tooltip();
 
-        /*
         template.bind('mouseover', function(e){
             e.preventDefault();
             //window.setTimeout(function() {
-                
+                texto.dialog('open');
             //}, 1000);//time to wait in milliseconds
         });
-*/
 
         //atach to secao
         //console.log('Fazer um appendTo para: ', $('#synthSecao_'+sondaOrigemId+" .synth_sondas_dest"));
