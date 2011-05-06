@@ -170,7 +170,7 @@ class Pair {
 		$last = Date("U");
 		//$last = (int) $rrd->last($metric);
 		$start = $start?$start:$last - 600;
-		$end = $end?$end:$last;
+		$end = $end?$end:$last-300;
 
 		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
 
