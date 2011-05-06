@@ -245,90 +245,35 @@ var SYNTH_BAR = { //Retorna a cor do background
          * 1 - green
          * 2 - yellow
          */
-        //console.log('------------Debug da função color --------------- ');
-        //valor = parseFloat(valor);
-        //console.log("valor: ", valor);
-        //limMin = parseFloat(limMin);
-        //console.log("limMin: ", limMin);
-        //limMax = parseFloat(limMax);
-        //console.log("limMax: ", limMax);
-        
-        if(tipo == 'normal'){
-            if(valor <= limMin){
-                console.log('Metrica normal');
-                console.log("valor: ", valor);
-                console.log("limMin: ", limMin);
-                console.log("limMax: ", limMax);
-                console.log('O programa acha que valor <= limMin');
-                return SYNTH_BAR.vermelho;
-            }
-            else if(valor >= limMax){
-                console.log('Metrica normal');
-                console.log("valor: ", valor);
-                console.log("limMin: ", limMin);
-                console.log("limMax: ", limMax);
-                console.log('O programa acha que valor >= limMin');
-                return SYNTH_BAR.verde;
-            }
-            else {
-                var media = (limMax + limMin) / 2;
-                var limite;
-                var r, g, b;
-                var offset_r, offset_g, offset_b;
-                var base_r, base_g, base_b;
+        console.log('------------Debug da função color --------------- ');
+        valor = parseFloat(valor);
+        console.log("valor: ", valor);
+        limMin = parseFloat(limMin);
+        console.log("limMin: ", limMin);
+        limMax = parseFloat(limMax);
+        console.log("limMax: ", limMax);
 
-                if (valor <= media){ //transition from red to yellow
-                    offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
-                    offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
-                    offset_b = SYNTH_BAR.amarelo_b - SYNTH_BAR.vermelho_b;
-                    limite = media;
-                    base_r = SYNTH_BAR.vermelho_r;
-                    base_g = SYNTH_BAR.vermelho_g;
-                    base_b = SYNTH_BAR.vermelho_b;
-                }
-                else { //if(valor > media) //transition from yellow to green
-                    offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
-                    offset_g = SYNTH_BAR.verde_g - SYNTH_BAR.amarelo_g;
-                    offset_b = SYNTH_BAR.verde_b - SYNTH_BAR.amarelo_b;
-                    limite = limMax;
-                    base_r = SYNTH_BAR.amarelo_r;
-                    base_g = SYNTH_BAR.amarelo_g;
-                    base_b = SYNTH_BAR.amarelo_b;
-                }
-                r = base_r + Math.round(offset_r * (valor/limite));
-                //console.log('r: ', r);
-                g = base_g + Math.round(offset_g * (valor/limite));
-                //console.log('g: ', g);
-                b = base_b + Math.round(offset_b * (valor/limite));
-                //console.log('b: ', b);
-                console.log();
-                return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
-            }
+        if(tipo == reversa){ //disreverte a *)#($Q@*$)Q*$ da métrica
+            var tmp = limMax;
+            limMin = limMax;
+            limMax = tmp;
         }
-        else { // if (tipo == 'reversa')
-            if(valor <= limMin){
-                console.log('Metrica reversa');
-                console.log("valor: ", valor);
-                console.log("limMin: ", limMin);
-                console.log("limMax: ", limMax);
-                console.log('O programa acha que valor <= limMin');
-                return SYNTH_BAR.verde;
-            }
-            else if(valor >= limMax){
-                console.log('Metrica reversa');
-                console.log("valor: ", valor);
-                console.log("limMin: ", limMin);
-                console.log("limMax: ", limMax);
-                console.log('O programa acha que valor >= limMin');
-                return SYNTH_BAR.vermelho;
-            }
-            else {
-                var media = (limMax + limMin) / 2;
-                var limite;
-                var r, g, b;
-                var offset_r, offset_g, offset_b;
-                var base_r, base_g, base_b;
 
+        if(valor <= limMin){
+            if(tipo == 'reversa') return SYNTH_BAR.verde;
+            else return SYNTH_BAR.vermelho;
+        }
+        else if(valor >= limMax){
+            if(tipo == 'reversa') return SYNTH_BAR.vermelho;
+            else return SYNTH_BAR.verde;
+        }
+        else {
+            var media = (limMax + limMin) / 2;
+            var limite;
+            var r, g, b;
+            var offset_r, offset_g, offset_b;
+            var base_r, base_g, base_b;
+            if(tipo == 'normal'){
                 if (valor <= media){ //transition from red to yellow
                     offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
                     offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
@@ -347,15 +292,35 @@ var SYNTH_BAR = { //Retorna a cor do background
                     base_g = SYNTH_BAR.amarelo_g;
                     base_b = SYNTH_BAR.amarelo_b;
                 }
-                r = base_r + Math.round(offset_r * (valor/limite));
-                //console.log('r: ', r);
-                g = base_g + Math.round(offset_g * (valor/limite));
-                //console.log('g: ', g);
-                b = base_b + Math.round(offset_b * (valor/limite));
-                //console.log('b: ', b);
-                console.log();
-                return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
             }
+            else{ //if (tipo == 'reversa')
+                if (valor >= media){ //transition from red to yellow
+                    offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
+                    offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
+                    offset_b = SYNTH_BAR.amarelo_b - SYNTH_BAR.vermelho_b;
+                    limite = limMax;
+                    base_r = SYNTH_BAR.vermelho_r;
+                    base_g = SYNTH_BAR.vermelho_g;
+                    base_b = SYNTH_BAR.vermelho_b;
+                }
+                else { //if(valor > media) //transition from yellow to green
+                    offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
+                    offset_g = SYNTH_BAR.verde_g - SYNTH_BAR.amarelo_g;
+                    offset_b = SYNTH_BAR.verde_b - SYNTH_BAR.amarelo_b;
+                    limite = media;
+                    base_r = SYNTH_BAR.amarelo_r;
+                    base_g = SYNTH_BAR.amarelo_g;
+                    base_b = SYNTH_BAR.amarelo_b;
+                }
+            }
+            r = base_r + Math.round(offset_r * (valor/limite));
+            //console.log('r: ', r);
+            g = base_g + Math.round(offset_g * (valor/limite));
+            //console.log('g: ', g);
+            b = base_b + Math.round(offset_b * (valor/limite));
+            //console.log('b: ', b);
+            console.log();
+            return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
         }
     }
 }
