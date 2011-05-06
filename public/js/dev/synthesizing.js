@@ -19,31 +19,8 @@
 //fazer os hooks de pop up, delete section => OK
 
 /******************************************************************************/
-//fake input para criar uma seção
-/*
-var sondaInfo = [
-    {
-     "id":1,
-     "ip":"143.54.10.199",
-     "nome":"nm1",
-     "rtt": 0.0012,
-     "loss":"15.77972",
-     "tpUDP":"47.92972",
-     "tpTCP": "12.12233",
-     "erros":[]
-    },
-    {
-     "id":2,
-     "ip":"143.54.10.77",
-     "nome":"nm2",
-     "rtt": 0.0012,
-     "loss":"5.972",
-     "tpUDP":"7.92972",
-     "tpTCP": "1.2233",
-     "erros":[]
-    }
-];
-*/
+
+
 var SYNTH_AVISOS = {
     escreve: function(numeroDoerro){
         var msgErro = getMensagem(numeroDoerro);
@@ -177,13 +154,33 @@ var SYNTH_TEMPLATE = {
             template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, limiares.loss.min, limiares.loss.max));
             template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, limiares.throughputTCP.min, limiares.throughputTCP.max));
             template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, limiares.throughput.min, limiares.throughput.max));
-
-        template.bind('click', sondaOrigemId, function(e){
+/*
+        template.bind('click', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
             e.preventDefault();
-            SYNTH.popupRelatorios(sondaOrigemId, id);
+            $.post("test.php", { source: sondaOrigemId, destination: id } );
+            $.ajax({
+              url: '/mom/synthesizing/Modal/',
+              data: {
+                source: sondaOrigemId,
+		destination: id
+              },
+              success: function(htmlPage){
+                  htmlPage.dialog();
+              },
+              dataType: 'html'
+            });            
         });
 
+        template.bind('mouseover', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
+            e.preventDefault();
+            window.setTimout(function() {
+                $.post( url, {sondaOrigemId:sondaOrigemId, id:id}, function( data ) {
+                    data.tooltip();
+                });
+            }, 1000);//time to wait in milliseconds
+        })
 
+        */
         //atach to secao
         //console.log('Fazer um appendTo para: ', $('#synthSecao_'+sondaOrigemId+" .synth_sondas_dest"));
         template.appendTo('#synthSecao_'+sondaOrigemId);        //CONTINUE DAQUI: refazer CSS : +".synth_sondas_dest")
