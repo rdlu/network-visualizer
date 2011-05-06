@@ -255,8 +255,8 @@ var SYNTH_BAR = { //Retorna a cor do background
 
         if(tipo == 'reversa'){ //disreverte a *)#($Q@*$)Q*$ da métrica
             var tmp = limMax;
-            limMin = limMax;
-            limMax = tmp;
+            limMax = limMin;
+            limMin = tmp;
         }
 
         if(valor <= limMin){
