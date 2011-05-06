@@ -143,6 +143,11 @@ var SYNTH_TEMPLATE = {
         console.log('tpTCP: ', tpTCP);
         console.log('tpUDP: ', tpUDP);
         console.log('limiares: ', limiares);
+
+        console.log('teste de limiares em SYBTH_TEMPLATE');
+        console.log('limiares.rtt: ', limiares.rtt);
+        console.log('limiares.rtt.min: ', limiares.rtt.min);
+        console.log('limiares.rtt.max: ', limiares.rtt.max);
         //
             //console.log('DEBUG do template build New Box: ', template);
             template.find('.nome').text(nome);
