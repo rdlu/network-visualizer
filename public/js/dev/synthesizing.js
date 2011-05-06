@@ -196,7 +196,7 @@ var SYNTH_TEMPLATE = {
 
         template.bind('mouseover', function(e){
             e.preventDefault();
-            setTimout(function() {
+            window.setTimeout(function() {
                 _html.tooltip();
             }, 1000);//time to wait in milliseconds
         });
