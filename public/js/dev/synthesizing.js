@@ -245,18 +245,31 @@ var SYNTH_BAR = { //Retorna a cor do background
          * 1 - green
          * 2 - yellow
          */
-        console.log('------------Debug da função color --------------- ');
-        valor = parseFloat(valor);
-        console.log("valor: ", valor);
-        limMin = parseFloat(limMin);
-        console.log("limMin: ", limMin);
-        limMax = parseFloat(limMax);
-        console.log("limMax: ", limMax);
+        //console.log('------------Debug da função color --------------- ');
+        //valor = parseFloat(valor);
+        //console.log("valor: ", valor);
+        //limMin = parseFloat(limMin);
+        //console.log("limMin: ", limMin);
+        //limMax = parseFloat(limMax);
+        //console.log("limMax: ", limMax);
+        
         if(tipo == 'normal'){
             if(valor <= limMin){
+                console.log('Metrica normal');
+                console.log("valor: ", valor);
+                console.log("limMin: ", limMin);
+                console.log("limMax: ", limMax);
+                console.log('O programa acha que valor <= limMin');
                 return SYNTH_BAR.vermelho;
             }
-            else if(valor >= limMax){return SYNTH_BAR.verde;}
+            else if(valor >= limMax){
+                console.log('Metrica normal');
+                console.log("valor: ", valor);
+                console.log("limMin: ", limMin);
+                console.log("limMax: ", limMax);
+                console.log('O programa acha que valor >= limMin');
+                return SYNTH_BAR.verde;
+            }
             else {
                 var media = (limMax + limMin) / 2;
                 var limite;
@@ -294,9 +307,21 @@ var SYNTH_BAR = { //Retorna a cor do background
         }
         else { // if (tipo == 'reversa')
             if(valor <= limMin){
+                console.log('Metrica reversa');
+                console.log("valor: ", valor);
+                console.log("limMin: ", limMin);
+                console.log("limMax: ", limMax);
+                console.log('O programa acha que valor <= limMin');
                 return SYNTH_BAR.verde;
             }
-            else if(valor >= limMax){return SYNTH_BAR.vermelho;}
+            else if(valor >= limMax){
+                console.log('Metrica reversa');
+                console.log("valor: ", valor);
+                console.log("limMin: ", limMin);
+                console.log("limMax: ", limMax);
+                console.log('O programa acha que valor >= limMin');
+                return SYNTH_BAR.vermelho;
+            }
             else {
                 var media = (limMax + limMin) / 2;
                 var limite;
