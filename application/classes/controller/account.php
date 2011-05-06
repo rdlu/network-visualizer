@@ -22,39 +22,31 @@ class Controller_Account extends Controller_Skeleton {
 		}
 
 		#Load the view
-		$content = $this->template->content = View::factory('register');
+		$content = $this->template->content = View::factory('account/register');
 
 		#If there is a post and $_POST is not empty
 		if ($_POST) {
 			$auth = Auth::instance();
 			#Instantiate a new user
+			/**
+			 * @var Model_User
+			 */
 			$user = ORM::factory('user');
 
-			#Load the validation rules, filters etc...
-			$post = $user->validate_create($_POST);
-
-			#If the post data validates using the rules setup in the user model
-			if ($post->check()) {
-				#Affects the sanitized vars to the user object
-				$user->values($post);
-
-				#create the account
-				$user->save();
-
+			try {
+				$user = $user->create_user($_POST,array('username','password','email'));
 				#Add the login role to the user
 				$login_role = new Model_Role(array('name' => 'login'));
 				$user->add('roles', $login_role);
 
 				#sign the user in
-				Auth::instance()->login($post['username'], $post['password']);
+				Auth::instance()->login($user->username, $user->password);
 
 				#redirect to the user account
-				Request::current()->redirect('account/myaccount');
-			}
-			else
-			{
-				#Get errors for display in view
-				$content->errors = $post->errors('account/register');
+				Request::current()->redirect('welcome/index');
+			} catch (ORM_Validation_Exception $e) {
+				$content->errors = $e->errors('account/register');
+				Fire::info($e->errors());
 			}
 		}
 	}
@@ -65,7 +57,7 @@ class Controller_Account extends Controller_Skeleton {
 		#If user already signed-in
 		if (Auth::instance()->logged_in() != 0) {
 			#redirect to the user account
-			Request::current()->redirect('account/myaccount');
+			Request::current()->redirect('welcome/index');
 		}
 
 		$content = $this->template->content = View::factory('account/signin');
