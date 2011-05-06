@@ -478,6 +478,17 @@ synth_form h2 {
 .template {
     display: none;
 }
+
+.synth_tooltip{
+    display:none;
+	background: #CCC;
+	height:600px;
+	padding:40px 30px 10px 30px;
+	width:310px;
+	font-size:11px;
+	color:#fff;
+}
+
 /* synth_index -> synth_box -> synth_bar_bg -> synth_bar_inner */
 
 div.loadingBig {
@@ -555,3 +566,5 @@ span.nice.checkbox, li.nice.checkbox {
 
 div.nice {
     padding: 5px;
+}
+

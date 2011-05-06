@@ -187,16 +187,21 @@ var SYNTH_TEMPLATE = {
         })
 */
         //prepara o html para colocar no bind abaixo
-        var _html = '';
-        var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
-        var resultadosValues = SYNTH_TEMPLATE.values(resultados);
-        for(i = 0; i < (resultados.length -1); i++){
-            _html = _html+'<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
-        }
-        console.log('resultadosKeys', resultadosKeys);
-        console.log('resultadosValues', resultadosValues);
-        console.log('tooltip text: ', _html);
-        $(_html).tooltip();
+        var texto = '<div class="synth_tooltip">';
+        //var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
+        //var resultadosValues = SYNTH_TEMPLATE.values(resultados);
+        //for(i = 0; i < (resultados.length -1); i++){
+        //    _html = _html+'<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
+        //}
+
+        $.each(resultados, function(key, value){
+             texto = texto+'<span>'+key+': '+value+'</span><br />';
+        });
+        texto = texto+'</div>';
+        //console.log('resultadosKeys', resultadosKeys);
+        //console.log('resultadosValues', resultadosValues);
+        console.log('tooltip texto: ', texto);
+        $(texto).tooltip();
 
         /*
         template.bind('mouseover', function(e){
