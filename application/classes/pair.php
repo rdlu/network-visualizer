@@ -254,7 +254,12 @@ class Pair {
 
 		$return = array();
 		foreach($results[$type] as $metric => $result) {
-			$return[$metric] = Rrd::sci2num(end($result));
+			//se o ultimo estiver zerado pega o penultimo resultado
+			if(end($result) == 0) {
+				$return[$metric] = Rrd::sci2num(prev($result));
+			} else {
+				$return[$metric] = Rrd::sci2num(end($result));
+			}
 		}
 
 		Fire::info($return);

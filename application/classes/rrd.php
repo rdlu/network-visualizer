@@ -162,9 +162,9 @@ class Rrd {
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
 				$filename = $this->filename($metric, $l1 . $l2);
-				$upstream = $data[$l1 . 'DS' . $l2];
+				$upstream = abs($data[$l1 . 'DS' . $l2]);
 				if ($metric != 'rtt') {
-					$downstream = $data[$l1 . 'SD' . $l2];
+					$downstream = abs($data[$l1 . 'SD' . $l2]);
 					//Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
 					$numbers = "SD $downstream : DS $upstream";
 					$ret = rrd_update($path . $filename, "$timestamp:$downstream:$upstream");
