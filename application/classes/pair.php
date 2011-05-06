@@ -167,7 +167,8 @@ class Pair {
 
 	public function getResult($metric,$start=false,$end=false) {
 		$rrd = Rrd::instance($this->source->ipaddress,$this->destination->ipaddress);
-		$last = (int) $rrd->last($metric);
+		$last = Date("U");
+		//$last = (int) $rrd->last($metric);
 		$start = $start?$start:$last - 600;
 		$end = $end?$end:$last-300;
 
@@ -257,7 +258,7 @@ class Pair {
 		$return = array();
 		foreach($results[$type] as $metric => $result) {
 			//se o ultimo estiver zerado pega o penultimo resultado
-			if(end($result) == 0) {
+			if(end($result) === 0) {
 				$return[$metric] = Rrd::sci2num(prev($result));
 			} else {
 				$return[$metric] = Rrd::sci2num(end($result));
