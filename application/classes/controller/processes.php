@@ -41,7 +41,7 @@ class Controller_Processes extends Controller_Skeleton {
 			Fire::group('Models Loaded')
 					->info($processes)
 					->info($sourceEntity)
-					->info($destinations)
+					//->info($destinations)
 					->groupEnd();
 		} else {
 			$errors[] = "A origem $sourceAddr não é um IP válido. Você deve informar um IP válido.";
@@ -313,6 +313,8 @@ class Controller_Processes extends Controller_Skeleton {
 				$profile = $process->profile->load();
 				if (Snmp::instance($source->ipaddress)->isReachable(NMMIB . '.0.0.0.' . $process->id)) {
 					if (Snmp::instance($destination->ipaddress)->isReachable(NMMIB . '.10.0.0.' . $process->id)) {
+						$source->status = 1; $source->update();
+						$destination->status = 2; $destination->update();
 						$response['message'] = "Configurações salvas com sucesso no banco de dados do MoM";
 						$response['class'] = 'success';
 						$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
@@ -359,6 +361,15 @@ class Controller_Processes extends Controller_Skeleton {
 
 			$pair = Pair::instance($source,$destination);
 			$responses = $pair->removeProcesses($force);
+
+			//procura se eh a ultima medicao removida no destino
+			$db = Db::select()->from('processes')->or_where('source_id','=',$destination)->or_where('destination_id','=',$destination)->execute();
+
+			if($db->count() == 0) {
+				$sou = Sprig::factory('entity',array('id'=>$destination))->load();
+				$sou->status = 0;
+				$sou->update();
+			}
 
 			$this->response->headers('Content-Type', 'application/json');
 			$this->response->body(json_encode($responses));
