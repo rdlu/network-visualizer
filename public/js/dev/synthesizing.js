@@ -191,13 +191,13 @@ var SYNTH_TEMPLATE = {
         var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
         var resultadosValues = SYNTH_TEMPLATE.values(resultados);
         for(i = 0; i < (resultados.length -1); i++){
-            _html += '<p>'+resultadosKeys[i]+': '+resultadosValues[i]+'</p';
+            _html += '<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
         }
 
         template.bind('mouseover', function(e){
             e.preventDefault();
             window.setTimeout(function() {
-                _html.tooltip();
+                $(_html).tooltip();
             }, 1000);//time to wait in milliseconds
         });
 
