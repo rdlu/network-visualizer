@@ -248,9 +248,9 @@ var SYNTH_BAR = { //Retorna a cor do background
         console.log('------------Debug da função color --------------- ');
         valor = parseFloat(valor);
         console.log("valor: ", valor);
-        limMin = parseFloat(valor);
+        limMin = parseFloat(limMin);
         console.log("limMin: ", limMin);
-        limMax = parseFloat(valor);
+        limMax = parseFloat(limMax);
         console.log("limMax: ", limMax);
 
         if(valor <= limMin){
