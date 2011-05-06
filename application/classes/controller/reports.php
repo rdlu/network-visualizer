@@ -69,21 +69,19 @@ class Controller_Reports extends Controller_Skeleton {
 			foreach($processes as $process) {
 				Fire::info($process->as_array(),"Process 1, ID: $process->id");
 				$profile = $process->profile->load();
-				$metrics = $profile->metrics;
+				$metrics = $process->metrics->as_array('order');
+				ksort($metrics);
+				Fire::error($metrics);
 				foreach($metrics as $metric) {
 					$img[$metric->name] = $rrd->graph($metric->name,$inicio,$fim);
-					$metrics2[$metric->name] = array('order' => $metric->order, 'desc' => $metric->desc);
-					$order[] = $metric->order;
 				}
 			}
-
-			array_multisort($order, $metrics2);
 
 		   Fire::group("Images path")->info($img)->groupEnd();
 		   Fire::groupEnd();
 
 		   if(Request::current()->is_ajax()) {
-			   $view->bind('images',$img)->bind('metrics',$metrics2)
+			   $view->bind('images',$img)->bind('metrics',$metrics)
 			      ->bind('processes',$processes);
 			   $this->response->headers('Cache-Control',"no-cache");
 			   $this->response->body($view);
