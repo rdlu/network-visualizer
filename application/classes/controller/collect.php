@@ -17,7 +17,7 @@ class Controller_Collect extends Controller {
 		    $process = Sprig::factory('process',array('id'=>$id))->load();
 
 		    if($process->count() == 0) {
-			    throw new Kohana_Exception("Process $id does not exist.",$_POST);
+			    $response = "Process $id does not exist.";
 		    }
 		    $destination = $process->destination->load();
 		    $source = $process->source->load();
@@ -31,21 +31,22 @@ class Controller_Collect extends Controller {
 		       $dip = $simple['ipaddress'];
 		       if($destination->ipaddress == $dip) {
 			       $data = $snmp->group($metric->name,array('id'=>$id));
-			       //$timestamp = Snmp::convertTimestamp($simple['timestamp']);
-			       $timestamp = date('U');
+			       $timestamp = Snmp::convertTimestamp($simple['timestamp']);
+			       //$timestamp = date('U');
 		          $rrd = Rrd::instance($source->ipaddress,$destination->ipaddress)->update($metric->name,$data,$timestamp);
-		          $destination->updated = $timestamp;
-			       $source->updated = $timestamp;
-			       $process->updated = $timestamp;
+		          $destination->updated = date('U');
+			       $source->updated = date('U');
+			       $process->updated = date('U');
 		          $destination->update();
 			       $source->update();
 			       $process->update();
-		          $response = "Updated $timestamp";
+			       $asd = date('U');
+		          $response = "Updated S: {$source->ipaddress} D: {$destination->ipaddress}  with TS: $timestamp @$asd";
 		       } else {
-			       throw new Kohana_Exception("Source IP $ip for id $id on Destination IP $ip does not match the records on DB",$simple);
+			       $response = "Source IP $ip for id $id on Destination IP $ip does not match the records on DB";
 		       }
 	       } else {
-		       throw new Kohana_Exception("Requester IP $ip not found in database",$_POST);
+		       $response = "Requester IP $ip not found in database";
 	       }
 
 	    } else {

@@ -35,7 +35,7 @@
 </fieldset>
 <fieldset title="Dados do Perfil a ser utilizado">
 	<legend>Métricas a serem utilizadas</legend>
-	<div style="float:left;margin-right:15px;"><img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
+	<div style="float:left;margin-right:15px; height:80px;"><img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
 <span class="label nice big"><strong>Métricas</strong></span></div>
 	<ul class="nice" id="metricas">
 		<?php foreach($metrics as $key => $metric): ?>
@@ -49,7 +49,7 @@
 
 <fieldset title="Conjunto dos limiares a serem considerados">
 	<legend>Limiares a serem utilizadas</legend>
-	<div style="float:left;margin-right:15px;"><img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
+	<div style="float:left;margin-right:15px; height:80px;"><img src="<?=url::site('images/boardMenu/profiles.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
 <span class="label nice big"><strong>Limiares</strong></span></div>
 	<div style="float:left;margin-right:15px;">
 		<select name="threshold" id="threshold" class="nice big">
