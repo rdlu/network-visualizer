@@ -35,16 +35,16 @@ class Sonda {
 					$newinstance->message = 'Entidade ativa e funcional';
 
 					$newinstance->class = 'success';
-				} elseif($newinstance->sonda->updated + 1800 <= date("U") ) {
+				} elseif($newinstance->sonda->updated + 300 <= date("U") ) {
 					$newinstance->sonda->status = 2;
 					$newinstance->class = 'warn';
-					$newinstance->message = 'Entidade em estado desconhecido, não responde há mais de 30 minutos.';
+					$newinstance->message = 'Entidade em estado desconhecido, não responde há mais de 5 minutos.';
 				}
 
-				if($newinstance->sonda->updated + 7200 <= date("U") ) {
+				if($newinstance->sonda->updated + 600 <= date("U") ) {
 					$newinstance->sonda->status = 3;
 					$newinstance->class = 'error';
-					$newinstance->message = 'Entidade em estado de erro passivo, não responde há mais de 2 horas.';
+					$newinstance->message = 'Entidade em estado de erro passivo, não responde há mais de 10 minutos.';
 				}
 
 				if($snmp) {
