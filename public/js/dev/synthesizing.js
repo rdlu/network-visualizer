@@ -160,6 +160,7 @@ var SYNTH_TEMPLATE = {
             template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, (limiares.loss).min, (limiares.loss).max, 'reversa'));
             template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, (limiares.throughputTCP).min, (limiares.throughputTCP).max, 'normal'));
             template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max, 'normal'));
+            
 /*
         template.bind('click', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
             e.preventDefault();
