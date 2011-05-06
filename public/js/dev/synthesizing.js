@@ -260,6 +260,7 @@ var SYNTH_BAR = { //Retorna a cor do background
         console.log("valor: ", valor);
         console.log("limMax: ", limMax);
         console.log("limMin: ", limMin);
+        console.log("tipo: ", tipo);
 /* Valores estourando o valor dos limiares */
         if(valor <= limMin){
             if(tipo == 'reversa'){
@@ -302,7 +303,7 @@ var SYNTH_BAR = { //Retorna a cor do background
                         base_g = SYNTH_BAR.vermelho_g;
                         base_b = SYNTH_BAR.vermelho_b;
                         console.log('Metrica normal');
-                        console.log('O programa acha que valor <= media')
+                        console.log('O programa acha que valor <= media');
                     }
                     else { //if(valor > media) //transition from yellow to green
                         offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
@@ -313,7 +314,7 @@ var SYNTH_BAR = { //Retorna a cor do background
                         base_g = SYNTH_BAR.amarelo_g;
                         base_b = SYNTH_BAR.amarelo_b;
                         console.log('Metrica normal');
-                        console.log('O programa acha que valor > media')
+                        console.log('O programa acha que valor > media');
                 }
             }
             else{ //if (tipo == 'reversa')
