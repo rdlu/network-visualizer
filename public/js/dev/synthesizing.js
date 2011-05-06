@@ -187,7 +187,7 @@ var SYNTH_TEMPLATE = {
         })
 */
         //prepara o html para colocar no bind abaixo
-        var texto = '<div class="synth_tooltip">';
+        //var texto = '<div class="synth_tooltip">';
         //var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
         //var resultadosValues = SYNTH_TEMPLATE.values(resultados);
         //for(i = 0; i < (resultados.length -1); i++){
@@ -197,18 +197,20 @@ var SYNTH_TEMPLATE = {
         $.each(resultados, function(key, value){
              texto = texto+'<span>'+key+': '+value+'</span><br />';
         });
-        texto = texto+'</div>';
+        //texto = texto+'</div>';
         //console.log('resultadosKeys', resultadosKeys);
         //console.log('resultadosValues', resultadosValues);
-        texto.dialog({
+        var $dialog = $('<div></div>')
+		.html(texto)
+		.dialog({
 			autoOpen: false,
 			title: 'Basic Dialog'
-		});
+	});
 
         template.bind('mouseover', texto, function(e){
-            e.preventDefault();
+            //e.preventDefault();
             //window.setTimeout(function() {
-                $(texto).dialog('open');
+                $dialog.dialog('open');
             //}, 1000);//time to wait in milliseconds
         });
 
