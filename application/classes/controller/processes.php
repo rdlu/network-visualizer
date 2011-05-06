@@ -101,6 +101,7 @@ class Controller_Processes extends Controller_Skeleton {
 			$tarr = array();
 			foreach($tvalues as $tvalue) {
 				$tmet = $tvalue->metric->load();
+				$order[] = $tmet->order;
 				$tarr[$tmet->name] = $tvalue->as_array();
 				$tarr[$tmet->name]['reverse'] = (int) $tmet->reverse;
 				$type = $measure[$tmet->name]['type'];
@@ -114,10 +115,12 @@ class Controller_Processes extends Controller_Skeleton {
 					$tarr[$tmet->name]['max'] = $tarr[$tmet->name]['max']." ".$measure[$tmet->name]['default'];
 					$tarr[$tmet->name]['min'] = $tarr[$tmet->name]['min']." ".$measure[$tmet->name]['default'];
 				}
-
 			}
+			array_multisort($order,$tarr);
 			$tvals[$threshold->id] =$tarr;
 		}
+
+
 		
 		$view = View::factory('processes/form');
 		$view->bind('process', $process)
