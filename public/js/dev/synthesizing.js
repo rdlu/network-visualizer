@@ -191,8 +191,10 @@ var SYNTH_TEMPLATE = {
         var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
         var resultadosValues = SYNTH_TEMPLATE.values(resultados);
         for(i = 0; i < (resultados.length -1); i++){
-            _html += '<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
+            _html = _html+'<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
         }
+        console.log('resultadosKeys', resultadosKeys);
+        console.log('resultadosValues', resultadosValues);
         console.log('tooltip text: ', _html);
         $(_html).tooltip();
 
