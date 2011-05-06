@@ -25,7 +25,8 @@ class Controller_Synthesizing extends Controller_Skeleton
         
         if ($this->auto_render) {          
 
-            $scripts = array(                               
+            $scripts = array(
+                'js/jquery.tools.min.js',
                 'js/dev/synthesizing.js'
             );            
             $this->template->scripts = array_merge($scripts,$this->template->scripts);
