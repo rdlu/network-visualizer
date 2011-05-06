@@ -245,13 +245,10 @@ var SYNTH_BAR = { //Retorna a cor do background
          * 1 - green
          * 2 - yellow
          */
-        console.log('------------Debug da função color --------------- ');
-        valor = parseFloat(valor);
-        console.log("valor: ", valor);
-        limMin = parseFloat(limMin);
-        console.log("limMin: ", limMin);
+        
+        valor = parseFloat(valor);        
+        limMin = parseFloat(limMin);        
         limMax = parseFloat(limMax);
-        console.log("limMax: ", limMax);
 
         if(tipo == 'reversa'){ //disreverte a *)#($Q@*$)Q*$ da métrica
             var tmp = limMax;
@@ -259,14 +256,36 @@ var SYNTH_BAR = { //Retorna a cor do background
             limMin = tmp;
         }
 
+        console.log('------------Debug da função color --------------- ');
+        console.log("valor: ", valor);
+        console.log("limMax: ", limMax);
+        console.log("limMin: ", limMin);
+/* Valores estourando o valor dos limiares */
         if(valor <= limMin){
-            if(tipo == 'reversa') return SYNTH_BAR.verde;
-            else return SYNTH_BAR.vermelho;
+            if(tipo == 'reversa'){
+                console.log('Metrica reversa');
+                console.log('O programa acha que valor <= limMin');
+                return SYNTH_BAR.verde;
+            }
+            else {
+                console.log('Metrica normal');
+                console.log('O programa acha que valor <= limMin')
+                return SYNTH_BAR.vermelho;
+            }
         }
         else if(valor >= limMax){
-            if(tipo == 'reversa') return SYNTH_BAR.vermelho;
-            else return SYNTH_BAR.verde;
+            if(tipo == 'reversa'){
+                console.log('Metrica reversa');
+                console.log('O programa acha que valor >= limMax');
+                return SYNTH_BAR.vermelho;
+            }
+            else {
+                console.log('Metrica normal');
+                console.log('O programa acha que valor >= limMax')
+                return SYNTH_BAR.verde;
+            }
         }
+/* Valores intermediários aos limites máximo e mínimo */
         else {
             var media = (limMax + limMin) / 2;
             var limite;
@@ -274,23 +293,27 @@ var SYNTH_BAR = { //Retorna a cor do background
             var offset_r, offset_g, offset_b;
             var base_r, base_g, base_b;
             if(tipo == 'normal'){
-                if (valor <= media){ //transition from red to yellow
-                    offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
-                    offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
-                    offset_b = SYNTH_BAR.amarelo_b - SYNTH_BAR.vermelho_b;
-                    limite = media;
-                    base_r = SYNTH_BAR.vermelho_r;
-                    base_g = SYNTH_BAR.vermelho_g;
-                    base_b = SYNTH_BAR.vermelho_b;
-                }
-                else { //if(valor > media) //transition from yellow to green
-                    offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
-                    offset_g = SYNTH_BAR.verde_g - SYNTH_BAR.amarelo_g;
-                    offset_b = SYNTH_BAR.verde_b - SYNTH_BAR.amarelo_b;
-                    limite = limMax;
-                    base_r = SYNTH_BAR.amarelo_r;
-                    base_g = SYNTH_BAR.amarelo_g;
-                    base_b = SYNTH_BAR.amarelo_b;
+                    if (valor <= media){ //transition from red to yellow
+                        offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
+                        offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
+                        offset_b = SYNTH_BAR.amarelo_b - SYNTH_BAR.vermelho_b;
+                        limite = media;
+                        base_r = SYNTH_BAR.vermelho_r;
+                        base_g = SYNTH_BAR.vermelho_g;
+                        base_b = SYNTH_BAR.vermelho_b;
+                        console.log('Metrica normal');
+                        console.log('O programa acha que valor <= media')
+                    }
+                    else { //if(valor > media) //transition from yellow to green
+                        offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
+                        offset_g = SYNTH_BAR.verde_g - SYNTH_BAR.amarelo_g;
+                        offset_b = SYNTH_BAR.verde_b - SYNTH_BAR.amarelo_b;
+                        limite = limMax;
+                        base_r = SYNTH_BAR.amarelo_r;
+                        base_g = SYNTH_BAR.amarelo_g;
+                        base_b = SYNTH_BAR.amarelo_b;
+                        console.log('Metrica normal');
+                        console.log('O programa acha que valor > media')
                 }
             }
             else{ //if (tipo == 'reversa')
@@ -302,6 +325,8 @@ var SYNTH_BAR = { //Retorna a cor do background
                     base_r = SYNTH_BAR.vermelho_r;
                     base_g = SYNTH_BAR.vermelho_g;
                     base_b = SYNTH_BAR.vermelho_b;
+                    console.log('Metrica reversa');
+                    console.log('O programa acha que valor >= media');
                 }
                 else { //if(valor > media) //transition from yellow to green
                     offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
@@ -311,15 +336,18 @@ var SYNTH_BAR = { //Retorna a cor do background
                     base_r = SYNTH_BAR.amarelo_r;
                     base_g = SYNTH_BAR.amarelo_g;
                     base_b = SYNTH_BAR.amarelo_b;
+                    console.log('Metrica reversa');
+                    console.log('O programa acha que valor < media');
                 }
             }
             r = base_r + Math.round(offset_r * (valor/limite));
-            //console.log('r: ', r);
+            
             g = base_g + Math.round(offset_g * (valor/limite));
-            //console.log('g: ', g);
+            
             b = base_b + Math.round(offset_b * (valor/limite));
-            //console.log('b: ', b);
-            console.log();
+            var rgb = 'rgb('+r+','+g+','+b+')';
+            console.log('rgb: ', rgb);
+            
             return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
         }
     }
