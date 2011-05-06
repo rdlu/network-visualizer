@@ -156,10 +156,10 @@ var SYNTH_TEMPLATE = {
             template.attr('id', 'synthBox_'+id); //coloca dinâmicamente o id único para cada sonda substituindo o id do template
 
             //adiciona as cores às barras
-            template.find('.rtt_bar').css('background-color', SYNTH_BAR.color(rtt, (limiares.rtt).min, (limiares.rtt).max));
-            template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, (limiares.loss).min, (limiares.loss).max));
-            template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, (limiares.throughputTCP).min, (limiares.throughputTCP).max));
-            template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max));
+            template.find('.rtt_bar').css('background-color', SYNTH_BAR.color(rtt, (limiares.rtt).min, (limiares.rtt).max), 'reversa');
+            template.find('.loss_bar').css('background-color', SYNTH_BAR.color(loss, (limiares.loss).min, (limiares.loss).max), 'reversa');
+            template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, (limiares.throughputTCP).min, (limiares.throughputTCP).max), 'normal');
+            template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max), 'normal');
 /*
         template.bind('click', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
             e.preventDefault();
@@ -238,7 +238,7 @@ var SYNTH_BAR = { //Retorna a cor do background
     verde_g: 206,
     verde_b: 72,
 
-    color: function(valor, limMin, limMax){
+    color: function(valor, limMin, limMax, tipo){
         /*
          * código de cores
          * 0 - red
@@ -252,44 +252,85 @@ var SYNTH_BAR = { //Retorna a cor do background
         console.log("limMin: ", limMin);
         limMax = parseFloat(limMax);
         console.log("limMax: ", limMax);
+        if(tipo == 'normal'){
+            if(valor <= limMin){
+                return SYNTH_BAR.vermelho;
+            }
+            else if(valor >= limMax){return SYNTH_BAR.verde;}
+            else {
+                var media = (limMax + limMin) / 2;
+                var limite;
+                var r, g, b;
+                var offset_r, offset_g, offset_b;
+                var base_r, base_g, base_b;
 
-        if(valor <= limMin){
-            return SYNTH_BAR.vermelho;
+                if (valor <= media){ //transition from red to yellow
+                    offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
+                    offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
+                    offset_b = SYNTH_BAR.amarelo_b - SYNTH_BAR.vermelho_b;
+                    limite = media;
+                    base_r = SYNTH_BAR.vermelho_r;
+                    base_g = SYNTH_BAR.vermelho_g;
+                    base_b = SYNTH_BAR.vermelho_b;
+                }
+                else { //if(valor > media) //transition from yellow to green
+                    offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
+                    offset_g = SYNTH_BAR.verde_g - SYNTH_BAR.amarelo_g;
+                    offset_b = SYNTH_BAR.verde_b - SYNTH_BAR.amarelo_b;
+                    limite = limMax;
+                    base_r = SYNTH_BAR.amarelo_r;
+                    base_g = SYNTH_BAR.amarelo_g;
+                    base_b = SYNTH_BAR.amarelo_b;
+                }
+                r = base_r + Math.round(offset_r * (valor/limite));
+                //console.log('r: ', r);
+                g = base_g + Math.round(offset_g * (valor/limite));
+                //console.log('g: ', g);
+                b = base_b + Math.round(offset_b * (valor/limite));
+                //console.log('b: ', b);
+                console.log();
+                return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
+            }
         }
-        else if(valor >= limMax){return SYNTH_BAR.verde;}
-        else {
-            var media = (limMax + limMin) / 2;
-            var limite;
-            var r, g, b;
-            var offset_r, offset_g, offset_b;
-            var base_r, base_g, base_b;
+        else { // if (tipo == 'reversa')
+            if(valor <= limMin){
+                return SYNTH_BAR.verde;
+            }
+            else if(valor >= limMax){return SYNTH_BAR.vermelho;}
+            else {
+                var media = (limMax + limMin) / 2;
+                var limite;
+                var r, g, b;
+                var offset_r, offset_g, offset_b;
+                var base_r, base_g, base_b;
 
-            if (valor <= media){ //transition from red to yellow
-                offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
-                offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
-                offset_b = SYNTH_BAR.amarelo_b - SYNTH_BAR.vermelho_b;
-                limite = media;
-                base_r = SYNTH_BAR.vermelho_r;
-                base_g = SYNTH_BAR.vermelho_g;
-                base_b = SYNTH_BAR.vermelho_b;
+                if (valor <= media){ //transition from red to yellow
+                    offset_r = SYNTH_BAR.amarelo_r - SYNTH_BAR.vermelho_r;
+                    offset_g = SYNTH_BAR.amarelo_g - SYNTH_BAR.vermelho_g;
+                    offset_b = SYNTH_BAR.amarelo_b - SYNTH_BAR.vermelho_b;
+                    limite = media;
+                    base_r = SYNTH_BAR.vermelho_r;
+                    base_g = SYNTH_BAR.vermelho_g;
+                    base_b = SYNTH_BAR.vermelho_b;
+                }
+                else { //if(valor > media) //transition from yellow to green
+                    offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
+                    offset_g = SYNTH_BAR.verde_g - SYNTH_BAR.amarelo_g;
+                    offset_b = SYNTH_BAR.verde_b - SYNTH_BAR.amarelo_b;
+                    limite = limMax;
+                    base_r = SYNTH_BAR.amarelo_r;
+                    base_g = SYNTH_BAR.amarelo_g;
+                    base_b = SYNTH_BAR.amarelo_b;
+                }
+                r = base_r + Math.round(offset_r * (valor/limite));
+                //console.log('r: ', r);
+                g = base_g + Math.round(offset_g * (valor/limite));
+                //console.log('g: ', g);
+                b = base_b + Math.round(offset_b * (valor/limite));
+                //console.log('b: ', b);
+                console.log();
+                return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
             }
-            else { //if(valor > media) //transition from yellow to green
-                offset_r = SYNTH_BAR.verde_r - SYNTH_BAR.amarelo_r;
-                offset_g = SYNTH_BAR.verde_g - SYNTH_BAR.amarelo_g;
-                offset_b = SYNTH_BAR.verde_b - SYNTH_BAR.amarelo_b;
-                limite = limMax;
-                base_r = SYNTH_BAR.amarelo_r;
-                base_g = SYNTH_BAR.amarelo_g;
-                base_b = SYNTH_BAR.amarelo_b;
-            }
-            r = base_r + Math.round(offset_r * (valor/limite));
-            //console.log('r: ', r);
-            g = base_g + Math.round(offset_g * (valor/limite));
-            //console.log('g: ', g);
-            b = base_b + Math.round(offset_b * (valor/limite));
-            //console.log('b: ', b);
-            console.log();
-            return( 'rgb('+r+','+g+','+b+')' ); //retorna a string com um rgb com a cor
         }
     }
 }
