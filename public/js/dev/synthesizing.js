@@ -194,13 +194,15 @@ var SYNTH_TEMPLATE = {
             _html += '<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
         }
 
+        $(_html).tooltip();
+        /*
         template.bind('mouseover', function(e){
             e.preventDefault();
-            window.setTimeout(function() {
-                $(_html).tooltip();
-            }, 1000);//time to wait in milliseconds
+            //window.setTimeout(function() {
+                
+            //}, 1000);//time to wait in milliseconds
         });
-
+*/
 
         //atach to secao
         //console.log('Fazer um appendTo para: ', $('#synthSecao_'+sondaOrigemId+" .synth_sondas_dest"));
