@@ -200,8 +200,12 @@ var SYNTH_TEMPLATE = {
         texto = texto+'</div>';
         //console.log('resultadosKeys', resultadosKeys);
         //console.log('resultadosValues', resultadosValues);
+        texto.dialog({
+			autoOpen: false,
+			title: 'Basic Dialog'
+		});
 
-        template.bind('mouseover', function(e){
+        template.bind('mouseover', texto, function(e){
             e.preventDefault();
             //window.setTimeout(function() {
                 $(texto).dialog('open');
