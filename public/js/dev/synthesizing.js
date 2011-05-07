@@ -293,6 +293,10 @@ var SYNTH_BAR = { //Retorna a cor do background
         limMin = parseFloat(limMin);        
         limMax = parseFloat(limMax);
 
+        if(valor == null){
+            return SYNTH_BAR.vermelho;
+        }
+
         if(tipo == 'reversa'){ //disreverte a *)#($Q@*$)Q*$ da métrica
             var tmp = limMax;
             limMax = limMin;

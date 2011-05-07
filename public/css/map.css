@@ -30,13 +30,14 @@
 /************** RIGHT BAR ********************/
 #rightBar {
     display: inline-block;
-    width: 33%;
+    width: 33%;    
 }
 
 #rightBarMenu a {
     color: #375D81;
     line-height: 28px;    
     margin-right: 20px;
+    display: none;
 }
 
 #rightBarMenu a:visited {
@@ -59,6 +60,10 @@
 
 .sondaDestaque {
   padding-bottom: 5px;
+  
+   border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 
 .sondaDestaqueBox {
@@ -141,6 +146,9 @@
     float: left;
     clear: right;
     color:#375D81;
+     border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 .sondaBg{
     background-color: #ccc;
@@ -189,6 +197,7 @@ a {
     height: 30px;
     background-color: #CCC;
     text-align: center;
+    display: none;
 }
 
 /******************MAPS**************************/
