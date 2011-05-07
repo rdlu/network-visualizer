@@ -164,7 +164,7 @@ var SYNTH_TEMPLATE = {
         var texto = "";
             $.each(resultados, function(key, value){
                 if(value != null){
-                    texto = texto+'<span>'+key+': '+value+'</span><br />';
+                    texto = texto+'<span>'+key+' : '+value+'</span><br />';
                 }
                 $(texto).tooltip();
             });
@@ -174,7 +174,7 @@ var SYNTH_TEMPLATE = {
            show: 'mouseover',
            hide: 'mouseout',
            style: {
-              name: 'dark' // Inherit from preset style
+              name: 'blue' // Inherit from preset style
            }
         });        
 
