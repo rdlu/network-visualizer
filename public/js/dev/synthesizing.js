@@ -89,8 +89,10 @@ var SYNTH = {
         console.log($('#synth_opt_'+sondaOrigemId));
         (SYNTH.onScreen).pop(sondaOrigemId);
         console.log('SYNTH.onScreen: ', SYNTH.onScreen);
+    },
+    popupSection: function(sondaOrigemId){
+        window.open('/mom/synthpopup/'+sondaOrigemId,'','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes, width=800,height=600');
     }
-    
 };
 
 SYNTH.onScreen = []; //vou precisar de um array com as sondas medidas.
@@ -161,6 +163,7 @@ var SYNTH_TEMPLATE = {
             template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max, 'normal'));
             
 /* on mouseover */
+        //TOOLTIP
         var texto = "";
             $.each(resultados, function(key, value){
                 if(value != null){
@@ -188,7 +191,7 @@ var SYNTH_TEMPLATE = {
         
         
    /* On click */
-
+        //ABRE janela modal com os relatórios
         template.bind('click', function(e){
             e.preventDefault();
             $.ajax({            
