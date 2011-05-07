@@ -191,7 +191,7 @@ var SYNTH_TEMPLATE = {
         template.bind('click', function(e){
             e.preventDefault();
             $.ajax({            
-               url: '/mom/synthesizing/origsondas/'+SondaOrigemId,
+               url: 'synthesizing/modal',
                type: 'post',
                dataType: 'html',
                data: {
