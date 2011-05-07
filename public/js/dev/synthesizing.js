@@ -160,18 +160,24 @@ var SYNTH_TEMPLATE = {
             template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, (limiares.throughputTCP).min, (limiares.throughputTCP).max, 'normal'));
             template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max, 'normal'));
             
-/* on mouseover
-        
+/* on mouseover */
+        var texto = "";
+            $.each(resultados, function(key, value){
+                if(value != null){
+                    texto = texto+'<span>'+key+': '+value+'</span><br />';
+                }
+                $(texto).tooltip();
+            });
 
-        template.bind('mouseover', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
-            e.preventDefault();
-            window.setTimout(function() {
-                $.post( url, {sondaOrigemId:sondaOrigemId, id:id}, function( data ) {
-                    data.tooltip();
-                });
-            }, 1000);//time to wait in milliseconds
-        })
-*/
+        template.qtip({
+           content: texto,
+           show: 'mouseover',
+           hide: 'mouseout',
+           style: {
+              name: 'dark' // Inherit from preset style
+           }
+        });        
+
         //prepara o html para colocar no bind abaixo
         //var texto = '<div class="synth_tooltip">';
         //var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
@@ -179,12 +185,7 @@ var SYNTH_TEMPLATE = {
         //for(i = 0; i < (resultados.length -1); i++){
         //    _html = _html+'<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
         //}
-        var texto = "";
-        $.each(resultados, function(key, value){
-             if(value != null){
-                texto = texto+'<span>'+key+': '+value+'</span><br />';
-             }
-        });
+        
         
    /* On click */
 
