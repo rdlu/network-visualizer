@@ -201,11 +201,12 @@ var SYNTH_TEMPLATE = {
                async: false,
                cache: false,
                success: function(resp){
-                    var $dialog = $(resp)
+                    var $dialog = $('<div></div>')
+                            .html(resp)
                             .dialog({
                                 autoOpen: false,
-                                modal: true
-                                
+                                modal: true,
+                                width: 1000
                             });
                     $dialog.dialog('open');
                }
