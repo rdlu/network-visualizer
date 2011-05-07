@@ -201,8 +201,7 @@ var SYNTH_TEMPLATE = {
                async: false,
                cache: false,
                success: function(resp){
-                    var $dialog = $('<div></div>')
-                            .html(resp)
+                    var $dialog = $(resp)
                             .dialog({
                                 autoOpen: false,
                                 modal: true,
