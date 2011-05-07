@@ -177,7 +177,7 @@ var SYNTH_TEMPLATE = {
            show: 'mouseover',
            hide: 'mouseout',
            style: {
-              name: 'blue' // Inherit from preset style
+              name: 'light' // Inherit from preset style
            }
         });        
 
