@@ -160,22 +160,8 @@ var SYNTH_TEMPLATE = {
             template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, (limiares.throughputTCP).min, (limiares.throughputTCP).max, 'normal'));
             template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max, 'normal'));
             
-/*
-        template.bind('click', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
-            e.preventDefault();
-            $.post("test.php", { source: sondaOrigemId, destination: id } );
-            $.ajax({
-              url: '/mom/synthesizing/Modal/',
-              data: {
-                source: sondaOrigemId,
-		destination: id
-              },
-              success: function(htmlPage){
-                  htmlPage.dialog();
-              },
-              dataType: 'html'
-            });            
-        });
+/* on mouseover
+        
 
         template.bind('mouseover', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
             e.preventDefault();
@@ -193,30 +179,42 @@ var SYNTH_TEMPLATE = {
         //for(i = 0; i < (resultados.length -1); i++){
         //    _html = _html+'<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
         //}
-        var texto;
+        var texto = "";
         $.each(resultados, function(key, value){
-             texto = texto+'<span>'+key+': '+value+'</span><br />';
+             if(value != null){
+                texto = texto+'<span>'+key+': '+value+'</span><br />';
+             }
         });
-        //texto = texto+'</div>';
-        //console.log('resultadosKeys', resultadosKeys);
-        //console.log('resultadosValues', resultadosValues);
-        var $dialog = $('<div></div>')
-		.html(texto)
-		.dialog({
-			autoOpen: false,
-			title: 'Basic Dialog'
-	});
+        
+   /* On click */
 
-        template.bind('mouseover', texto, function(e){
-            //e.preventDefault();
-            //window.setTimeout(function() {
-                $dialog.dialog('open');
-            //}, 1000);//time to wait in milliseconds
-        });
+        template.bind('click', function(e){
+            e.preventDefault();
+            $.ajax({            
+               url: '/mom/synthesizing/origsondas/'+SondaOrigemId,
+               type: 'post',
+               dataType: 'html',
+               data: {
+                    source: sondaOrigemId,
+                    destination: id
+               },
+               async: false,
+               cache: false,
+               success: function(resp){
+                    var $dialog = $('<div></div>')
+                            .html(resp)
+                            .dialog({
+                                autoOpen: false,
+                                modal: true
+                            });
+                    $dialog.dialog('open');
+               }
+            });
+        });   
 
         //atach to secao
         //console.log('Fazer um appendTo para: ', $('#synthSecao_'+sondaOrigemId+" .synth_sondas_dest"));
-        template.appendTo('#synthSecao_'+sondaOrigemId);        //CONTINUE DAQUI: refazer CSS : +".synth_sondas_dest")
+        template.appendTo('#synthSecao_'+sondaOrigemId);        
         
     },
     //do the same thing as the Perl "keys" subroutine
