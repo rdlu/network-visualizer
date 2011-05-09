@@ -89,8 +89,10 @@ var SYNTH = {
         console.log($('#synth_opt_'+sondaOrigemId));
         (SYNTH.onScreen).pop(sondaOrigemId);
         console.log('SYNTH.onScreen: ', SYNTH.onScreen);
+    },
+    popupSection: function(sondaOrigemId){
+        window.open('/mom/synthpopup/'+sondaOrigemId,'','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes, width=800,height=600');
     }
-    
 };
 
 SYNTH.onScreen = []; //vou precisar de um array com as sondas medidas.
@@ -160,32 +162,25 @@ var SYNTH_TEMPLATE = {
             template.find('.tpTCP_bar').css('background-color', SYNTH_BAR.color(tpTCP, (limiares.throughputTCP).min, (limiares.throughputTCP).max, 'normal'));
             template.find('.tpUDP_bar').css('background-color', SYNTH_BAR.color(tpUDP, (limiares.throughput).min, (limiares.throughput).max, 'normal'));
             
-/*
-        template.bind('click', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
-            e.preventDefault();
-            $.post("test.php", { source: sondaOrigemId, destination: id } );
-            $.ajax({
-              url: '/mom/synthesizing/Modal/',
-              data: {
-                source: sondaOrigemId,
-		destination: id
-              },
-              success: function(htmlPage){
-                  htmlPage.dialog();
-              },
-              dataType: 'html'
-            });            
-        });
+/* on mouseover */
+        //TOOLTIP
+        var texto = "";
+            $.each(resultados, function(key, value){
+                if(value != null){
+                    texto = texto+'<span>'+key+' : '+value+'</span><br />';
+                }
+                $(texto).tooltip();
+            });
 
-        template.bind('mouseover', {sondaOrigemId:sondaOrigemId, id:id}, function(e){
-            e.preventDefault();
-            window.setTimout(function() {
-                $.post( url, {sondaOrigemId:sondaOrigemId, id:id}, function( data ) {
-                    data.tooltip();
-                });
-            }, 1000);//time to wait in milliseconds
-        })
-*/
+        template.qtip({
+           content: texto,
+           show: 'mouseover',
+           hide: 'mouseout',
+           style: {
+              name: 'blue' // Inherit from preset style
+           }
+        });        
+
         //prepara o html para colocar no bind abaixo
         //var texto = '<div class="synth_tooltip">';
         //var resultadosKeys = SYNTH_TEMPLATE.keys(resultados);
@@ -193,30 +188,38 @@ var SYNTH_TEMPLATE = {
         //for(i = 0; i < (resultados.length -1); i++){
         //    _html = _html+'<span>'+resultadosKeys[i]+': '+resultadosValues[i]+'</span><br />';
         //}
-        var texto;
-        $.each(resultados, function(key, value){
-             texto = texto+'<span>'+key+': '+value+'</span><br />';
-        });
-        //texto = texto+'</div>';
-        //console.log('resultadosKeys', resultadosKeys);
-        //console.log('resultadosValues', resultadosValues);
-        var $dialog = $('<div></div>')
-		.html(texto)
-		.dialog({
-			autoOpen: false,
-			title: 'Basic Dialog'
-	});
-
-        template.bind('mouseover', texto, function(e){
-            //e.preventDefault();
-            //window.setTimeout(function() {
-                $dialog.dialog('open');
-            //}, 1000);//time to wait in milliseconds
-        });
+        
+        
+   /* On click */
+        //ABRE janela modal com os relatórios
+        template.bind('click', function(e){
+            e.preventDefault();
+            $.ajax({            
+               url: 'synthesizing/modal',
+               type: 'post',
+               dataType: 'html',
+               data: {
+                    source: sondaOrigemId,
+                    destination: id
+               },
+               async: false,
+               cache: false,
+               success: function(resp){
+                    var $dialog = $('<div></div>')
+                            .html(resp)
+                            .dialog({
+                                autoOpen: false,
+                                modal: true,
+                                width: 1000
+                            });
+                    $dialog.dialog('open');
+               }
+            });
+        });   
 
         //atach to secao
         //console.log('Fazer um appendTo para: ', $('#synthSecao_'+sondaOrigemId+" .synth_sondas_dest"));
-        template.appendTo('#synthSecao_'+sondaOrigemId);        //CONTINUE DAQUI: refazer CSS : +".synth_sondas_dest")
+        template.appendTo('#synthSecao_'+sondaOrigemId);        
         
     },
     //do the same thing as the Perl "keys" subroutine
@@ -293,6 +296,10 @@ var SYNTH_BAR = { //Retorna a cor do background
         valor = parseFloat(valor);        
         limMin = parseFloat(limMin);        
         limMax = parseFloat(limMax);
+
+        if(valor == null){
+            return SYNTH_BAR.vermelho;
+        }
 
         if(tipo == 'reversa'){ //disreverte a *)#($Q@*$)Q*$ da métrica
             var tmp = limMax;

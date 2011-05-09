@@ -479,9 +479,9 @@ synth_form h2 {
     display: none;
 }
 
-.synth_tooltip{
+.tooltip{
     display:none;
-	background: #CCC;
+	background: black;
 	height:600px;
 	padding:40px 30px 10px 30px;
 	width:310px;
