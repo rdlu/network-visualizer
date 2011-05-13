@@ -76,14 +76,15 @@ class Controller_Skeleton extends Controller_Template {
 				'css/cupertino/jquery-ui-1.8.6.custom.css' => 'all',
 			);
 
-			$jqueryVersion = "1.5.1";
+			$jqueryVersion = "1.6.1";
+			$juiversion = "1.8.6.custom";
 
 
 			$scripts = array(
-				'js/dev/jquery-1.5.1.js',
+				"js/dev/jquery-$jqueryVersion.js",
 				'js/jquery.tools.min.js',
 				'js/dev/dummyConsole.js',
-				'js/jquery-ui-1.8.6.custom.min.js',
+				"js/jquery-ui-$juiversion.min.js",
 				'js/jquery.tablesorter.min.js',
 				'js/dev/jquery.inputmask.js',
 				//'js/firebug-lite.js',
