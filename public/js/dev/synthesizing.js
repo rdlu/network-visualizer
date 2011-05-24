@@ -169,8 +169,9 @@ var SYNTH_TEMPLATE = {
         var texto = "";        
             $.each(resultados, function(key, value){
                 if(value != null){
-                    var unidade = ''
+                    var unidade = '';
                     if(key == 'jitter' || key == 'rtt' || key == 'jitter' || key == 'owd'){
+                        key = parseFloat(key);
                         unidade = 's';
                         if(value < 1){
                             value *= 1000; //
@@ -179,13 +180,15 @@ var SYNTH_TEMPLATE = {
                         if(value < 1){
                             value *= 1000;
                             unidade = '&micro;s';
-                        }                       
+                        }
+                        value = ( value.toFixed(6) );
                     }
                     if(key == 'pom' || key == 'loss'){
                         unidade = '&#37;'; //'%'
                     }
                     if(key == 'throughput' || key == 'throughputTCP'){
                         unidade = 'bps';
+                        key = parseFloat(key);
                         if(value > 1000){
                             value = value / 1000;
                             unidade = 'kbps';
@@ -197,10 +200,11 @@ var SYNTH_TEMPLATE = {
                         if(value > 1000){
                             value = value / 1000;
                             unidade = 'gpbs';
-                        }                        
+                        }
+                        value = ( value.toFixed(6) );
                     }
-                    console.log("VALUE", value);
-                    texto = texto+'<span>'+key+' : '+( value.toFixed(6) )+unidade+'</span><br />';
+                    console.log('value, key: ', value, key);
+                    texto = texto+'<span>'+key+' : '+value+' '+unidade+'</span><br />';
                 }
                 $(texto).tooltip();
             });
