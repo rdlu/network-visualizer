@@ -171,7 +171,7 @@ var SYNTH_TEMPLATE = {
                 if(value != null){
                     var unidade = '';
                     if(key == 'jitter' || key == 'rtt' || key == 'jitter' || key == 'owd'){
-                        key = parseFloat(key);
+                        value = parseFloat(value);
                         unidade = 's';
                         if(value < 1){
                             value *= 1000; //
@@ -181,7 +181,7 @@ var SYNTH_TEMPLATE = {
                             value *= 1000;
                             unidade = '&micro;s';
                         }
-                        //value = value.toFixed(6);
+                        value = value.toFixed(6);
                     }
                     if(key == 'pom' || key == 'loss'){
                         unidade = '&#37;'; //'%'
@@ -201,7 +201,7 @@ var SYNTH_TEMPLATE = {
                             value = value / 1000;
                             unidade = 'gpbs';
                         }
-                        //value = value.toFixed(6);
+                        value = value.toFixed(6);
                     }
                     console.log('value, key: ', value, key);
                     texto = texto+'<span>'+key+' : '+value+' '+unidade+'</span><br />';
