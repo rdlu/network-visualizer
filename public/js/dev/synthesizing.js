@@ -180,6 +180,7 @@ var SYNTH_TEMPLATE = {
                             value *= 1000;
                             unidade = '&micro;s';
                         }
+                        value = value.toFixed(6);
                     }
                     if(key == 'pom' || key == 'loss'){
                         unidade = '&#37;'; //'%'
