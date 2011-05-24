@@ -170,7 +170,7 @@ var SYNTH_TEMPLATE = {
             $.each(resultados, function(key, value){
                 if(value != null){
                     var unidade = ''
-                    if(key == 'jitter' || key == 'rtt' || key == 'jitter'){
+                    if(key == 'jitter' || key == 'rtt' || key == 'jitter' || key == 'owd'){
                         unidade = 's';
                         if(value < 1){
                             value *= 1000; //
@@ -198,6 +198,7 @@ var SYNTH_TEMPLATE = {
                             value = value / 1000;
                             unidade = 'gpbs';
                         }
+                        value = value.toFixed(4);
                     }
                     texto = texto+'<span>'+key+' : '+value+unidade+'</span><br />';
                 }
