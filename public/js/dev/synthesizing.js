@@ -199,7 +199,8 @@ var SYNTH_TEMPLATE = {
                             unidade = 'gpbs';
                         }                        
                     }
-                    texto = texto+'<span>'+key+' : '+value.toFixed(6)+unidade+'</span><br />';
+                    console.log("VALUE", value);
+                    texto = texto+'<span>'+key+' : '+( value.toFixed(6) )+unidade+'</span><br />';
                 }
                 $(texto).tooltip();
             });
