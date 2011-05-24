@@ -179,8 +179,7 @@ var SYNTH_TEMPLATE = {
                         if(value < 1){
                             value *= 1000;
                             unidade = '&micro;s';
-                        }
-                        value = value.toFixed(6);
+                        }                       
                     }
                     if(key == 'pom' || key == 'loss'){
                         unidade = '&#37;'; //'%'
@@ -198,10 +197,9 @@ var SYNTH_TEMPLATE = {
                         if(value > 1000){
                             value = value / 1000;
                             unidade = 'gpbs';
-                        }
-                        value = value.toFixed(4);
+                        }                        
                     }
-                    texto = texto+'<span>'+key+' : '+value+unidade+'</span><br />';
+                    texto = texto+'<span>'+key+' : '+value.toFixed(6)+unidade+'</span><br />';
                 }
                 $(texto).tooltip();
             });
