@@ -188,7 +188,7 @@ var SYNTH_TEMPLATE = {
                     }
                     if(key == 'throughput' || key == 'throughputTCP'){
                         unidade = 'bps';
-                        key = parseFloat(key);
+                        value = parseFloat(value);
                         if(value > 1000){
                             value = value / 1000;
                             unidade = 'kbps';
