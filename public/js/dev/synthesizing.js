@@ -164,10 +164,47 @@ var SYNTH_TEMPLATE = {
             
 /* on mouseover */
         //TOOLTIP
-        var texto = "";
+        //formata os valores:        
+
+        var texto = "";        
             $.each(resultados, function(key, value){
                 if(value != null){
-                    texto = texto+'<span>'+key+' : '+value+'</span><br />';
+                    var unidade = '';
+                    if(key == 'jitter' || key == 'rtt' || key == 'jitter' || key == 'owd'){
+                        value = parseFloat(value);
+                        unidade = 's';
+                        if(value < 1){
+                            value *= 1000; //
+                            unidade = 'ms';
+                        }
+                        if(value < 1){
+                            value *= 1000;
+                            unidade = '&micro;s';
+                        }
+                        value = value.toFixed(4);
+                    }
+                    if(key == 'pom' || key == 'loss'){
+                        unidade = '&#37;'; //'%'
+                    }
+                    if(key == 'throughput' || key == 'throughputTCP'){
+                        unidade = 'bps';
+                        value = parseFloat(value);
+                        if(value > 1000){
+                            value = value / 1000;
+                            unidade = 'kbps';
+                        }
+                        if(value > 1000){
+                            value = value / 1000;
+                            unidade = 'mbps';
+                        }
+                        if(value > 1000){
+                            value = value / 1000;
+                            unidade = 'gpbs';
+                        }
+                        value = value.toFixed(4);
+                    }
+                    console.log('value, key: ', value, key);
+                    texto = texto+'<span>'+key+' : '+value+' '+unidade+'</span><br />';
                 }
                 $(texto).tooltip();
             });

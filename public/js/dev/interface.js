@@ -7,7 +7,8 @@ var MOM = {
     script2: 'retornaXML2.php',
     //script_info_mapa: '../mom/welcome/infoMapa',
     script_info_bar: '../mom/welcome/infoBar',
-    info_mapa_json: '../mom/welcome/infoMapaJ'
+    info_mapa_json: '../mom/welcome/infoMapaJ',
+    infoMedicoesSondaOrigem: '../mom/welcome/infoMedicoesSondaOrigem'
 }
 //namespace reservado para o layout e os resizes
 var DS = { //display screen :)
@@ -262,6 +263,17 @@ var CACHED = {
            success: function(JSONresp){               
                CACHED.JSONresponse = JSONresp;
                CACHED.loaded = true;
+           }
+       })
+   },
+   infoMedicoesSondaOrigem: function(sondaOrigemId){
+       $.ajax({
+           url: MOM.infoMedicoesSondaOrigem+sondaOrigemId,
+           type: 'get',
+           dataType: 'json',
+           async: false,
+           success: function(data){
+               CACHED.medicoes = data;
            }
        })
    }
