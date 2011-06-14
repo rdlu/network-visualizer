@@ -3,6 +3,8 @@
 class Model_DynData extends ORM
 {
 
+	protected $_table_name = 'dyndata';
+
 	public function filters()
 	{
 		return array(
