@@ -58,16 +58,25 @@ class Controller_Welcome extends Controller_Skeleton {
 			$query = DB::select()->order_by('status', 'DESC');
 			$entities = Sprig::factory('entity')->load($query, FALSE);
 			$JSONresponse = array();
-
+                        $before = 0;
 			foreach ($entities as $k => $entity) { //coloca as medições em um array
 				$status = Sonda::instance($entity->id)->getCode();
 				$agentes = array();
 				$gerentes = array();
 				foreach ($entity->processes_as_source as $process) {
-					$agentes[] = $process->destination->id;
+                                        if($process->destination->id != $before){
+                                            $agentes[] = $process->destination->id;
+                                            $before = $process->destination->id;
+                                        }
+					
 				}
+                                $before = 0;
 				foreach ($entity->processes_as_destination as $process) {
-					$gerentes[] = $process->source->id;
+                                    if($process->destination->id != $before){
+                                            $gerentes[] = $process->source->id;
+                                            $before = $process->destination->id;
+                                    }
+					
 				}
 
 				$JSONresponse[$k] = array( //prepara um array com a resposta

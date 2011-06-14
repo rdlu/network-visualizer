@@ -8,7 +8,7 @@ var MOM = {
     //script_info_mapa: '../mom/welcome/infoMapa',
     script_info_bar: '../mom/welcome/infoBar',
     info_mapa_json: '../mom/welcome/infoMapaJ',
-    infoMedicoesSondaOrigem: '../mom/welcome/infoMedicoesSondaOrigem'
+    infoMedicoesSondaOrigem: '../mom/synthesizing/infoMedicoesSondaOrigem/'
 }
 //namespace reservado para o layout e os resizes
 var DS = { //display screen :)
@@ -253,7 +253,19 @@ SONDA.lastClicked = null;
 
 var CACHED = {
    //loaded: false,
-   
+   infoMedicoes: function(sondaOrigemId){
+       $.ajax({
+           type: 'get',
+           url: '../mom/synthesizing/destsondas/'+sondaOrigemId,
+           dataType: 'json',
+           async: false, //necessário, ou terá problema de sincronicidade
+           cache: false,
+           success: function(medicoes){
+               CACHED.medicoes = medicoes;
+               //CACHED.last = true;
+           }
+       });
+   },
    infoMapaJ: function(){
        $.ajax({
            url: MOM.info_mapa_json,
@@ -278,25 +290,7 @@ var CACHED = {
        })
    }
 };
-/*obsoleta: usar infoMapaJ para iniciar o CACHE
-CACHED.init = function(){    
-    $.ajax({
-        type: 'get',
-        url: MOM.script_info_mapa,
-        dataType: 'xml',
-        async: false,
-        success: function(xml){
-           try {
-               $(xml).find("entities").appendTo("#cache");
-           }
-           catch(err){
-               $("#cache").append( $(xml).find("entities").clone() );
-           }
-        }
-    })
-    CACHED.loaded = true;
-}
-*/
+
 var MAPA = {
     iconeVerde: 'verdeNormal.png', //markerGimp.png',
     iconeAmarelo: 'amareloNormal2.png', //markerAmarelo.png',
@@ -360,30 +354,52 @@ var MAPA = {
          if(id != MAPA.ultimaLinhaDesenhada){ //só desenha se não tiver desenhado ainda
              MAPA.deletaLinhas(MAPA.ultimaLinhaDesenhada, gmap);
              var sonda = SONDA.getFromCache(id);
-             
+             console.log(sonda);
              MAPA.linhas = [];
-             MAPA.ultimaLinhaDesenhada = id;                         
-             //itera sobre as medições de cada agente
-             
+             MAPA.ultimaLinhaDesenhada = id;
+//pega os valores das medições
+            CACHED.infoMedicoesSondaOrigem(id);
+            var medicoes = CACHED.medicoes;
+            console.log("------------------------------");
+            console.log("medicoes: ", medicoes);
+//para pegar o objeto certo que contém as medições terei que entrar em cada um deles, verificar o medicoes.target.id,
+//e, se for o correto, retornar o medicoes.results
+            console.log("id da sonda de origem: ", id);
+            console.log("------------------------------");
+//itera sobre as medições dos agentes e gerentes
+
              $.each(sonda.agentes, function(key, value){
-                 
                  var med = value;                 
                  var coord = [];
                     coord.push(MAPA.myLatlng[id]);
                     coord.push(MAPA.myLatlng[med]);                    
                     //desenha as linhas
                     //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
-                    //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas                    
-                    (MAPA.linhas).push( new google.maps.Polyline({
+                    //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
+                    var linha = new google.maps.Polyline({
                         path: coord,
                         map: gmap,
                         strokeColor: "#EE8844", /*#FF0000*/
-                        strokeOpacity: 0.9,
+                        strokeOpacity: 0.8,
                         strokeWeight: 3
-                    }))
+                    });
+                    // TO_DO : função que pegue 1 JSON com as medições do agente
+                    // CUIDAR : tem duas funções: uma que cuida das linhas claras e outra das linhas escuras.]
+                    //          isso é estúpido, refatorar
+                    google.maps.event.addListener(linha, 'mouseover', function(){
+                        //alert("mOUs3 Ouv4h1!1");
+                        // TO_DO: adicionar infoView aqui
+                        //code sample:
+                        /*
+                        coordInfoWindow = new google.maps.InfoWindow({content: "Chicago, IL"});
+                        coordInfoWindow.setContent(latlngStr + worldCoordStr + pixelCoordStr + tileCoordStr);
+                        coordInfoWindow.setPosition(chicago); //seta o ponto
+                        coordInfoWindow.open(map);
+                        */
+                    });
+                    (MAPA.linhas).push(linha);
              });
              $.each(sonda.gerentes, function(key, value){
-
                  var med = value;
                  var coord = [];
                     coord.push(MAPA.myLatlng[id]);
@@ -391,13 +407,17 @@ var MAPA = {
                     //desenha as linhas
                     //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
                     //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
-                    (MAPA.linhas).push( new google.maps.Polyline({
+                    var linha = new google.maps.Polyline({
                         path: coord,
                         map: gmap,
                         strokeColor: "#EE9955",
                         strokeOpacity: 0.6,
                         strokeWeight: 2
-                    }))
+                    });
+                    google.maps.event.addListener(linha, 'mouseover', function(){
+                        //alert("mOUs3 Ouv4h1!1");
+                    });
+                    (MAPA.linhas).push(linha);
              });
          }
      },
@@ -493,6 +513,7 @@ $(document).ready(function(){
     //CACHED.init();
     CACHED.infoMapaJ();
     //inicia os dados para povoar o lado direito com sondas em formato Box
+    console.log("CACHED.JSONresponse: ", CACHED.JSONresponse);
     RIGHTBAR.entitiesPovoa();  
     MAPA.gmap = MAPA.init(); 
     MAPA.povoa(MAPA.gmap);
