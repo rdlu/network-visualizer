@@ -19,6 +19,49 @@
 //fazer os hooks de pop up, delete section => OK
 
 /******************************************************************************/
+var FORMAT = {
+    metric: function(key, value){
+        if(value != null){
+                    var unidade = '';
+                    if(key == 'jitter' || key == 'rtt' || key == 'jitter' || key == 'owd'){
+                        value = parseFloat(value);
+                        unidade = 's';
+                        if(value < 1){
+                            value *= 1000; //
+                            unidade = 'ms';
+                        }
+                        if(value < 1){
+                            value *= 1000;
+                            unidade = '&micro;s';
+                        }
+                        value = value.toFixed(4);
+                    }
+                    if(key == 'pom' || key == 'loss'){
+                        unidade = '&#37;'; //'%'
+                    }
+                    if(key == 'throughput' || key == 'throughputTCP'){
+                        unidade = 'bps';
+                        value = parseFloat(value);
+                        if(value > 1000){
+                            value = value / 1000;
+                            unidade = 'kbps';
+                        }
+                        if(value > 1000){
+                            value = value / 1000;
+                            unidade = 'mbps';
+                        }
+                        if(value > 1000){
+                            value = value / 1000;
+                            unidade = 'gpbs';
+                        }
+                        value = value.toFixed(4);
+                    }
+                    console.log('value, key: ', value, key);
+                    return(key+unidade);
+        }
+        else return "";
+    }
+}
 
 var SYNTH_AVISOS = {
     escreve: function(numeroDoerro){
@@ -63,14 +106,14 @@ var SYNTH = {
     newBoxes: function(sondaOrigemId){
         SYNTH_AJAX.getInfoSondasDestino(sondaOrigemId);
         var sondasDestino = SYNTH_AJAX.infoSondasDestino;
-        //console.log("em newBoxes, sondasDestino: ", sondasDestino);
+        console.log("em newBoxes, sondasDestino: ", sondasDestino);
         $.each(sondasDestino, function(){
             var sonda = $(this)[0];
-            console.log('$(this)[0]: ',$(this)[0]);
+            //console.log('$(this)[0]: ',$(this)[0]);
             var resultados = sonda.results;
             var limiares = sonda.thresholds;
             var target = sonda.target;
-            console.log("sonda.target: ", sonda.target);
+            //console.log("sonda.target: ", sonda.target);
             SYNTH_TEMPLATE.buildNewBox(sondaOrigemId, resultados, limiares, target);
             //template.find('.synth_destino span').text(sonda.nome);
         })
@@ -83,12 +126,12 @@ var SYNTH = {
         return ( $.inArray(sondaOrigemId, SYNTH.onScreen) <= -1); //inArray retorna valores <= -1 se o valor não está no array.
     },
     deleteSection: function(sondaOrigemId){
-        console.log('~~~~~~~~~~~~~~~debug do delete section~~~~~~~~~~~~~~~~~')
+        //console.log('~~~~~~~~~~~~~~~debug do delete section~~~~~~~~~~~~~~~~~')
         $('#synthSecao_'+sondaOrigemId).remove();        
         $('#synth_opt_'+sondaOrigemId).removeAttr('disabled');
-        console.log($('#synth_opt_'+sondaOrigemId));
+        //console.log($('#synth_opt_'+sondaOrigemId));
         (SYNTH.onScreen).pop(sondaOrigemId);
-        console.log('SYNTH.onScreen: ', SYNTH.onScreen);
+        //console.log('SYNTH.onScreen: ', SYNTH.onScreen);
     },
     popupSection: function(sondaOrigemId){
         window.open('/mom/synthpopup/'+sondaOrigemId,'','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes, width=800,height=600');
@@ -168,6 +211,7 @@ var SYNTH_TEMPLATE = {
 
         var texto = "";        
             $.each(resultados, function(key, value){
+
                 if(value != null){
                     var unidade = '';
                     if(key == 'jitter' || key == 'rtt' || key == 'jitter' || key == 'owd'){
@@ -203,7 +247,8 @@ var SYNTH_TEMPLATE = {
                         }
                         value = value.toFixed(4);
                     }
-                    console.log('value, key: ', value, key);
+
+                    //console.log('value, key: ', value, key);
                     texto = texto+'<span>'+key+' : '+value+' '+unidade+'</span><br />';
                 }
                 $(texto).tooltip();
@@ -322,14 +367,7 @@ var SYNTH_BAR = { //Retorna a cor do background
     verde_g: 206,
     verde_b: 72,
 
-    color: function(valor, limMin, limMax, tipo){
-        /*
-         * código de cores
-         * 0 - red
-         * 1 - green
-         * 2 - yellow
-         */
-        
+    color: function(valor, limMin, limMax, tipo){       
         valor = parseFloat(valor);        
         limMin = parseFloat(limMin);        
         limMax = parseFloat(limMax);
@@ -472,17 +510,17 @@ var SYNTH_BAR = { //Retorna a cor do background
 */
 $(document).ready(function(){
     // coloca os hooks de eventos
-    console.log('estou funcionando?');
+    console.log('começa...');
 
     //SELECT MENU - para selecionar sonda de origem. Botão que adiciona uma seção na página
     
     $("#synth_select_add").click(function(event){
        event.preventDefault();       
        var sondaOrigemId = $('#synth_dropdown option:selected').val();
-       console.log('~~~~~~~~~~~~~~No clique~~~~~~~~~~~~~~~~');
-       console.log(SYNTH.onScreen);
-       console.log('valor de sonda origem: ', sondaOrigemId);
-       console.log("#synth_opt_"+sondaOrigemId);
+       //console.log('~~~~~~~~~~~~~~No clique~~~~~~~~~~~~~~~~');
+       //console.log(SYNTH.onScreen);
+       //console.log('valor de sonda origem: ', sondaOrigemId);
+       //console.log("#synth_opt_"+sondaOrigemId);
        $("#synth_opt_"+sondaOrigemId).attr('disabled', 'disabled');
        if( SYNTH.isOnScreen(sondaOrigemId) ){
            SYNTH.newSection(sondaOrigemId);
