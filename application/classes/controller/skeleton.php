@@ -35,6 +35,7 @@ class Controller_Skeleton extends Controller_Template {
 		if (($this->auth_required !== FALSE && Auth::instance()->logged_in($this->auth_required) === FALSE)
 				|| (is_array($this->secure_actions) && array_key_exists($action_name, $this->secure_actions) &&
 						Auth::instance()->logged_in($this->secure_actions[$action_name]) === FALSE)) {
+                        
 			if (Auth::instance()->logged_in()) {
 				Request::current()->redirect('account/noaccess');
 			} else {

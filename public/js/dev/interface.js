@@ -8,7 +8,7 @@ var MOM = {
     //script_info_mapa: '../mom/welcome/infoMapa',
     script_info_bar: '../mom/welcome/infoBar',
     info_mapa_json: '../mom/welcome/infoMapaJ',
-    infoMedicoesSondaOrigem: '../mom/synthesizing/infoMedicoesSondaOrigem/'
+    infoMedicoesSondaOrigem: '../mom/synthesizing/destsondas/'
 }
 //namespace reservado para o layout e os resizes
 var DS = { //display screen :)
