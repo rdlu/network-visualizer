@@ -16,6 +16,8 @@ class Controller_Entities extends Controller_Skeleton
 		$this->template->title .= 'Entidades :: ';
 
 		//teste
+
+		//teste2
 	}
 
 	public function action_index()
