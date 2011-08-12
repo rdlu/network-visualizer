@@ -15,7 +15,7 @@ return array(
         'admin'=>array(
             'title'=>__('Administrar'),
             'submenu'=>array(
-	            'processes'=>array(
+	       'processes'=>array(
                     'title'=>__('Processos de Medição'),
                     'href'=>'processes/'),
                'entities'=>array(
@@ -24,9 +24,13 @@ return array(
                'profiles'=>array(
                     'title'=>__('Métricas e Perfis de Teste'),
                     'href'=>'profiles/'),
-	            'logviewer'=>array(
+	        'logviewer'=>array(
 		            'title'=>__('Registro de Eventos (Log)'),
 		            'href'=>'log/'),
+                'account'=>array(
+                    'title'=>__('Controle de Usuário'),
+                    'href'=>'account/'
+                ),
 	            ),
             'href'=>'admin'
         )
