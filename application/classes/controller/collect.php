@@ -24,7 +24,7 @@ class Controller_Collect extends Controller {
 		    $profile = $process->profile->load();
 		    $metric = Sprig::factory('metric')->load(Db::select()->where('plugin','=',$metric));
 
-		    Fire::info($metric->as_array());
+		    //Fire::info($metric->as_array());
 	       if(true || $source->ipaddress == $ip) {
 		       $snmp = Snmp::instance($source->ipaddress);
 		       $simple = $snmp->group('agentSimple',array('pid'=>$id));

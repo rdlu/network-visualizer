@@ -46,7 +46,7 @@ class Controller_Account extends Controller_Skeleton {
 				Request::current()->redirect('welcome/index');
 			} catch (ORM_Validation_Exception $e) {
 				$content->errors = $e->errors('account/register');
-				Fire::info($e->errors());
+				//Fire::info($e->errors());
 			}
 		}
 	}

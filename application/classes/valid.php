@@ -17,7 +17,7 @@ class Valid extends Kohana_Valid {
         $gap = (int) $_POST['gap'];
         $count = (int) $_POST['count'];
         $minWait = $count*$gap*2.2;
-        Fire::info("Tempo mínimo de polling: $minWait");
+        //Fire::info("Tempo mínimo de polling: $minWait");
         return $value*1000 > $minWait;
     }
 

@@ -199,7 +199,7 @@ class Controller_Synthesizing extends Controller_Skeleton
 		}
 
 		$inicio = strtotime("-".$relative);
-		Fire::error($inicio,"$relative");
+		//Fire::error($inicio,"$relative");
 		$fim = date("U");
 
 	   $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
@@ -210,13 +210,13 @@ class Controller_Synthesizing extends Controller_Skeleton
 		$rrd = Rrd::instance($source->ipaddress,$destination->ipaddress);
 		$count = $processes->count();
 
-		Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
+		//Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
 
 		if($count) {
 			$metrics2 = array();
 
 			foreach($processes as $process) {
-				Fire::info($process->as_array(),"Process 1, ID: $process->id");
+				//Fire::info($process->as_array(),"Process 1, ID: $process->id");
 				$profile = $process->profile->load();
 				$metrics = $profile->metrics;
 				foreach($metrics as $metric) {
@@ -228,8 +228,8 @@ class Controller_Synthesizing extends Controller_Skeleton
 
 			array_multisort($order, $metrics2);
 
-		   Fire::group("Images path")->info($img)->groupEnd();
-		   Fire::groupEnd();
+		   //Fire::group("Images path")->info($img)->groupEnd();
+		   //Fire::groupEnd();
 
 		   $view->bind('images',$img)
 				   ->bind('metrics',$metrics2)

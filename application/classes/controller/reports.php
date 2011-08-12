@@ -67,25 +67,25 @@ class Controller_Reports extends Controller_Skeleton {
 
 		$count = $processes->count();
 		
-		Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
+		//Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
 
 		if($count) {
 
 			$metrics2 = array();
 
 			foreach($processes as $process) {
-				Fire::info($process->as_array(),"Process 1, ID: $process->id");
+				//Fire::info($process->as_array(),"Process 1, ID: $process->id");
 				$profile = $process->profile->load();
 				$metrics = $process->metrics->as_array('order');
 				ksort($metrics);
-				Fire::error($metrics);
+				//Fire::error($metrics);
 				foreach($metrics as $metric) {
 					$img[$metric->name] = $rrd->graph($metric->name,$inicio,$fim);
 				}
 			}
 
-		   Fire::group("Images path")->info($img)->groupEnd();
-		   Fire::groupEnd();
+		   //Fire::group("Images path")->info($img)->groupEnd();
+		   //Fire::groupEnd();
 
 		   if(Request::current()->is_ajax()) {
 			   $view->bind('images',$img)->bind('metrics',$metrics)
@@ -168,14 +168,14 @@ class Controller_Reports extends Controller_Skeleton {
 
 		$count = $processes->count();
 
-		Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
+		//Fire::group("Report status for $source->ipaddress to $destination->ipaddress",array('Collapsed'=>'true'))->info("Number of processes: $count");
 
 		if($count) {
 			$inicio = Rrd::converteData($start)." ".$stime;
 			$fim = Rrd::converteData($end)." ".$etime;
 
 			foreach($processes as $process) {
-				Fire::info($process->as_array(),"Process 1, ID: $process->id");
+				//Fire::info($process->as_array(),"Process 1, ID: $process->id");
 				$profile = $process->profile->load();
 				$metrics = $profile->metrics;
 				foreach($metrics as $metric) {
@@ -183,8 +183,8 @@ class Controller_Reports extends Controller_Skeleton {
 				}
 			}
 
-		   Fire::group("Images path")->info($img)->groupEnd();
-		   Fire::groupEnd();
+		   //Fire::group("Images path")->info($img)->groupEnd();
+		   //Fire::groupEnd();
 
 		   if(Request::current()->is_ajax()) {
 			   $view->bind('images',$img)

@@ -51,7 +51,7 @@ class Snmp {
 		try {
 			$ps = snmp2_get($this->address,$this->community,$oid,$this->timeout,$this->retries);
 		   if(preg_match('/^No Such/',$ps)) {
-				Fire::info("IsReachable got this result: $ps");
+				//Fire::info("IsReachable got this result: $ps");
 				$userError = 'Sonda de origem não tem o Netmetric corretamente instalado';
 				$msg = "No such instance error on $oid at $this->address";
 		      $this->setError($userError,$msg,'error');
@@ -95,8 +95,8 @@ class Snmp {
 			$subst = array();
 		}
 
-		Fire::group('SNMP Data on '.$this->address,array('Collapsed'=>'true'));
-		Fire::info($values,"Received array to be set via SNMP:");
+		//Fire::group('SNMP Data on '.$this->address,array('Collapsed'=>'true'));
+		//Fire::info($values,"Received array to be set via SNMP:");
 
 		$data = array();
 		foreach($oids as $key => $oid) {
@@ -131,14 +131,14 @@ class Snmp {
 					$value = (string) utf8::transliterate_to_ascii($value);
 			}
 
-			Fire::info("$key: $value");
+			//Fire::info("$key: $value");
 
 			try {
 				$result = snmp2_set($this->address,$this->community,$oid['oid'],$type,$value,$this->timeout,$this->retries);
 			} catch (Exception $err) {
 				$code = $err->getCode();
 				$msg = $err->getMessage();                $oe = $oid['oid'];
-				Fire::error($err,"Exception on SNMP SET $code");
+				//Fire::error($err,"Exception on SNMP SET $code");
 				if($key == 'entryStatus' || $key == 'managerEntryStatus') {
 
 				} else {
@@ -149,7 +149,7 @@ class Snmp {
 			}
 		}
 
-		Fire::groupEnd();
+		//Fire::groupEnd();
 		return $data;
     }
 
@@ -171,7 +171,7 @@ class Snmp {
 				throw new Kohana_Exception("Configuration node '$name' does not exist on snmp configuration file",array($name));
 			}
 
-			Fire::group('SNMP Data from '.$this->address,array('Collapsed'=>'true'));
+			//Fire::group('SNMP Data from '.$this->address,array('Collapsed'=>'true'));
 
 			foreach($oids as $key => $oid) {
 				foreach ($subst as $k=>$v) {
@@ -180,7 +180,7 @@ class Snmp {
 				
 				try {
 					$data = snmp2_get($this->address,$this->community,$oid['oid'],$this->timeout,$this->retries);
-					Fire::info($oid['oid']);
+					//Fire::info($oid['oid']);
 					$pos = strpos($data,':');
 					$dt = substr($data,$pos+2);
 					$dt = trim($dt,"\0\n\r \"");
@@ -189,13 +189,13 @@ class Snmp {
 					$return[$key] = NULL;
 				   $code = $e->getCode();
                 $msg = $e->getMessage();
-                Fire::error($e,"Exception on SNMP GET $code");
+                //Fire::error($e,"Exception on SNMP GET $code");
                 Kohana::$log->add(Log::ERROR,"Erro no snmpget para o ip $this->address, oid $key, $msg");
 				}
 			}
 
 			$this->groups[$name] = $return;
-			Fire::info($return)->groupEnd();
+			//Fire::info($return)->groupEnd();
 		} else $return = $this->groups[$name];
 
 		return $return;

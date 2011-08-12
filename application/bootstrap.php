@@ -102,7 +102,7 @@ Kohana::modules(array(
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
 	'userguide' => MODPATH . 'userguide', // User guide and API documentation
 	'sprig' => MODPATH . 'sprig', // User guide and API documentation
-	'firephp' => MODPATH . 'firephp', // User guide and API documentation
+	//'firephp' => MODPATH . 'firephp', // User guide and API documentation
 	'log' => MODPATH . 'log',
 	'zend' => MODPATH . 'zend',
 	'pheanstalk' => MODPATH . 'pheanstalk',
@@ -126,9 +126,9 @@ Cookie::$salt = 'Xg0kVdEh';
  */
 require_once APPPATH . 'routes.php';
 
-FirePHP_Profiler::instance()
+/*FirePHP_Profiler::instance()
 		->group('NetMetric MoM Profiler Results:', array('Collapsed' => 'true'))
 		->superglobals() // New Superglobals method to show them all...
 		->database()
 		->benchmark()
-		->groupEnd();
+		->groupEnd();*/
