@@ -12,8 +12,7 @@
                 <th>TP TCP down / up (Mbps)</th>
             </tr>
         </thead>
-        <tbody>
-            <?php Fire::info($medicoes); ?>
+        <tbody>            
             <?php foreach($medicoes as $medicao): ?>
                 <tr>
                     <td><?php echo $medicao->username; ?></td>
