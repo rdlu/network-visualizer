@@ -11,8 +11,10 @@
             <tr>
                 <th>Nome</th>
                 <th>Email</th>
-                <th>Logins</th>
+                <th>Logins</th>                
+                <th>Nível de acesso</th>
                 <th>Último Login</th>
+                <th>Status</th>
                 <th>&nbsp;</th>              
             </tr>
         </thead>
@@ -22,10 +24,31 @@
                     <td><?php echo $user->username; ?></td>
                     <td><?php echo $user->email; ?></td>
                     <td><?php echo $user->logins; ?></td>
-                    <td><?php echo date("(d/m/y) H:i:s", $user->last_login); ?></td>
-                    <td><a href='<?php echo URL::site('account/edit?id='.$user->id, 'http');?>'><img src="" alt="editar"/></a>
-                        <a href='<?php echo URL::site('account/delete?id='.$user->id, 'http'); ?>'><img src="" alt="excluir"/></a></td>
+                    <td><?php
+                            if($user->has('roles', ORM::factory('role', array('name' => 'admin')))){
+                                echo 'administrador';
+                            }
+                            elseif ($user->has('roles', ORM::factory('role', array('name' => 'config')))){
+                                echo 'configurador';
+                            }
+                            else echo 'visualizador';
+                        ?>
+                    </td>
+                    <td><?php 
+                            if($user->last_login != 0){echo date("(d/m/Y) H:i:s", $user->last_login);}
+                            else echo "não logou";
+                        ?>
+                    </td>
+                    <td><?php echo ($user->active == 1)? 'ativo' : 'inativo'; ?></td>
+                    <td>
+                        <a href='<?php echo URL::site('account/edit?id='.$user->id, 'http');?>'>Editar</a>
+                        <?php if($user->username != 'admin') : ?>
+                            <a href='<?php echo URL::site('account/delete?id='.$user->id, 'http'); ?>'>Excluir</a>
+                            <a href='<?php echo URL::site('account/toogle?id='.$user->id, 'http');?>'><?php echo ($user->active == 1)? 'Desativar' : 'Ativar'; ?></a>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+

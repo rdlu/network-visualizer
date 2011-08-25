@@ -1,5 +1,6 @@
-<?php echo form::open('account/savechanges', array('class' => 'form_center', 'method' => 'post')) ?>
+<?php echo form::open('account/edit', array('class' => 'form_center')) ?>
     <?php echo form::hidden('id', $user->id) ?>
+<input type="hidden" name="action" value="save" />
   <table>
     <tr>
       <td><?php echo form::label('email','E-mail') ?></td>
@@ -19,10 +20,30 @@
     <tr>
       <td><?php echo form::label('password_confirm','Digite novamente') ?></td>
       <td>:</td>
-      <td><?php echo form::password('password_confirm','',array('id' => 'password_confirm')) ?>
+      <td><?php echo form::password('password_confirm','',array('id' => 'password_confirm')) ?></td>
     </tr>
-  </table>
+    <tr>
+        <td>
+            <?php echo Form::radio('privilege', 'administrador', ($user->has('roles', ORM::factory('role', array('name' => 'admin'))))); ?>
+            <span>Administrador</span>
+            <?php echo Form::radio('privilege', 'configurador', ($user->has('roles', ORM::factory('role', array('name' => 'config')))) && !($user->has('roles', ORM::factory('role', array('name' => 'admin'))))); ?>
+            <span>Configurador</span>
+            <?php echo Form::radio('privilege', 'visualizador', ($user->has('roles', ORM::factory('role', array('name' => 'login')))) && !($user->has('roles', ORM::factory('role', array('name' => 'config')))) && !($user->has('roles', ORM::factory('role', array('name' => 'admin'))))); ?>
+            <span>Visualizador</span>
+        </td>
+    </tr>
+    
+  </table>    
+ 
   <div style="text-align:center">
     <?php echo form::submit('submit','Salvar') ?>
   </div>
 <?php echo form::close() ?>
+
+<?php if (isset($errors)): ?>
+	<ul class="errors">
+		<?php foreach($errors as $error): ?>
+		<li class="<?=$error['class']?>"><?=$error['message']?></li>
+		<?php endforeach; ?>
+	</ul><br />
+<?php endif; ?>
