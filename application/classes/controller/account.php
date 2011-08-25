@@ -95,7 +95,7 @@ class Controller_Account extends Controller_Skeleton {
 			}
                         catch (ORM_Validation_Exception $e) {
 				$content->errors = $e->errors('account/register');
-				Fire::info($e->errors());
+				//Fire::info($e->errors());
 			}
 		}
 	}

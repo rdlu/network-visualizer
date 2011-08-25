@@ -1,7 +1,6 @@
 <table id="filterMenu">
     <tr>
         <td><strong>Perfis de Teste</strong></td>
-        <td><a href="<?=url::base()?>profiles/new/" class="filterMenu"><img src="<?=url::site('images/actions/add.png')?>" alt="Adicionar novo perfil" />&nbsp;&nbsp;&nbsp;Novo Perfil de Teste</a></td>
     </tr>
 </table>
 <table id="entityList" class="tablesorter">
@@ -44,7 +43,6 @@
 <table class="filterMenu">
     <tr>
         <td><strong>Métricas</strong></td>
-        <td><a href="<?=url::base()?>metrics/new/" class="filterMenu"><img src="<?=url::site('images/actions/add.png')?>" alt="Adicionar novo perfil" />&nbsp;&nbsp;&nbsp;Nova Métrica</a></td>
     </tr>
 </table>
 

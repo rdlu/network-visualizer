@@ -121,27 +121,27 @@ class Rrd {
 		//$opts[] = "RRA:MIN:0.5:4:$secondaryPrecision";
 		//$opts[] = "RRA:MIN:0.5:16:$thirdPrecision";
 		//$opts[] = "RRA:MIN:0.5:100:$fourthPrecision";
-		Fire::group('Created RRD Files: ');
+		//Fire::group('Created RRD Files: ');
 		$path = $this->path();
 		if (!is_dir($path)) {
-			Fire::info('Creating Directory ' . $path);
+			//Fire::info('Creating Directory ' . $path);
 			mkdir($path, 0774, true);
 		}
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
 				$filename = $this->filename($metric, $l1 . $l2);
-				Fire::info($path.$filename);
+				//Fire::info($path.$filename);
 				$ret = rrd_create($path . $filename, $opts, count($opts));
 
 				if ($ret == 0) {
-					Fire::error($opts, 'RRD File Create Error: ' . rrd_error());
+					//Fire::error($opts, 'RRD File Create Error: ' . rrd_error());
 					Log::instance()->add(Log::ERROR, "RRD File Create Error: $path.$filename", $opts);
 					$this->errors = true;
 				} else {
 					Log::instance()->add(Log::INFO, "RRD File Created $path$filename with $step second step");
 				}
 			}
-		Fire::groupEnd();
+		//Fire::groupEnd();
 		return $this;
 	}
 
@@ -157,7 +157,7 @@ class Rrd {
 			$ts = date("d.m.Y H:i:s T");
 			$timestamp = date("U");
 		} else $ts = date("d.m.Y H:i:s T", $timestamp);
-		Fire::group("Updating RRD Files - S:$this->source D:$this->destination TS:$ts");
+		//Fire::group("Updating RRD Files - S:$this->source D:$this->destination TS:$ts");
 		$path = $this->path();
 		foreach ($this->types[0] as $l1)
 			foreach ($this->types[1] as $l2) {
@@ -165,24 +165,24 @@ class Rrd {
 				$upstream = abs($data[$l1 . 'DS' . $l2]);
 				if ($metric != 'rtt') {
 					$downstream = abs($data[$l1 . 'SD' . $l2]);
-					//Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
+					////Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
 					$numbers = "SD $downstream : DS $upstream";
 					$ret = rrd_update($path . $filename, "$timestamp:$downstream:$upstream");
 				} else {
-					//Fire::info("$filename TIME $timestamp : RTT $downstream");
+					////Fire::info("$filename TIME $timestamp : RTT $downstream");
 					$ret = rrd_update($path . $filename, "$timestamp:$upstream");
 					$numbers = "RTT $upstream";
 				}
 
-				Fire::info("RRD Update : TIME $timestamp : $numbers on $path$filename");
+				//Fire::info("RRD Update : TIME $timestamp : $numbers on $path$filename");
 
 				if ($ret == 0) {
 					$erf = rrd_error();
 					Log::instance()->add(Log::WARNING, "RRD Update Failed :: $filename TIME $timestamp : $numbers :: " . $erf);
-					Fire::error(array($path . $filename, $numbers), 'RRD Update Failed: ' . $erf);
+					//Fire::error(array($path . $filename, $numbers), 'RRD Update Failed: ' . $erf);
 				}
 			}
-		Fire::groupEnd();
+		//Fire::groupEnd();
 		return $this;
 	}
 
@@ -198,9 +198,9 @@ class Rrd {
 		$rrdPath = $this->path();
 		$path = $this->imgPath();
 
-		Fire::group("Creating RRD $metric graph from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
+		//Fire::group("Creating RRD $metric graph from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
 		if (!is_dir($path)) {
-			Fire::info('Creating Directory ' . $path);
+			//Fire::info('Creating Directory ' . $path);
 			mkdir($path, 0774, true);
 		}
 		$measures = Kohana::config("measure.$metric");
@@ -208,7 +208,7 @@ class Rrd {
 		//if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
 		//if(!$end) $end = date('d.m.Y H:i');
 
-		Fire::info("Fetched range from $start to $end");
+		//Fire::info("Fetched range from $start to $end");
 
 		$choosenMeasure = $measures['default'];
 		$choosenView = __($measures['view']);
@@ -254,15 +254,15 @@ class Rrd {
 
 				$filename = $this->filename($metric, $l1 . $l2, 'png');
 				$imgs[] = $this->imgSrc($metric, $l1 . $l2);
-				Fire::info($this->imgSrc($metric, $l1 . $l2));
+				//Fire::info($this->imgSrc($metric, $l1 . $l2));
 				$ret = rrd_graph($path . $filename, $opts, count($opts));
 
 				if (!is_array($ret)) {
-					Fire::error($opts, 'RRD Graph File Create Error: ' . rrd_error());
+					//Fire::error($opts, 'RRD Graph File Create Error: ' . rrd_error());
 					Log::instance()->add(Log::ERROR, "RRD Graph Create Error: $path$filename");
 				}
 			}
-		Fire::groupEnd();
+		//Fire::groupEnd();
 		return $imgs;
 	}
 
@@ -281,13 +281,13 @@ class Rrd {
 	public function xml($metric, $start, $end, $m = 'Avg') {
 		$path = $this->path();
 
-		Fire::group("Creating RRD $metric xml from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
+		//Fire::group("Creating RRD $metric xml from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
 		$measures = Kohana::config("measure.$metric");
 
 		//if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
 		//if(!$end) $end = date('d.m.Y H:i');
 
-		Fire::info("Fetched range from $start to $end");
+		//Fire::info("Fetched range from $start to $end");
 
 		/**
 		 * Opcoes da geracao do RRD
@@ -300,8 +300,8 @@ class Rrd {
 		if ($metric != 'rtt') $options .= " DEF:ds=$path$filename:upstream:AVERAGE XPORT:ds:\"$metric sd\"";
 		$resp = array();
 		$ret = exec("rrdtool xport $options", $resp, $code);
-		Fire::info("Xport Code: $code Last Line: $ret Command: rrdtool xport $options");
-		Fire::groupEnd();
+		//Fire::info("Xport Code: $code Last Line: $ret Command: rrdtool xport $options");
+		//Fire::groupEnd();
 		return implode("\n", $resp);
 	}
 

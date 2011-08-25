@@ -45,11 +45,11 @@ class Controller_Processes extends Controller_Skeleton {
 				$metrics[$destination->id] = $pair->getMetrics();
 			}
 
-			Fire::group('Models Loaded')
+			/*Fire::group('Models Loaded')
 					->info($processes)
 					->info($sourceEntity)
 					//->info($destinations)
-					->groupEnd();
+					->groupEnd();*/
 		} else {
 			$errors[] = "A origem $sourceAddr não é um IP válido. Você deve informar um IP válido.";
 		}
@@ -83,7 +83,7 @@ class Controller_Processes extends Controller_Skeleton {
 			$sourceEnt = Sprig::factory('entity', array('id' => $source))->load();
 			$process->source = $sourceEnt->id;
 			$sourceEntity = $process->source->load();
-			Fire::group('Models Loaded', array('Collapsed' => 'true'))->info($process)->info($sourceEntity)->groupEnd();
+			//Fire::group('Models Loaded', array('Collapsed' => 'true'))->info($process)->info($sourceEntity)->groupEnd();
 		}
 
 		$db = DB::select()->where('profile_id', 'IS NOT', null)->order_by('order');
@@ -96,7 +96,7 @@ class Controller_Processes extends Controller_Skeleton {
 				$this->request->redirect($this->request->controller . '/setup/' . $process->source->id);
 			} catch (Validation_Exception $e) {
 				$errors = $e->array->errors('processes/edit');
-				Fire::group('Form Validation Results')->warn($errors)->groupEnd();
+				//Fire::group('Form Validation Results')->warn($errors)->groupEnd();
 			}
 		}
 
@@ -209,7 +209,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 			foreach ($procs as $i => $proc) {
 				$process = Sprig::factory('process',array('id'=>$proc))->load();
-				Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
+				//Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
 				$source = $process->source->load();
 				$destination = $process->destination->load();
 				$profile = $process->profile->load();
@@ -220,7 +220,7 @@ class Controller_Processes extends Controller_Skeleton {
 					'managerProtocol' => $profile->protocol
 				);
 
-				Fire::info($values,"To do on Manager Table");
+				//Fire::info($values,"To do on Manager Table");
 
 				$snmp = Snmp::instance($destination->ipaddress, 'suppublic')->setGroup('managerTable', $values, array('id' => $process->id));
 
@@ -252,7 +252,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 			foreach ($procs as $i => $proc) {
 				$process = Sprig::factory('process',array('id'=>$proc))->load();
-				Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
+				//Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
 				$source = $process->source->load();
 				$destination = $process->destination->load();
 				$profile = $process->profile->load();
@@ -316,7 +316,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 			foreach ($procs as $i => $proc) {
 				$process = Sprig::factory('process',array('id'=>$proc))->load();
-				Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
+				//Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
 				$source = $process->source->load();
 				$destination = $process->destination->load();
 

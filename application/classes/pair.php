@@ -265,7 +265,7 @@ class Pair {
 			}
 		}
 
-		Fire::info($return);
+		//Fire::info($return);
 
 		if($type == 'sd') {
 			$target = array(

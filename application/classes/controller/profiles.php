@@ -2,12 +2,9 @@
 
 class Controller_Profiles extends Controller_Skeleton {
 
-	public $auth_required = array('admin');
+	//public $auth_required = array('login','admin');
 
-	// Controls access for separate actions
-	// 'adminpanel' => 'admin' will only allow users with the role admin to access action_adminpanel
-	// 'moderatorpanel' => array('login', 'moderator') will only allow users with the roles login and moderator to access action_moderatorpanel
-	public $secure_actions = FALSE;
+	public $secure_actions = array('index' => 'admin', 'view'=>'admin');
 
     public function before() {
         parent::before();
@@ -17,7 +14,7 @@ class Controller_Profiles extends Controller_Skeleton {
 	public function action_index() {
 		$profiles = Sprig::factory('profile')->load(NULL, FALSE);
 		$metrics = Sprig::factory('metric')->load(NULL, FALSE);
-        Fire::group('Models Loaded')->info($profiles)->groupEnd();
+        //Fire::group('Models Loaded')->info($profiles)->groupEnd();
         $view = View::factory('profiles/list');
 
         $view->bind('profiles',$profiles)->bind('metrics',$metrics);
@@ -39,7 +36,7 @@ class Controller_Profiles extends Controller_Skeleton {
                 $this->request->redirect('profiles');
             } catch (Validation_Exception $e) {
                 $errors = $e->array->errors('profiles/new');
-                Fire::group('Form Validation Results')->warn($errors)->groupEnd();
+                //Fire::group('Form Validation Results')->warn($errors)->groupEnd();
             }
         }
         $view = View::factory('profiles/form');

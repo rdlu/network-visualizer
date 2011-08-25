@@ -1,6 +1,5 @@
 <table id="filterMenu">
     <tr>
-        <td>Filtro <select id="das"></select></td>
         <td><a href="<?=url::base()?>entities/new/" class="filterMenu"><img src="<?=url::site('images/actions/computer_add.png')?>" alt="Adicionar nova entidade" />&nbsp;&nbsp;&nbsp;Cadastrar Nova Entidade</a></td>
     </tr>
 </table>
