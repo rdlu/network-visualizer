@@ -31,6 +31,10 @@ return array(
                     'title'=>__('Controle de Usuário'),
                     'href'=>'account/'
                 ),
+                'winagent'=>array(
+                    'title'=>__('Medições do Agente Windows'),
+                    'href'=>'winagent/'
+                ),
 	            ),
             'href'=>'admin'
         )

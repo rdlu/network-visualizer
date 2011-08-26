@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct access allowed.');
 
 class Model_Dyndata extends ORM
 {
@@ -12,7 +12,7 @@ class Model_Dyndata extends ORM
 				array('trim'),
 			),
 			'timestamp' => array(
-				array('Date::toTimestamp', array(':value')),
+				//array('Date::toTimestamp', array(':value')),
 			),
 			'cellid' => array(
 				array('trim', array(':value'," \t\n\r\0\x0B-")),
@@ -26,7 +26,8 @@ class Model_Dyndata extends ORM
 		return array(
 			'username' => array(
 				// Uses Valid::not_empty($value);
-				array('not_empty')
+				array('not_empty'),
+                                array('max_length', array(':value', 16)),
 			),
 			'timestamp' => array(
 				// Uses Valid::not_empty($value);
@@ -34,4 +35,6 @@ class Model_Dyndata extends ORM
 			),
 		);
 	}
+ 
+
 }

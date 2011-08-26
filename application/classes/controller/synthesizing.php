@@ -3,7 +3,7 @@
 class Controller_Synthesizing extends Controller_Skeleton
 {
 
-	public $auth_required = array('login','admin');
+	public $auth_required = array('login');
 
 	// Controls access for separate actions
 	// 'adminpanel' => 'admin' will only allow users with the role admin to access action_adminpanel

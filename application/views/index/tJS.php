@@ -21,20 +21,7 @@
                     </ul>
                 </div>
             </div>
-        </div>
-        <div class="sondaMenuInfo">
-            <div id="sondaMenuAvisos">
-                <ul>
-                    <li><a href="#">+Avisos</a></li>
-
-                </ul>
-            </div>
-            <div id="sondaMenuMedicoes">
-                <ul>
-                    <li><a href="#">+Medições</a></li>
-                </ul>
-            </div>
-        </div>
+        </div>       
 
     </div>
 <!-- Template para as sondas que ficam no lado direito sem destaque -->
