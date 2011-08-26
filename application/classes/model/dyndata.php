@@ -2,7 +2,7 @@
 
 class Model_Dyndata extends ORM
 {
-        protected $_db_group = 'zebes';
+        //protected $_db_group = 'zebes';
 	protected $_table_name = 'dyndata';
 
 	public function filters()

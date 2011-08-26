@@ -10,7 +10,6 @@
 //to_do:
 //checagem de dias para bloquear a conta OK
 //troca de senha de 30 em 30 dias
-//46 dias atrás = 1313516981
 //transmitir erros para a página (n) OU unir save_changes com edit (n) OU filtra tudo no JS (y)
 
 
@@ -149,7 +148,7 @@ class Controller_Account extends Controller_Skeleton {
 
         public function action_index(){
             $this->template->title .= 'Controle de usuários';
-            $users = ORM::factory('dyndata')->find_all();
+            $users = ORM::factory('user')->find_all();
             $view = View::factory('account/index')
                     ->bind('users', $users);
             //Fire::info($users);
@@ -298,6 +297,5 @@ class Controller_Account extends Controller_Skeleton {
             }
         }
 }
-// 1313615143 -> agora ;
-// 1309727417 -> 45 dias atrás
+
 
