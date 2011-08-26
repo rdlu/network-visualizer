@@ -6,6 +6,31 @@ return array(
 			'oid' => '.1.3.6.1.2.1.1.1.0',
 			'type' => 'string',
 			'readonly' => true
+		),
+		'nmVersion' => array(
+			'oid' => NMMIB.'.20.0',
+			'type' => 'string',
+			'readonly' => true
+		),
+		'ddnsVersion' => array(
+			'oid' => NMMIB.'.20.1',
+			'type' => 'string',
+			'readonly' => true
+		),
+		'gparcVersion' => array(
+			'oid' => NMMIB.'.20.2',
+			'type' => 'string',
+			'readonly' => true
+		),
+		'modemInfo' => array(
+			'oid' => NMMIB.'.20.3',
+			'type' => 'string',
+			'readonly' => true
+		),
+		'osVersion' => array(
+			'oid' => NMMIB.'.20.4',
+			'type' => 'string',
+			'readonly' => true
 		)
 	),
     'throughput' => array(

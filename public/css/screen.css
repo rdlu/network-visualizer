@@ -218,6 +218,14 @@ span.sucess, span.success {
     border: dotted thin green;
 }
 
+span.warn {
+    background-image: url('../images/actions/error.png');
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    border: dotted thin #ffcc00;
+    background-color: #ffcc99;
+}
+
 span.error {
     background-image: url('../images/actions/cross.png');
     background-repeat: no-repeat;

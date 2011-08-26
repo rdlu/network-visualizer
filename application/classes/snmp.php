@@ -20,12 +20,14 @@ class Snmp {
 
 	protected $errors = array();
 
-    /**
-     * @static
-     * @param string $address
-     * @param string $community
-     * @return Snmp
-     */
+	/**
+	 * Cria, ou retorna uma instancia SNMP, para determinado endereço
+	 * @static
+	 * @param string $address
+	 * @param string $community
+	 * @param array $options
+	 * @return Snmp
+	 */
 	public static function instance($address = NULL,$community='suppublic',$options = array()) {
 		if ($address === NULL) {
 			// Use the default instance name
@@ -46,17 +48,14 @@ class Snmp {
 		return Snmp::$instances[$address];
 	}
 
-	public function isReachable($oid) {
-		//checar se o perfil existe e fazer o setup
+	/**
+	 * Funcao que busca um oid unico
+	 * @param $oid
+	 * @return null|string
+	 */
+	public function getValue($oid) {
 		try {
-			$ps = snmp2_get($this->address,$this->community,$oid,$this->timeout,$this->retries);
-		   if(preg_match('/^No Such/',$ps)) {
-				//Fire::info("IsReachable got this result: $ps");
-				$userError = 'Sonda de origem não tem o Netmetric corretamente instalado';
-				$msg = "No such instance error on $oid at $this->address";
-		      $this->setError($userError,$msg,'error');
-		      return false;
-         }
+			$response = snmp2_get($this->address,$this->community,$oid,$this->timeout,$this->retries);
 		} catch (Exception $err) {
 			$code = $err->getCode();
 			$msg = $err->getMessage();
@@ -67,10 +66,55 @@ class Snmp {
 			}
 
 		   $this->setError($userError,$msg,'error');
-		   return false;
+		   return null;
 		}
 
-		return true;
+		return $response;
+	}
+
+	public function isNotSet($response) {
+		if(preg_match('/^notSet/',$response)) {
+		   return true;
+      }
+		return false;
+	}
+
+	/**
+	 * isNotLoaded: Funcao exclusiva para teste do EntryStatus do Netmetric SNMP
+	 * @param $response
+	 * @return bool
+	 */
+	public function isNotLoaded($response) {
+		if($this->isNotSet($response) || $response != '1') {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * isProfileNotLoaded Funcao exclusiva para testar se um perfil está configurado em um determinado agente
+	 * @param int $profileId
+	 * @return bool
+	 */
+	public function isProfileNotLoaded($profileId) {
+		$response = $this->getValue(NMMIB.".1.0.14.$profileId");
+		return $this->isNotLoaded($response);
+	}
+
+	public function isAgentNotLoaded($destinationId) {
+		$response = $this->getValue(NMMIB.".0.0.9.$destinationId");
+		return $this->isNotLoaded($response);
+	}
+
+	public function isNoSuchInstance($response) {
+		if(preg_match('/^No Such/',$response)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function isReachable($oid) {
+		return ($this->getValue($oid) == null)?false:true;
 	}
 
 	public function getErrors() {
@@ -208,5 +252,13 @@ class Snmp {
 	   else
 		   //return 'N';
 			return date('U');
+	}
+
+	public function getOid($string) {
+		return Kohana::config('snmp.'.$string);
+	}
+
+	public function getEntryOid($type = 'profile') {
+		return $this->getOid($type.'Table.entryStatus');
 	}
 }

@@ -74,11 +74,11 @@ class Controller_Skeleton extends Controller_Template {
 				'css/print.css' => 'print',
 				'css/mobile.css' => 'mobile',
 				'css/tablesorter/blue.css' => 'screen, projection',
-				'css/cupertino/jquery-ui-1.8.6.custom.css' => 'all',
+				'css/cupertino/jquery-ui-1.8.15.custom.css' => 'all',
 			);
 
-			$jqueryVersion = "1.6.1";
-			$juiversion = "1.8.6.custom";
+			$jqueryVersion = "1.6.2";
+			$juiversion = "1.8.15.custom";
 
 
 			$scripts = array(

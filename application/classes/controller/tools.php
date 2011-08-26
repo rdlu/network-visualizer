@@ -7,10 +7,19 @@ class Controller_Tools extends Controller {
 
         $ip = $_POST['ip'];
         if(Valid::ipOrHostname($ip)) {
-	         $realip = Network::getAddress($ip);
-            $data = Snmp::instance($realip)->group('linuxManager');
-            $json['address'] = $realip;
-            $json['data'] = $data;
+	         try {
+		         $realip = Network::getAddress($ip);
+		         $data = Snmp::instance($realip)->group('linuxManager');
+               $json['address'] = $realip;
+               $json['data'] = $data;
+	         } catch (Network_Exception $err) {
+		         if($err->getCode() == 1) {
+			         $json['error'] = 'O servidor DDNS não retornou nenhum endereço IP, verifique se a sonda está corretamente registrada no DDNS..';
+		         } elseif($err->getCode() == 2) {
+			         $json['error'] = 'O servidor DDNS não respondeu. Verifique se o mesmo está OK.';
+		         }
+	         }
+
             $this->response->headers('Content-Type','application/json');
             if(Request::current()->is_ajax()) $this->response->body(json_encode($json));
             else throw new Kohana_Exception('This controller only accepts AJAX requests',$json);
