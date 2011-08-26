@@ -152,7 +152,7 @@ class Controller_Account extends Controller_Skeleton {
             $users = ORM::factory('dyndata')->find_all();
             $view = View::factory('account/index')
                     ->bind('users', $users);
-            Fire::info($users);
+            //Fire::info($users);
             $this->template->content = $view;
         }
 
@@ -217,7 +217,7 @@ class Controller_Account extends Controller_Skeleton {
                                 ->bind('user', $user);
                     }
                     catch(ORM_Validation_Exception $e){
-                            Fire::info($e);
+                            //Fire::info($e);
                             $errors[] = array('class'=>'error','message'=>'Usuário e/ou senha inválidos.');
                             $view->bind('errors',$errors);
                     }
@@ -259,7 +259,7 @@ class Controller_Account extends Controller_Skeleton {
                     $user = ORM::factory('user', $id);
                 }
                 catch(ORM_Validation_Exception $e){
-                    Fire::info($e);
+                    //Fire::info($e);
                     die();
                 }
                 if($id != $cur_user->id){ //não deixa o usuário se auto-deletar
@@ -267,7 +267,8 @@ class Controller_Account extends Controller_Skeleton {
                     $this->request->redirect('account/index');
                 }
                 else {
-                    Fire::info('erro: Usuário não pode deletar a si mesmo');
+                    //Fire::info('erro: Usuário não pode deletar a si mesmo');
+                    die();
                 }
             }
         }
