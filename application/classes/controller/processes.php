@@ -250,58 +250,27 @@ class Controller_Processes extends Controller_Skeleton {
 			$this->auto_render = false;
 			$procs = (array) $_POST['processes'];
 
+			$pair = Pair::instanceFromProcess(current($procs));
+			$source = $pair->getSource();
+			$destination = $pair->getDestination();
+
 			foreach ($procs as $i => $proc) {
-				$process = Sprig::factory('process',array('id'=>$proc))->load();
-				//Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
-				$source = $process->source->load();
-				$destination = $process->destination->load();
-				$profile = $process->profile->load();
-				//Checar se o destino esta OK
-				$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic');
-
-				if (!$sourceSnmp->isReachable(NMMIB . '.1.0.9.' . $process->id)) {
-					$values = array('entryStatus' => 6);
-					$values = array_merge($values, $profile->as_array());
-					$values['gap'] = $profile->gap * 1000;
-					$values['metrics'] = $profile->metrics;
-					$ptable = $sourceSnmp->setGroup('profileTable', $values, array('id' => $profile->id));
+				if($pair->setProfile($proc)) {
+					if($pair->setAgent($proc)) {
+						$e['errors'] = null;
+						$e['class'] = 'success';
+						$e['message'] = "Entidade de origem $source->name ($source->ipaddress) foi configurada com sucesso via SNMP.";
+					} else {
+						Kohana::$log->add(Log::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Agent Table)");
+						$e['message'] = 'Erros na transmissão dos dados via SNMP (Agent Setup)';
+						$e['class'] = 'error';
+					}
 				} else {
-					$ptable = array();
-				}
-
-				$avalues = array('entryStatus' => 6);
-				$avalues = array_merge($avalues, $destination->as_array());
-				$avalues['profile'] = $profile->id;
-				$avalues['port'] = 12000 + $profile->id;
-				$avalues['status'] = 1;
-				$atable = $sourceSnmp->setGroup('agentTable', $avalues, array('pid' => $process->id));
-
-				if (count($ptable)) {
-					$e['errors'] = array_keys($ptable);
 					Kohana::$log->add(Log::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Profile Table)");
 					$e['message'] = 'Erros na transmissão dos dados via SNMP (Profile Setup)';
 					$e['class'] = 'error';
-					$ptrue = true;
-				}
-
-				if (count($atable)) {
-					Kohana::$log->add(Log::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Agent Table)");
-					$e['message'] = 'Erros na transmissão dos dados via SNMP (Agent Setup)';
-					$e['class'] = 'error';
-					if (isset($ptrue)) {
-						$e['message'] .= ' & (Profile Setup)';
-						$e['errors'] = array_merge($e['errors'], array_keys($ptable));
-					} else
-						$e['errors'] = array_keys((array) $ptable);
-					$atrue = true;
-				}
-
-				if (!isset($ptrue) && !isset($atrue)) {
-					$e['errors'] = null;
-					$e['class'] = 'success';
-					$e['message'] = "Entidade de origem $source->name ($source->ipaddress) foi configurada com sucesso via SNMP.";
-				} else
 					break;
+				}
 			}
 
 			$this->response->headers('Content-Type', 'application/json');
@@ -352,8 +321,6 @@ class Controller_Processes extends Controller_Skeleton {
 					//break;
 				}
 			}
-
-
 
 			$this->response->headers('Content-Type', 'application/json');
 			$this->response->body(json_encode($response));

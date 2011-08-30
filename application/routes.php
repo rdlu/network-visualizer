@@ -26,7 +26,7 @@ Route::set('process', '(<controller>(/<action>(/<source>/<destination>)))')
 		'action'     => 'view',
 	));
 
-Route::set('processIndex', 'processes/list(/<source>)', array('source'=>'[0-9.]+'))
+Route::set('processIndex', 'processes/list(/<source>)', array('source'=>'[a-z0-9.]+'))
     ->defaults(array(
                     'controller'=>'processes',
                     'action'=>'list'

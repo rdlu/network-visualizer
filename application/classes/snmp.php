@@ -20,12 +20,14 @@ class Snmp {
 
 	protected $errors = array();
 
-    /**
-     * @static
-     * @param string $address
-     * @param string $community
-     * @return Snmp
-     */
+	/**
+	 * Cria, ou retorna uma instancia SNMP, para determinado endereço
+	 * @static
+	 * @param string $address
+	 * @param string $community
+	 * @param array $options
+	 * @return Snmp
+	 */
 	public static function instance($address = NULL,$community='suppublic',$options = array()) {
 		if ($address === NULL) {
 			// Use the default instance name
@@ -46,17 +48,14 @@ class Snmp {
 		return Snmp::$instances[$address];
 	}
 
-	public function isReachable($oid) {
-		//checar se o perfil existe e fazer o setup
+	/**
+	 * Funcao que busca um oid unico
+	 * @param $oid
+	 * @return null|string
+	 */
+	public function getValue($oid) {
 		try {
-			$ps = snmp2_get($this->address,$this->community,$oid,$this->timeout,$this->retries);
-		   if(preg_match('/^No Such/',$ps)) {
-				//Fire::info("IsReachable got this result: $ps");
-				$userError = 'Sonda de origem não tem o Netmetric corretamente instalado';
-				$msg = "No such instance error on $oid at $this->address";
-		      $this->setError($userError,$msg,'error');
-		      return false;
-         }
+			$response = snmp2_get($this->address,$this->community,$oid,$this->timeout,$this->retries);
 		} catch (Exception $err) {
 			$code = $err->getCode();
 			$msg = $err->getMessage();
@@ -67,10 +66,63 @@ class Snmp {
 			}
 
 		   $this->setError($userError,$msg,'error');
-		   return false;
+		   return null;
 		}
 
+		return $response;
+	}
+
+	public function isNotSet($response) {
+		if(preg_match('/^notSet/',$response)) {
+		   return true;
+      }
+		return false;
+	}
+
+	/**
+	 * isNotLoaded: Funcao exclusiva para teste do EntryStatus do Netmetric SNMP
+	 * @param $response
+	 * @return bool
+	 */
+	public function isNotLoaded($response) {
+		if($this->isNotSet($response) || $response != '1') {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * isProfileNotLoaded Funcao exclusiva para testar se um perfil está configurado em um determinado agente
+	 * @param int $profileId
+	 * @return bool
+	 */
+	public function isProfileNotLoaded($profileId) {
+		$response = $this->getValue(NMMIB.".1.0.14.$profileId");
+		return $this->isNotLoaded($response);
+	}
+
+	public function isAgentNotLoaded($destinationId) {
+		$response = $this->getValue(NMMIB.".0.0.9.$destinationId");
+		return $this->isNotLoaded($response);
+	}
+
+	public function isResponding() {
+		$response = $this->getValue(NMMIB.'.20.0');
+		if($response == null || $this->isNoSuchInstance($response)) {
+			return false;
+		}
 		return true;
+	}
+
+	protected function isNoSuchInstance($response) {
+		if(preg_match('/^No Such/',$response)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function isReachable($oid) {
+		return ($this->getValue($oid) == null)?false:true;
 	}
 
 	public function getErrors() {
@@ -173,11 +225,17 @@ class Snmp {
 
 			//Fire::group('SNMP Data from '.$this->address,array('Collapsed'=>'true'));
 
+			//Assume resultados em null
+			foreach($oids as $key => $oid) {
+				$return[$key] = NULL;
+			}
+
 			foreach($oids as $key => $oid) {
 				foreach ($subst as $k=>$v) {
 					$oid['oid'] = str_replace($k,$v,$oid['oid']);
 				}
 				
+				//Tenta obter cada um dos resultados
 				try {
 					$data = snmp2_get($this->address,$this->community,$oid['oid'],$this->timeout,$this->retries);
 					//Fire::info($oid['oid']);
@@ -188,9 +246,10 @@ class Snmp {
 				} catch(Exception $e) {
 					$return[$key] = NULL;
 				   $code = $e->getCode();
-                $msg = $e->getMessage();
-                //Fire::error($e,"Exception on SNMP GET $code");
-                Kohana::$log->add(Log::ERROR,"Erro no snmpget para o ip $this->address, oid $key, $msg");
+               $msg = $e->getMessage();
+               //Fire::error($e,"Exception on SNMP GET $code");
+               Kohana::$log->add(Log::ERROR,"Erro no snmpget para o ip $this->address, oid $key, $msg");
+					break;
 				}
 			}
 
@@ -208,5 +267,13 @@ class Snmp {
 	   else
 		   //return 'N';
 			return date('U');
+	}
+
+	public function getOid($string) {
+		return Kohana::config('snmp.'.$string);
+	}
+
+	public function getEntryOid($type = 'profile') {
+		return $this->getOid($type.'Table.entryStatus');
 	}
 }

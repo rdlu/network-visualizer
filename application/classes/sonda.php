@@ -16,6 +16,7 @@ class Sonda {
 
 	protected $message = "Entidade desativada.";
 	protected $class = "info";
+	protected $version = array('version'=>null);
 
 	/**
 	 * @static
@@ -30,6 +31,10 @@ class Sonda {
 			else $newinstance->sonda = Sprig::factory('entity',array('id'=>$id))->load();
 			//update
 			if($newinstance->sonda->status!=0) {
+				//Assume erro e testa as alternativas
+				$newinstance->class = 'error';
+				$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
+				
 				if($newinstance->sonda->updated + 1800 > date("U") ) {
 					$newinstance->sonda->status = 1;
 					$newinstance->message = 'Entidade ativa e funcional';
@@ -38,19 +43,18 @@ class Sonda {
 				} elseif($newinstance->sonda->updated + 300 <= date("U") ) {
 					$newinstance->sonda->status = 2;
 					$newinstance->class = 'warn';
-					$newinstance->message = 'Entidade em estado desconhecido, não responde há mais de 5 minutos.';
+					$newinstance->message = 'A sonda não faz medições há mais de 5 minutos.';
 				}
 
-				if($newinstance->sonda->updated + 600 <= date("U") ) {
+				/*if($newinstance->sonda->updated + 600 <= date("U") ) {
 					$newinstance->sonda->status = 3;
-					$newinstance->class = 'error';
-					$newinstance->message = 'Entidade em estado de erro passivo, não responde há mais de 10 minutos.';
-				}
+					$newinstance->class = 'warn';
+					$newinstance->message = 'A sonda não faz medições há mais de 10 minutos.';
+				}*/
 
-				if($snmp) {
-					$sncfg = Kohana::config('snmp.linuxManager.version');
-					$sn = Snmp::instance($newinstance->sonda->ipaddress)->isReachable($sncfg['oid']);
-					if(!$sn) {
+				if($snmp || ($newinstance->sonda->updated + 600 <= date("U") && $newinstance->sonda->status!=3)) {
+					$snmpResponse = $newinstance->getVersion();
+					if(!$newinstance->checkStatus()) {
 						$newinstance->sonda->status = 3;
 						$newinstance->class = 'error';
 						$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
@@ -93,5 +97,26 @@ class Sonda {
 
 	public function getClass() {
 		return $this->class;
+	}
+
+	public function getVersion() {
+		if(!$this->version['version']) {
+			$realip = Network::getAddress($this->sonda->ipaddress);
+			$this->version = Snmp::instance($realip)->group('linuxManager');
+		}
+		return $this->version;
+	}
+
+	public function checkStatus() {
+		$version = $this->getVersion();
+		foreach($version as $k => $v) {
+			if($v == null) return false;
+		}
+		return true;
+	}
+
+	public function checkSNMP() {
+		$realip = Network::getAddress($this->sonda->ipaddress);
+      return Snmp::instance($realip)->isResponding();
 	}
 }

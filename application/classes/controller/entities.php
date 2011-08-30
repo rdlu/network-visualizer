@@ -139,24 +139,28 @@ class Controller_Entities extends Controller_Skeleton
 		$this->template->title .= "Informações da sonda " . $entity->name;
 
 		if ($entity->loaded()) {
-
 			$asSource = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id', '=', $entity->id), null);
 			$assou = array();
+			$assouprocs = array();
 			foreach ($asSource as $process1) {
 				$ass1 = $process1->destination->load()->as_array();
-				$assou[$ass1['id']] = $ass1;
+				$assou['i'.$ass1['id']] = $ass1;
+				Pair::instance($entity->id,$ass1['id'])->getProcesses();
+				$assouprocs['p'.$ass1['id']] = Pair::instance($entity->id,$ass1['id'])->getProcesses(true);
 			}
 
 			$asDestination = Sprig::factory('process')->load(Db::select()->group_by('source_id')->where('destination_id', '=', $entity->id), null);
 			$asdest = array();
+			$asdestprocs = array();
 			foreach($asDestination as $process2) {
-
-				$asdest[] = $process2->source->load()->as_array();
+				$asd1 = $process2->source->load()->as_array();
+				$asdest['i'.$asd1['id']] = $asd1;
+				$asdestprocs['p'.$asd1['id']] = Pair::instance($asd1['id'],$entity->id)->getProcesses(true);
 			}
 
 			$processes = Sprig::factory('process')->load(Db::select()->or_where('source_id', '=', $entity->id)->or_where('destination_id','=',$entity->id), null);
 
-
+			$proca = array();
 			foreach($processes as $process) {
 				$proca[] = $process->as_array();
 			}
@@ -166,7 +170,9 @@ class Controller_Entities extends Controller_Skeleton
 			$view->bind('entity', $entity)
 					->bind('status', $status)
 					->bind('destinations', $assou)
+					->bind('destinationsProcesses',$assouprocs)
 					->bind('sources',$asdest)
+					->bind('sourcesProcesses',$asdestprocs)
 					->bind('processes',$processes)
 					->bind('procJSON',$processJSON);
 			$this->template->content = $view;
@@ -175,8 +181,7 @@ class Controller_Entities extends Controller_Skeleton
 		}
 	}
 
-	public function action_byCity()
-	{
+	public function action_byCity() {
 		$this->auto_render = false;
 		if (!isset($_POST['city'])) throw new Kohana_Exception('Compulsory data not set, must be called with post', $_POST);
 		$post = 'Port';
