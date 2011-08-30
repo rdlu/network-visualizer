@@ -39,8 +39,12 @@
 			<?php if (count($sources) == 0): ?>
 			<li>Esta sonda não tem o papel de agente.</li>
 			<?php else: foreach ($sources as $source): ?>
-			<li><a href="<?=Url::site('entities/view') . '/' . $source['id']?>"><?=$source['name']?>
-				(<?=$source['ipaddress']?>)</a></li>
+			<li>
+				<a href="<?=Url::site('entities/view') . '/' . $source['id']?>"><?=$source['name']?> (<?=$source['ipaddress']?>)</a>
+				<img src="<?=url::base()?>images/actions/clock_delete.png" alt="Remover"
+								     onclick="deleter.removeProcess(<?=$source['id']?>,'<?=$source['name']?>',<?=$entity->id?>,'<?=$entity->name?>')">
+
+			</li>
 			<?php endforeach; endif;  ?>
 		</ul>
 	</fieldset>
@@ -72,7 +76,7 @@
 
 			var sourceHTML = '';
 			jQuery.each(sources, function(idx, el) {
-				sourceHTML += "<li id=\"pair-" + el.id + '-' + myself.id + "\">" + el.name + ' -&gt; ' + myself.name + '</li>';
+				sourceHTML += "<li class=\"pair remove\" id=\"pair-" + el.id + '-' + myself.id + "\" >" + el.name + ' -&gt; ' + myself.name + '</li>';
 			});
 			return '<ul id="listaDeleter" class="lista deleter">' + destinationHTML + sourceHTML + '</ul>';
 		},

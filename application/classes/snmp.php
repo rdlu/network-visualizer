@@ -106,7 +106,15 @@ class Snmp {
 		return $this->isNotLoaded($response);
 	}
 
-	public function isNoSuchInstance($response) {
+	public function isResponding() {
+		$response = $this->getValue(NMMIB.'.20.0');
+		if($response == null || $this->isNoSuchInstance($response)) {
+			return false;
+		}
+		return true;
+	}
+
+	protected function isNoSuchInstance($response) {
 		if(preg_match('/^No Such/',$response)) {
 			return true;
 		}
@@ -217,11 +225,17 @@ class Snmp {
 
 			//Fire::group('SNMP Data from '.$this->address,array('Collapsed'=>'true'));
 
+			//Assume resultados em null
+			foreach($oids as $key => $oid) {
+				$return[$key] = NULL;
+			}
+
 			foreach($oids as $key => $oid) {
 				foreach ($subst as $k=>$v) {
 					$oid['oid'] = str_replace($k,$v,$oid['oid']);
 				}
 				
+				//Tenta obter cada um dos resultados
 				try {
 					$data = snmp2_get($this->address,$this->community,$oid['oid'],$this->timeout,$this->retries);
 					//Fire::info($oid['oid']);
@@ -232,9 +246,10 @@ class Snmp {
 				} catch(Exception $e) {
 					$return[$key] = NULL;
 				   $code = $e->getCode();
-                $msg = $e->getMessage();
-                //Fire::error($e,"Exception on SNMP GET $code");
-                Kohana::$log->add(Log::ERROR,"Erro no snmpget para o ip $this->address, oid $key, $msg");
+               $msg = $e->getMessage();
+               //Fire::error($e,"Exception on SNMP GET $code");
+               Kohana::$log->add(Log::ERROR,"Erro no snmpget para o ip $this->address, oid $key, $msg");
+					break;
 				}
 			}
 

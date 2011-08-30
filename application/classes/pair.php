@@ -49,7 +49,7 @@ class Pair {
 	{
 		$process = Sprig::factory('process', array('id' => $processId))->load();
 		$id = $process->source->id;
-		return self::instance($process->source, $process->destination);
+		return self::instance($process->source->id, $process->destination->id);
 	}
 
 	public function getSource() {
@@ -103,7 +103,13 @@ class Pair {
 			$destination = $process->destination->load();
 			$values = array();
 
-			$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic')->setGroup('removeAgent', $values, array('id' => $process->id));
+			$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic');
+			//disableAgent
+			$sourceSnmp->setGroup('disableAgent', $values, array('id' => $process->id));
+			sleep(5);
+			//removeAgent
+			$sourceSnmp->setGroup('removeAgent', $values, array('id' => $process->id));
+
 			$destinationSnmp = Snmp::instance($destination->ipaddress, 'suppublic')->setGroup('removeManager', $values, array('id' => $process->id));
 
 			$c = 0;

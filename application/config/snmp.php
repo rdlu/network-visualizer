@@ -711,17 +711,19 @@ return array(
 		    'default' => 2
 	    )
     ),
-	'removeAgent' => array(
-		/*'status' => array(
-		   'type' => 'int',
-		    'oid' => NMMIB.'.0.0.10.id',
+	'disableAgent' => array(
+		'status' => array(
+          'oid'=>NMMIB.'.0.0.10.id',
+          'type'=>'int',
 		    'default' => 0
-	    ),*/
+       ),
 	   'entryStatus' => array(
           'oid'=>NMMIB.'.0.0.9.id',
           'type'=>'int',
 		    'default' => 2
        ),
+	),
+	'removeAgent' => array(
 		'finalEntryStatus' => array(
           'oid'=>NMMIB.'.0.0.9.id',
           'type'=>'int',

@@ -31,6 +31,10 @@ class Sonda {
 			else $newinstance->sonda = Sprig::factory('entity',array('id'=>$id))->load();
 			//update
 			if($newinstance->sonda->status!=0) {
+				//Assume erro e testa as alternativas
+				$newinstance->class = 'error';
+				$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
+				
 				if($newinstance->sonda->updated + 1800 > date("U") ) {
 					$newinstance->sonda->status = 1;
 					$newinstance->message = 'Entidade ativa e funcional';
@@ -48,8 +52,7 @@ class Sonda {
 					$newinstance->message = 'A sonda não faz medições há mais de 10 minutos.';
 				}*/
 
-				//if($snmp) {
-				if($newinstance->sonda->updated + 600 <= date("U")) {
+				if($snmp || ($newinstance->sonda->updated + 600 <= date("U") && $newinstance->sonda->status!=3)) {
 					$snmpResponse = $newinstance->getVersion();
 					if(!$newinstance->checkStatus()) {
 						$newinstance->sonda->status = 3;
@@ -98,7 +101,8 @@ class Sonda {
 
 	public function getVersion() {
 		if(!$this->version['version']) {
-			$this->version = $this->checkSNMP();
+			$realip = Network::getAddress($this->sonda->ipaddress);
+			$this->version = Snmp::instance($realip)->group('linuxManager');
 		}
 		return $this->version;
 	}
@@ -113,6 +117,6 @@ class Sonda {
 
 	public function checkSNMP() {
 		$realip = Network::getAddress($this->sonda->ipaddress);
-      return Snmp::instance($realip)->group('linuxManager');
+      return Snmp::instance($realip)->isResponding();
 	}
 }
