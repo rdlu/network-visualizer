@@ -53,11 +53,17 @@ class Sonda {
 				}*/
 
 				if($snmp || ($newinstance->sonda->updated + 600 <= date("U") && $newinstance->sonda->status!=3)) {
-					$snmpResponse = $newinstance->getVersion();
-					if(!$newinstance->checkStatus()) {
-						$newinstance->sonda->status = 3;
+
+					try {
+						if(!$newinstance->checkStatus()) {
+							$newinstance->sonda->status = 3;
+							$newinstance->class = 'error';
+							$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
+						}
+					} catch (Network_Exception $err) {
+						$newinstance->sonda->status = 4;
 						$newinstance->class = 'error';
-						$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
+						$newinstance->message = 'Entidade fora do ar, não se registrou no DDNS';
 					}
 				}
 
