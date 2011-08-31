@@ -122,10 +122,16 @@ class Controller_Entities extends Controller_Skeleton
 		}
 
 		if ($entity->loaded()) {
-			$view = View::factory('entities/remove');
-			$view->set('name', $entity->name);
-			$entity->delete();
-			$this->template->content = $view;
+
+			if(($entity->processes_as_source->count() == 0) || ($entity->processes_as_destination->count() == 0)) {
+				$view = View::factory('entities/remove');
+				$view->set('name', $entity->name);
+				$entity->delete();
+				$this->template->content = $view;
+			} else {
+				$this->template->content = "Não foi possível remover a sonda $entity->name, ainda existem processos de medição agendados.";
+			}
+
 		} else $this->template->content = 'Entidade não existente no MoM';
 	}
 
