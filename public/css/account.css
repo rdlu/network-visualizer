@@ -24,3 +24,7 @@
 .button:hover {
     background-color: #eee;   
 }
+
+a, a:visited {
+   color: #3B5998;
+}

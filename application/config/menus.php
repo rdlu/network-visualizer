@@ -24,15 +24,15 @@ return array(
                'profiles'=>array(
                     'title'=>__('Métricas e Perfis de Teste'),
                     'href'=>'profiles/'),
-	        'logviewer'=>array(
-		            'title'=>__('Registro de Eventos (Log)'),
-		            'href'=>'log/'),
+	        //'logviewer'=>array(
+		//            'title'=>__('Registro de Eventos (Log)'),
+		//            'href'=>'log/'),
                 'account'=>array(
                     'title'=>__('Controle de Usuário'),
                     'href'=>'account/'
                 ),
                 'winagent'=>array(
-                    'title'=>__('Medições do Agente Windows'),
+                    'title'=>__('Agente Windows'),
                     'href'=>'winagent/'
                 ),
 	            ),
