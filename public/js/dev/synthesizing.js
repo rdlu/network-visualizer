@@ -354,6 +354,7 @@ var SYNTH_BAR = { //Retorna a cor do background
     vermelho: 'rgb(206, 83, 72)',   //'#CE5348', //'#da270b', //'red',
     verde:    'rgb(119, 206, 72)',  //'#77CE48', //'#5bb333', //'green',
     amarelo:  'rgb(245, 242, 72)',  //'#D4DB4C', //'#fedb1a', //yellow
+    cinza:  'rgb(102, 102, 102)',
 
     vermelho_r: 206,
     vermelho_g: 83,
@@ -372,8 +373,8 @@ var SYNTH_BAR = { //Retorna a cor do background
         limMin = parseFloat(limMin);        
         limMax = parseFloat(limMax);
 
-        if(valor == null){
-            return SYNTH_BAR.vermelho;
+        if(valor == null || isNaN(valor)){
+            return SYNTH_BAR.cinza;
         }
 
         if(tipo == 'reversa'){ //disreverte a *)#($Q@*$)Q*$ da métrica
