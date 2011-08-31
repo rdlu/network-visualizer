@@ -40,7 +40,7 @@ class Sonda {
 					$newinstance->message = 'Entidade ativa e funcional';
 
 					$newinstance->class = 'success';
-				} elseif($newinstance->sonda->updated + 300 <= date("U") ) {
+				} elseif(($newinstance->sonda->updated + 300 <= date("U")) && $newinstance->sonda->status!=3) {
 					$newinstance->sonda->status = 2;
 					$newinstance->class = 'warn';
 					$newinstance->message = 'A sonda não faz medições há mais de 5 minutos.';
@@ -107,8 +107,16 @@ class Sonda {
 
 	public function getVersion() {
 		if(!$this->version['version']) {
-			$realip = Network::getAddress($this->sonda->ipaddress);
-			$this->version = Snmp::instance($realip)->group('linuxManager');
+
+			try {
+				$realip = Network::getAddress($this->sonda->ipaddress);
+				$this->version = Snmp::instance($realip)->group('linuxManager');
+			} catch (Exception $err) {
+				foreach(Kohana::config('snmp.linuxManager') as $k => $v) {
+					$this->version[$k] = null;
+				}
+			}
+
 		}
 		return $this->version;
 	}
