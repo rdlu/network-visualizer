@@ -58,9 +58,8 @@ class Controller_Welcome extends Controller_Skeleton {
 			$query = DB::select()->order_by('status', 'DESC');
 			$entities = Sprig::factory('entity')->load($query, FALSE);
 			$JSONresponse = array();
-                        $before = 0;
+			$before = 0;
 			foreach ($entities as $k => $entity) { //coloca as medições em um array
-				$status = Sonda::instance($entity->id)->getCode();
 				$agentes = array();
 				$gerentes = array();
 				foreach ($entity->processes_as_source as $process) {
@@ -77,6 +76,13 @@ class Controller_Welcome extends Controller_Skeleton {
                                             $before = $process->destination->id;
                                     }
 					
+				}
+
+				try {
+					$st1= Sonda::instance($entity->id)->getCode();
+					$status = ($st1 >= 3)? 3 : $st1;
+				} catch (Network_Exception $err) {
+					$status = 3;
 				}
 
 				$JSONresponse[$k] = array( //prepara um array com a resposta

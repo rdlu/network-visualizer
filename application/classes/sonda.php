@@ -40,7 +40,7 @@ class Sonda {
 					$newinstance->message = 'Entidade ativa e funcional';
 
 					$newinstance->class = 'success';
-				} elseif($newinstance->sonda->updated + 300 <= date("U") ) {
+				} elseif(($newinstance->sonda->updated + 300 <= date("U")) && $newinstance->sonda->status!=3) {
 					$newinstance->sonda->status = 2;
 					$newinstance->class = 'warn';
 					$newinstance->message = 'A sonda não faz medições há mais de 5 minutos.';
@@ -53,17 +53,23 @@ class Sonda {
 				}*/
 
 				if($snmp || ($newinstance->sonda->updated + 600 <= date("U") && $newinstance->sonda->status!=3)) {
-					$snmpResponse = $newinstance->getVersion();
-					if(!$newinstance->checkStatus()) {
+
+					try {
+						if(!$newinstance->checkStatus()) {
+							$newinstance->sonda->status = 3;
+							$newinstance->class = 'error';
+							$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
+						}
+					} catch (Network_Exception $err) {
 						$newinstance->sonda->status = 3;
 						$newinstance->class = 'error';
-						$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
+						$newinstance->message = 'Entidade fora do ar, não se registrou no DDNS';
 					}
 				}
 
 				try {
 					$newinstance->sonda->update();
-				} catch(Validate_Exception $e) {
+				} catch(Validation_Exception $e) {
 					Kohana::$log->add('ERROR',"O status da sonda $id não pode ser atualizado com sucesso. (Validate_Exception on Sonda::instance)");
 					//Fire::info($e->array->errors());
 				}
@@ -101,8 +107,16 @@ class Sonda {
 
 	public function getVersion() {
 		if(!$this->version['version']) {
-			$realip = Network::getAddress($this->sonda->ipaddress);
-			$this->version = Snmp::instance($realip)->group('linuxManager');
+
+			try {
+				$realip = Network::getAddress($this->sonda->ipaddress);
+				$this->version = Snmp::instance($realip)->group('linuxManager');
+			} catch (Exception $err) {
+				foreach(Kohana::config('snmp.linuxManager') as $k => $v) {
+					$this->version[$k] = null;
+				}
+			}
+
 		}
 		return $this->version;
 	}
