@@ -1,6 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Welcome extends Controller_Skeleton {
+class Controller_Welcome extends Controller_Skeleton
+{
 
 	public $auth_required = array('login');
 
@@ -9,18 +10,21 @@ class Controller_Welcome extends Controller_Skeleton {
 	// 'moderatorpanel' => array('login', 'moderator') will only allow users with the roles login and moderator to access action_moderatorpanel
 	public $secure_actions = FALSE;
 
-	public function before() {
+	public function before()
+	{
 		parent::before();
 		$this->template->title .= 'Início :: ';
 	}
 
-	public function action_index() {
+	public function action_index()
+	{
 		$view = View::factory('index/welcome');
 		$this->template->content = $view;
 		$this->template->extras = View::factory('index/tJS');
 	}
 
-	public function after() {
+	public function after()
+	{
 		if ($this->auto_render) {
 			$styles = array(
 				'css/map.css' => 'all',
@@ -31,13 +35,14 @@ class Controller_Welcome extends Controller_Skeleton {
 				'js/dev/interface.js'
 			);
 
-			$this->template->styles = array_merge($styles,$this->template->styles);
-			$this->template->scripts = array_merge($scripts,$this->template->scripts);
+			$this->template->styles = array_merge($styles, $this->template->styles);
+			$this->template->scripts = array_merge($scripts, $this->template->scripts);
 		}
 		parent::after();
 	}
 
-	public function action_infoMapa() {
+	public function action_infoMapa()
+	{
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$entidades = Sprig::factory('entity')->load(null, FALSE);
@@ -52,35 +57,37 @@ class Controller_Welcome extends Controller_Skeleton {
 		}
 	}
 
-	public function action_infoMapaJ() {
-		if (Request::current()->is_ajax()) {
+	public function action_infoMapaJ()
+	{
+		if (true||Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$query = DB::select()->order_by('status', 'DESC');
 			$entities = Sprig::factory('entity')->load($query, FALSE);
 			$JSONresponse = array();
 			$before = 0;
+			$test = $entities->as_array();
 			foreach ($entities as $k => $entity) { //coloca as medições em um array
 				$agentes = array();
 				$gerentes = array();
 				foreach ($entity->processes_as_source as $process) {
-                                        if($process->destination->id != $before){
-                                            $agentes[] = $process->destination->id;
-                                            $before = $process->destination->id;
-                                        }
-					
+					if ($process->destination->id != $before) {
+						$agentes[] = $process->destination->id;
+						$before = $process->destination->id;
+					}
+
 				}
-                                $before = 0;
+				$before = 0;
 				foreach ($entity->processes_as_destination as $process) {
-                                    if($process->destination->id != $before){
-                                            $gerentes[] = $process->source->id;
-                                            $before = $process->destination->id;
-                                    }
-					
+					if ($process->destination->id != $before) {
+						$gerentes[] = $process->source->id;
+						$before = $process->destination->id;
+					}
+
 				}
 
 				try {
-					$st1= Sonda::instance($entity->id)->getCode();
-					$status = ($st1 >= 3)? 3 : $st1;
+					$st1 = Sonda::instance($entity->id)->getCode();
+					$status = ($st1 >= 3) ? 3 : $st1;
 				} catch (Network_Exception $err) {
 					$status = 3;
 				}
@@ -96,16 +103,17 @@ class Controller_Welcome extends Controller_Skeleton {
 					'gerentes' => $gerentes
 				);
 			}
-			$this->response->headers('Content-Type', 'text/json');
+			//$this->response->headers('Content-Type', 'text/json');
 			$this->response->body(json_encode($JSONresponse));
 		}
 	}
 
-	public function action_infoBar($id) {
+	public function action_infoBar($id)
+	{
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 
-			$id = (int) $id;
+			$id = (int)$id;
 			$dados = Sprig::factory('entity', array("id" => $id))->load();
 			$this->response->headers('Content-Type', 'application/json');
 
@@ -117,10 +125,10 @@ class Controller_Welcome extends Controller_Skeleton {
 			}
 
 			$this->response->body(JSON_encode(array(
-				'endereco' => $endereco,
-				'localidade' => "$dados->state, $dados->city",
-				'status' => "$dados->status"
-			)));
+			                                       'endereco' => $endereco,
+			                                       'localidade' => "$dados->state, $dados->city",
+			                                       'status' => "$dados->status"
+			                                  )));
 		}
 	}
 
