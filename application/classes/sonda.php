@@ -69,7 +69,7 @@ class Sonda {
 
 				try {
 					$newinstance->sonda->update();
-				} catch(Validate_Exception $e) {
+				} catch(Validation_Exception $e) {
 					Kohana::$log->add('ERROR',"O status da sonda $id não pode ser atualizado com sucesso. (Validate_Exception on Sonda::instance)");
 					//Fire::info($e->array->errors());
 				}
