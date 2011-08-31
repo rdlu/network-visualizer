@@ -11,7 +11,6 @@ class Sonda {
 		1=>'Ativo',
 		2=>'Alerta',
 		3=>'Erro',
-		4=>'Erro (DNS)',
 		-1=>'Bloqueado',
 	);
 
@@ -62,7 +61,7 @@ class Sonda {
 							$newinstance->message = 'Entidade em estado de erro ativo, não responde ao SNMP.';
 						}
 					} catch (Network_Exception $err) {
-						$newinstance->sonda->status = 4;
+						$newinstance->sonda->status = 3;
 						$newinstance->class = 'error';
 						$newinstance->message = 'Entidade fora do ar, não se registrou no DDNS';
 					}

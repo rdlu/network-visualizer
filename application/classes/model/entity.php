@@ -67,7 +67,6 @@ class Model_Entity extends Sprig {
 	                  1=>'Ativo',
 	                  2=>'Alerta',
 	                  3=>'Erro',
-	                  4=>'Erro (DNS)',
 	                  -1=>'Bloqueado',
                   ),
 	             'default'=>1)),
