@@ -2,7 +2,7 @@
 
 class Controller_Admin extends Controller_Skeleton {
 
-	public $auth_required = array('admin');
+	public $auth_required = array('config');
 
 	// Controls access for separate actions
 	// 'adminpanel' => 'admin' will only allow users with the role admin to access action_adminpanel
