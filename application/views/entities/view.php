@@ -27,8 +27,10 @@
 			<li>
 				<a href="<?=Url::site('entities/view') . '/' . $destination['id']?>"><?=$destination['name']?>
 					(<?=$destination['ipaddress']?>)</a>
+				<?php if(Auth::instance()->logged_in('admin')): ?>
 				<img src="<?=url::base()?>images/actions/clock_delete.png" alt="Remover"
 				     onclick="deleter.removeProcess(<?=$entity->id?>,'<?=$entity->name?>',<?=$destination['id']?>,'<?=$destination['name']?>')">
+				<?php endif; ?>
 			</li>
 			<?php endforeach; endif;  ?>
 		</ul>
@@ -41,9 +43,10 @@
 			<?php else: foreach ($sources as $source): ?>
 			<li>
 				<a href="<?=Url::site('entities/view') . '/' . $source['id']?>"><?=$source['name']?> (<?=$source['ipaddress']?>)</a>
+				<?php if(Auth::instance()->logged_in('admin')): ?>
 				<img src="<?=url::base()?>images/actions/clock_delete.png" alt="Remover"
 								     onclick="deleter.removeProcess(<?=$source['id']?>,'<?=$source['name']?>',<?=$entity->id?>,'<?=$entity->name?>')">
-
+				<?php endif; ?>
 			</li>
 			<?php endforeach; endif;  ?>
 		</ul>
@@ -53,10 +56,12 @@
 		<?php foreach ($version = $status->getVersion() as $k => $v): ?>
 		<span class="iblock"><span class="label"><?= $k ?>: </span><strong><?=$v?></strong></span><br />
 		<?php endforeach; ?><br /><br />
-		<span class="button" id="remover">
+		<?php if(Auth::instance()->logged_in('admin')): ?>
+		<span class="button" id="remover"  onclick="deleter.removeSonda();">
 			<img src="<?=url::base()?>images/actions/cross.png" alt="Remover">
 			Remover
 		</span>
+		<?php endif; ?>
 	</fieldset>
 </form>
 <script type="text/javascript">
@@ -67,6 +72,7 @@
 	var destinationsProcesses = <?=Zend_Json::encode($destinationsProcesses)?>;
 	var myself = <?=Zend_Json::encode($entity->as_array())?>;
 
+	<?php if(Auth::instance()->logged_in('admin')): ?>
 	var deleter = {
 		html: function() {
 			var destinationHTML = '';
@@ -160,6 +166,63 @@
 					}
 				}
 			});
+		},
+		removeSonda: function() {
+			if((typeof(processes.length) != 'undefined') && (processes.length > 0)) {
+				var dialog3 = $('<div></div>').html('A sonda ainda tem processos rodando, você deve desagendá-los antes.').dialog({
+					autoOpen: true,
+					modal: true,
+					minWidth: 500,
+					title: 'Remover sonda <?=$entity->name?>',
+					buttons: {
+						OK: function() {
+							$(this).dialog("close");
+						}
+					}
+				});
+			} else {
+				var dialog2 = $('<div></div>').html('Você deseja remover a sonda <?=$entity->name?>?').dialog({
+					autoOpen: true,
+					modal: true,
+					minWidth: 500,
+					title: 'Remover sonda <?=$entity->name?>',
+					buttons: {
+						OK: function() {
+							jQuery.ajax({
+								url: "<?=url::site('entities/remove')?>",
+								type: 'post',
+								data: {'id':<?=$entity->id?> },
+								beforeSend: function() {
+									dialog2.html("Removendo sonda, aguarde...");
+									dialog2.dialog("option", "buttons", {});
+								},
+								success: function(data) {
+									if(!data.error) {
+										dialog2.html(data.message);
+										dialog2.dialog("option", "buttons", {
+											OK: function() {
+												dialog2.dialog("close");
+												window.location = "<?=url::base()?>entities/";
+											}
+										});
+									} else {
+										dialog2.html(data.message);
+										dialog2.dialog("option", "buttons", {
+											OK: function() {
+												dialog2.dialog("close");
+											}
+										});
+									}
+								}
+							});
+						},
+						Cancelar: function() {
+							$(this).dialog("close");
+						}
+					}
+				});
+			}
 		}
 	};
+	<?php endif; ?>
 </script>
