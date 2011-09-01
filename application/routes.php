@@ -51,3 +51,19 @@ Route::set('reportsSpec', '(<controller>(/<action>/<source>/<destination>))')
 	));
 
 
+Route::set('collect',
+           'collect/id(/<destination>(/<metric>(/<dsMax>/<dsMin>/<dsAvg>/<sdMax>/<sdMin>/<sdAvg>)))',
+           array('destination'=>'[0-9]+',
+	             'metric'=>'[a-z_]+',
+                'dsMax'=>'[0-9.]+',
+                'dsMin'=>'[0-9.]+',
+                'dsAvg'=>'[0-9.]+',
+                'sdMax'=>'.*',
+                'sdMin'=>'[0-9.]+',
+                'sdAvg'=>'[0-9.]+'
+           ))
+		->defaults(array(
+                    'controller'=>'collect',
+                    'action'=>'id'
+               ));
+
