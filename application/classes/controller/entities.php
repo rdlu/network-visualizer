@@ -199,4 +199,24 @@ class Controller_Entities extends Controller_Skeleton
 		else throw new Kohana_Exception('This controller only accepts AJAX requests', $query);
 	}
 
+	public function action_topTenManagers() {
+		if ($_POST['name'] == "  " || $_POST['name'] == "topten") {
+			$this->auto_render = false;
+			$processes = Database::instance()->query(Database::SELECT,"SELECT source_id,count(*) FROM processes GROUP BY source_id ORDER BY count(*)");
+			$result = array();
+			foreach($processes as $process) {
+				$result['entities'][] = Sprig::factory('entity',array('id'=>$process["source_id"]))->load()->as_array();
+			}
+
+			$this->response->headers('Content-Type', 'application/json');
+			$this->response->headers('Cache-Control', 'no-cache');
+			if (Request::current()->is_ajax())
+				$this->response->body(json_encode($result));
+			else throw new Kohana_Exception('This controller only accepts AJAX requests', $result);
+		} else {
+			$this->action_list();
+		}
+
+	}
+
 } // End Welcome

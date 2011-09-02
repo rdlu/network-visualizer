@@ -1,7 +1,7 @@
 <table id="filterMenu">
 	<tr>
         <td>Sonda de Origem do Teste (Gerente):&nbsp;
-            <input type="text" name="sonda" id="sonda" size="36"/>
+            <input type="text" name="sonda" id="sonda" size="36"/><img id="sondaSelect" style="border: solid thin #666; background-color: #eee; vertical-align: middle;" src="<?=url::base()?>/images/actions/button_down.png" />
         </td>
 		<td>Sonda de Destino do Teste (Agente):&nbsp;
 	        <select name="destino" id="destino" disabled="true">
@@ -27,6 +27,7 @@
 <div id="resultado"></div>
 
 <script type="text/javascript">
+	var sondaAuto;
 	$(function() {
 
 		$("#consultar").click(function(evt) {
@@ -82,10 +83,14 @@
 			console.error(msg);
 		}
 
-		$("#sonda").autocomplete({
+		$("#sondaSelect").click(function(evt) {
+			sondaAuto.autocomplete("search","topten");
+		});
+
+		sondaAuto = $("#sonda").autocomplete({
 			source: function( request, response ) {
 				$.ajax({
-					url: "<?=url::site('entities/list')?>",
+					url: "<?=url::site('entities/topTenManagers')?>",
                     type: 'post',
 					data: {
 						maxRows: 5,
@@ -110,6 +115,7 @@
 				});
 			},
 			minLength: 2,
+			autoFocus: true,
 			select: function( event, ui ) {
 				log( ui.item ?
 					"Selected: " + ui.item.label :
