@@ -18,7 +18,9 @@
 		<td><b>Fim:</b>&nbsp;&nbsp;&nbsp;&nbsp;Data&nbsp;
 			<input id="fim" name="fim" type="text" size="10" value="<?=date('d/m/Y')?>" />
 			&nbsp;&nbsp;&nbsp;&nbsp;Hora:&nbsp;
-			<input id="horafim" type="text" size="6" value="<?=date('H:i')?>" /></td>
+			<input id="horafim" type="text" size="6" value="<?=date('H:i')?>" />
+			<span id="fimNow" style="cursor: pointer"><u>Agora</u></span>
+		</td>
 	</tr>
 	<tr>
 		<td colspan="2"><span class="button" id="consultar"><img src="<?=url::base()?>images/actions/tick.png" alt="Consultar">&nbsp;Consultar</span></td>
@@ -29,6 +31,10 @@
 <script type="text/javascript">
 	var sondaAuto;
 	$(function() {
+		$("#fimNow").click(function() {
+			$("#fim").val($.datepicker.formatDate('dd/mm/yy',new Date()));
+			$("#horafim").val(new Date().getHours()+':'+new Date().getMinutes());
+		});
 
 		$("#consultar").click(function(evt) {
 			//log($("#sonda").data("id") + $("#destino").val());
@@ -137,7 +143,7 @@
 				url: "<?=url::site('entities/destinations')?>",
 				type: 'post',
 				data: {
-					id: id,
+					id: id
 				},
 				success: function( data ) {
 					$("#destino").html("");
@@ -187,11 +193,13 @@
 		$( "#inicio" ).datepicker({
 			changeMonth: true,
 			changeYear: true,
+			showButtonPanel: true
 		});
 
 		$( "#fim" ).datepicker({
 			changeMonth: true,
 			changeYear: true,
+			showButtonPanel: true
 		});
 
 	});
