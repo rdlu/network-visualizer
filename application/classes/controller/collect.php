@@ -42,9 +42,6 @@ class Controller_Collect extends Controller
 			                          ));
 
 			Kohana_Cache::instance('memcache')->set("$source->id-$destination->id",$toBeCached,86400);
-
-			print_r(Kohana_Cache::instance('memcache')->get("$source->id-$destination->id", array()));
-
 			if (true || $source->ipaddress == $ip) {
 				$snmp = Snmp::instance($source->ipaddress);
 				$simple = $snmp->group('agentSimple', array('pid' => $id));
@@ -52,7 +49,8 @@ class Controller_Collect extends Controller
 				if ($destination->ipaddress == $dip) {
 					$data = $snmp->group($metric->name, array('id' => $id));
 					//$timestamp = Snmp::convertTimestamp($simple['timestamp']);
-					$timestamp = date('U');
+					$timestamp = date('U') - (date('U') % $profile->polling);
+					
 					$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress)->update($metric->name, $data, $timestamp);
 					$destination->updated = date('U');
 					$source->updated = date('U');

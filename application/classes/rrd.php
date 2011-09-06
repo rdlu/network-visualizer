@@ -108,7 +108,7 @@ class Rrd {
 		$opts[] = "DS:downstream:GAUGE:$heartbeat:U:U";
 		if ($metric != 'rtt')
 			$opts[] = "DS:upstream:GAUGE:$heartbeat:U:U";
-		$opts[] = "RRA:AVERAGE:0.5:1:$mainPrecision"; //step por step
+		$opts[] = "RRA:LAST:0.5:1:$mainPrecision"; //step por step
 		$opts[] = "RRA:AVERAGE:0.5:4:$secondaryPrecision"; //a cada 4 steps
 		$opts[] = "RRA:AVERAGE:0.5:16:$thirdPrecision"; //a cada 16 steps
 		$opts[] = "RRA:AVERAGE:0.5:32:$fourthPrecision"; //a cada 32 steps
@@ -117,8 +117,8 @@ class Rrd {
 		$opts[] = "RRA:MAX:0.5:4:$secondaryPrecision";
 		//$opts[] = "RRA:MAX:0.5:16:$thirdPrecision";
 		//$opts[] = "RRA:MAX:0.5:100:$fourthPrecision";
-		//$opts[] = "RRA:MIN:0.5:1:$mainPrecision";
-		//$opts[] = "RRA:MIN:0.5:4:$secondaryPrecision";
+		$opts[] = "RRA:MIN:0.5:1:$mainPrecision";
+		$opts[] = "RRA:MIN:0.5:4:$secondaryPrecision";
 		//$opts[] = "RRA:MIN:0.5:16:$thirdPrecision";
 		//$opts[] = "RRA:MIN:0.5:100:$fourthPrecision";
 		//Fire::group('Created RRD Files: ');
@@ -156,7 +156,10 @@ class Rrd {
 		if ($timestamp == 'N') {
 			$ts = date("d.m.Y H:i:s T");
 			$timestamp = date("U");
-		} else $ts = date("d.m.Y H:i:s T", $timestamp);
+		} else {
+			$ts = date("d.m.Y H:i:s T", $timestamp);
+		}
+
 		//Fire::group("Updating RRD Files - S:$this->source D:$this->destination TS:$ts");
 		$path = $this->path();
 		foreach ($this->types[0] as $l1)
@@ -167,14 +170,15 @@ class Rrd {
 					$downstream = abs($data[$l1 . 'SD' . $l2]);
 					////Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
 					$numbers = "SD $downstream : DS $upstream";
+					//echo date("d.m.Y H:i:s T");
+					//echo "Guardando @$path $filename os valores: $timestamp:$downstream:$upstream\n";
 					$ret = rrd_update($path . $filename, "$timestamp:$downstream:$upstream");
 				} else {
-					////Fire::info("$filename TIME $timestamp : RTT $downstream");
+					//echo date("d.m.Y H:i:s T");
+					//echo "Guardando @$path $filename os valores: $upstream\n";
 					$ret = rrd_update($path . $filename, "$timestamp:$upstream");
 					$numbers = "RTT $upstream";
 				}
-
-				//Fire::info("RRD Update : TIME $timestamp : $numbers on $path$filename");
 
 				if ($ret == 0) {
 					$erf = rrd_error();

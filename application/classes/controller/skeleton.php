@@ -37,7 +37,7 @@ class Controller_Skeleton extends Controller_Template {
 						Auth::instance()->logged_in($this->secure_actions[$action_name]) === FALSE)) {
                         
 			if (Auth::instance()->logged_in()) {
-				Request::current()->redirect(url::site('account/noaccess','https'));
+				Request::current()->redirect(url::site('account/noaccess','http'));
 			} else {
 				Request::current()->redirect(url::site('account/signin','https'));
 			}
