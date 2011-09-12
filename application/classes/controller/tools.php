@@ -47,10 +47,4 @@ class Controller_Tools extends Controller {
 
 		}
 	}
-
-	public function action_ph() {
-		$phean = new Pheanstalk('127.0.0.1',11300);
-
-		//Fire::info($phean);
-	}
 }

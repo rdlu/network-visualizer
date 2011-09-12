@@ -200,9 +200,19 @@ class Pair {
 		return $this->thresholds;
 	}
 
+	/**
+	 * @return Rrd
+	 */
+	public function getRrdInstance() {
+		if(!$this->rrd) {
+			$this->rrd = Rrd::instance($this->source->ipaddress, $this->destination->ipaddress);
+		}
+		return $this->rrd;
+	}
+
 	public function getResult($metric, $start = false, $end = false)
 	{
-		$rrd = Rrd::instance($this->source->ipaddress, $this->destination->ipaddress);
+		$rrd = $this->getRrdInstance();
 		$last = Date("U");
 		//$last = (int) $rrd->last($metric);
 		$start = $start ? $start : $last - 600;
@@ -369,4 +379,5 @@ class Pair {
 	protected function setManagerTable() {
 
 	}
+	
 }

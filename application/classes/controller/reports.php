@@ -215,36 +215,69 @@ class Controller_Reports extends Controller_Skeleton {
 		$this->response->body(Zend_Json::encode($pair->getResult($metric)));
 	}
 
-	public function action_flot() {
-		$this->auto_render = false;
-		$source = $_POST['source'];
-		$destination = $_POST['destination'];
-		$metric = $_POST['metric'];
-		//$source='143.54.10.199';$destination='143.54.10.122';$metric='owd';
+	protected function singleFlot($source,$destination,$metric,$start=false,$end=false) {
+		$start = ($start)?$start:date("U", time() - 3600);
+		$end = ($end)?$end:date("U");
+		$pair = Pair::instance($source,$destination);
 
-		$start = (isset($_POST['start']))?$_POST['start']:date("U", time() - 24*3600);
-		$end = (isset($_POST['end']))?$_POST['end']:date("U");
-
-		$metricModel = Sprig::factory('metric',array('name'=>$metric))->load();
-		$profile = $metricModel->profiles->current();
-
-		$json = Rrd::instance($source,$destination)->json($metric,$start,$end);
+		$json = $pair->getRrdInstance()->json($metric,$start,$end);
 
 		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
 
 		$results = new stdClass();
-		$results->labels = $obj->meta->legend->entry;
-		$results->values = new stdClass();
 
-		foreach($obj->meta->legend->entry as $x => $z) {
-			$results->values->$x = array();
+		$results->values = new stdClass();
+		$results->values->$metric = array();
+
+		$zero = 0;
+
+		if(is_array($obj->meta->legend->entry)) {
+			$results->labels = $obj->meta->legend->entry;
+			foreach($obj->meta->legend->entry as $x => $z) {
+				$rrdlabel = explode(" ",$z);
+				$direction[$x] = $rrdlabel[1];
+				$values[$direction[$x]] = null;
+			}
+			$results->values->$metric = $values;
+		} else {
+			$results->labels = array($obj->meta->legend->entry);
+			$rrdlabel = explode(" ",$obj->meta->legend->entry);
+			$direction[0] = $rrdlabel[1];
+			$values[$direction[0]] = null;
+			$results->values->$metric = $values;
 		}
 
 		foreach($obj->data->row as $k => $row) {
-			foreach($row->v as $j => $value) {
-				$value = ($value == 'NaN') ? null:$value;
-				array_push($results->values->$j,array($row->t,$value));
+			if(is_array($row->v)) {
+				foreach($row->v as $j => $value) {
+					$value = ($value == 'NaN') ? null:$value;
+					$values[$direction[$j]] = array($row->t,$value);
+				}
+				$results->values->$metric = $values;
+			} else {
+				$value = ($row->v == 'NaN') ? null:$row->v;
+				$values[$direction[0]] = array($row->t,$value);
+				$results->values->$metric = $values;
 			}
+		}
+
+		return $results;
+	}
+
+	protected function multiFlot($source,$destination) {
+		$pair = Pair::instance($source,$destination);
+		$metrics = $pair->getMetrics();
+	}
+
+	public function action_flot($source,$destination=false,$metric=false) {
+		$this->auto_render = false;
+
+		/*$source = $_POST['source'];
+		$destination = (isset($_POST['destination']))?$_POST['destination']:false;
+		$metric = (isset($_POST['metric']))?$_POST['metric']:false;*/
+
+		if($destination) {
+			$results[$destination] = $this->singleFlot($source,$destination,$metric);
 		}
 
 		$this->response->headers('Content-Type','application/json');
@@ -256,7 +289,7 @@ class Controller_Reports extends Controller_Skeleton {
 
 		$pair = Pair::instance($source,$destination);
 
-		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
+		if(true || Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
 		$this->response->body(Zend_Json::encode($pair->lastResults()));
 	}
 
