@@ -29,8 +29,10 @@
 <fieldset title="Dados da Sonda de Destino">
 	<legend>Dados da Sonda de Destino</legend>
 	<img src="<?=url::site('images/boardMenu/destination.png')?>" alt="Sonda de Destino" style="vertical-align:middle;"/>
-	<span style="vertical-align:middle;"><label for="sonda" class="nice big"><strong>Sonda de Destino da Medição</strong></label>
-	<input type="text" name="sonda" id="sonda" class="nice big" size="40"></span>
+	<span style="vertical-align:middle;">
+		<label for="sonda" class="nice big"><strong>Sonda de Destino da Medição</strong></label>
+		<input type="text" name="sonda" id="sonda" class="nice big" size="40">
+		</span>
 	<input type="hidden" name="destination" id="destination">
 </fieldset>
 <fieldset title="Dados do Perfil a ser utilizado">
