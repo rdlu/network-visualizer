@@ -2,6 +2,8 @@
 	<tr>
 		<td>Sonda de Origem da Medição:
 			<input type="text" name="sonda" id="sonda" size="30"/>
+			<img id="sondaSelect" style="border: solid thin #666; background-color: #eee; vertical-align: middle;" src="<?=url::base()?>/images/actions/button_down.png" />
+				
 		</td>
 		<td><a href="<?=url::base()?>processes/new/" class="filterMenu" id="newlink"><img
 				src="<?=url::site('images/actions/clock_add.png')?>" alt="Adicionar nova processo de medição"/>&nbsp;&nbsp;&nbsp;Agendar
@@ -12,14 +14,19 @@
 
 <script type="text/javascript">
 	var newlink = '';
+	var sondaAuto;
 	$(function() {
+
+		$("#sondaSelect").click(function(evt) {
+			sondaAuto.autocomplete("search","topten");
+		});
 
 		newlink = $('#newlink').attr('href');
 
-		$("#sonda").autocomplete({
+		sondaAuto = $("#sonda").autocomplete({
 			source: function(request, response) {
 				$.ajax({
-					url: "<?=url::site('entities/list')?>",
+					url: "<?=url::site('entities/topTenManagers')?>",
 					type: 'post',
 					data: {
 						maxRows: 5,

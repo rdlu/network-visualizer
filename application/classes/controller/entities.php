@@ -3,12 +3,12 @@
 class Controller_Entities extends Controller_Skeleton
 {
 
-	public $auth_required = array('login', 'admin');
+	public $auth_required = array('login', 'admin', 'config');
 
 	// Controls access for separate actions
 	// 'adminpanel' => 'admin' will only allow users with the role admin to access action_adminpanel
 	// 'moderatorpanel' => array('login', 'moderator') will only allow users with the roles login and moderator to access action_moderatorpanel
-	public $secure_actions = FALSE;
+	public $secure_actions = array('remove' => array('admin', 'config'), 'edit' => array('admin', 'config'), 'new' => array('admin', 'config'));
 
 	public function before()
 	{
@@ -122,10 +122,16 @@ class Controller_Entities extends Controller_Skeleton
 		}
 
 		if ($entity->loaded()) {
-			$view = View::factory('entities/remove');
-			$view->set('name', $entity->name);
-			$entity->delete();
-			$this->template->content = $view;
+
+			if(($entity->processes_as_source->count() == 0) || ($entity->processes_as_destination->count() == 0)) {
+				$view = View::factory('entities/remove');
+				$view->set('name', $entity->name);
+				$entity->delete();
+				$this->template->content = $view;
+			} else {
+				$this->template->content = "Não foi possível remover a sonda $entity->name, ainda existem processos de medição agendados.";
+			}
+
 		} else $this->template->content = 'Entidade não existente no MoM';
 	}
 
@@ -191,6 +197,26 @@ class Controller_Entities extends Controller_Skeleton
 		$this->response->headers('Cache-Control', 'no-cache');
 		if (Request::current()->is_ajax()) $this->response->body(json_encode($query));
 		else throw new Kohana_Exception('This controller only accepts AJAX requests', $query);
+	}
+
+	public function action_topTenManagers() {
+		if ($_POST['name'] == "  " || $_POST['name'] == "topten") {
+			$this->auto_render = false;
+			$processes = Database::instance()->query(Database::SELECT,"SELECT source_id,count(*) FROM processes GROUP BY source_id ORDER BY count(*)");
+			$result = array();
+			foreach($processes as $process) {
+				$result['entities'][] = Sprig::factory('entity',array('id'=>$process["source_id"]))->load()->as_array();
+			}
+
+			$this->response->headers('Content-Type', 'application/json');
+			$this->response->headers('Cache-Control', 'no-cache');
+			if (Request::current()->is_ajax())
+				$this->response->body(json_encode($result));
+			else throw new Kohana_Exception('This controller only accepts AJAX requests', $result);
+		} else {
+			$this->action_list();
+		}
+
 	}
 
 } // End Welcome

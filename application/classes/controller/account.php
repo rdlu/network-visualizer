@@ -124,8 +124,7 @@ class Controller_Account extends Controller_Skeleton {
 			elseif($auth->login($_POST['username'],$_POST['password'])) {
 				#redirect to the user account
                                 $user = Auth::instance()->get_user();
-                                Kohana::$log->add(Log::INFO,"Usuário $user->username fez login em ".date("(d/m/Y) H:i:s", $user->last_login));
-                                $this->request->redirect('/');
+                                $this->request->redirect(url::site('/','http'));
 			}
                         else {
 				#Get errors for display in view

@@ -45,11 +45,6 @@ class Controller_Processes extends Controller_Skeleton {
 				$metrics[$destination->id] = $pair->getMetrics();
 			}
 
-			/*Fire::group('Models Loaded')
-					->info($processes)
-					->info($sourceEntity)
-					//->info($destinations)
-					->groupEnd();*/
 		} else {
 			$errors[] = "A origem $sourceAddr não é um IP válido. Você deve informar um IP válido.";
 		}

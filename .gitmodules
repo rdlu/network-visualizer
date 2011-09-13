@@ -43,3 +43,6 @@
 [submodule "modules/firelogger"]
 	path = modules/firelogger
 	url = git://github.com/rodrigodk/kohana-firelogger.git
+[submodule "modules/pheanstalk"]
+    path = modules/pheanstalk
+    url = git://github.com/rodrigodk/kohana-pheanstalk.git

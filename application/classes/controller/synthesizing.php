@@ -154,6 +154,8 @@ class Controller_Synthesizing extends Controller_Skeleton
 		}
 
 		foreach($resp as $destination) {
+			//Resultados do MemCached
+			$cacheResults[$destination->id] = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id");
 			$pair = Pair::instance($source->id,$destination->id);
 			$resultss[] = $pair->lastResults();
 		}

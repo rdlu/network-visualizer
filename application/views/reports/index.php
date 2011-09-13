@@ -1,7 +1,7 @@
 <table id="filterMenu">
 	<tr>
         <td>Sonda de Origem do Teste (Gerente):&nbsp;
-            <input type="text" name="sonda" id="sonda" size="36"/>
+            <input type="text" name="sonda" id="sonda" size="36"/><img id="sondaSelect" style="border: solid thin #666; background-color: #eee; vertical-align: middle;" src="<?=url::base()?>/images/actions/button_down.png" />
         </td>
 		<td>Sonda de Destino do Teste (Agente):&nbsp;
 	        <select name="destino" id="destino" disabled="true">
@@ -18,7 +18,9 @@
 		<td><b>Fim:</b>&nbsp;&nbsp;&nbsp;&nbsp;Data&nbsp;
 			<input id="fim" name="fim" type="text" size="10" value="<?=date('d/m/Y')?>" />
 			&nbsp;&nbsp;&nbsp;&nbsp;Hora:&nbsp;
-			<input id="horafim" type="text" size="6" value="<?=date('H:i')?>" /></td>
+			<input id="horafim" type="text" size="6" value="<?=date('H:i')?>" />
+			<span id="fimNow" style="cursor: pointer"><u>Agora</u></span>
+		</td>
 	</tr>
 	<tr>
 		<td colspan="2"><span class="button" id="consultar"><img src="<?=url::base()?>images/actions/tick.png" alt="Consultar">&nbsp;Consultar</span></td>
@@ -27,7 +29,12 @@
 <div id="resultado"></div>
 
 <script type="text/javascript">
+	var sondaAuto;
 	$(function() {
+		$("#fimNow").click(function() {
+			$("#fim").val($.datepicker.formatDate('dd/mm/yy',new Date()));
+			$("#horafim").val(new Date().getHours()+':'+new Date().getMinutes());
+		});
 
 		$("#consultar").click(function(evt) {
 			//log($("#sonda").data("id") + $("#destino").val());
@@ -82,10 +89,14 @@
 			console.error(msg);
 		}
 
-		$("#sonda").autocomplete({
+		$("#sondaSelect").click(function(evt) {
+			sondaAuto.autocomplete("search","topten");
+		});
+
+		sondaAuto = $("#sonda").autocomplete({
 			source: function( request, response ) {
 				$.ajax({
-					url: "<?=url::site('entities/list')?>",
+					url: "<?=url::site('entities/topTenManagers')?>",
                     type: 'post',
 					data: {
 						maxRows: 5,
@@ -110,6 +121,7 @@
 				});
 			},
 			minLength: 2,
+			autoFocus: true,
 			select: function( event, ui ) {
 				log( ui.item ?
 					"Selected: " + ui.item.label :
@@ -131,7 +143,7 @@
 				url: "<?=url::site('entities/destinations')?>",
 				type: 'post',
 				data: {
-					id: id,
+					id: id
 				},
 				success: function( data ) {
 					$("#destino").html("");
@@ -181,11 +193,13 @@
 		$( "#inicio" ).datepicker({
 			changeMonth: true,
 			changeYear: true,
+			showButtonPanel: true
 		});
 
 		$( "#fim" ).datepicker({
 			changeMonth: true,
 			changeYear: true,
+			showButtonPanel: true
 		});
 
 	});
