@@ -1,3 +1,5 @@
+<?php $current_user = Auth::instance()->get_user(); ?>
+<?php if($current_user->has('roles', ORM::factory('role', array('name' => 'admin')))) : ?>
     <div id="account_options">
         <a href="<?php echo URL::site('account/register', 'http'); ?>">           
             <span class="button">
@@ -52,3 +54,43 @@
         </tbody>
     </table>
 
+<?php endif ?>
+
+<?php if(!$current_user->has('roles', ORM::factory('role', array('name' => 'admin')))) : ?>
+     <table id="entityList" class="tablesorter">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Logins</th>
+                <th>Nível de acesso</th>
+                <th>Último Login</th>
+                <th>Status</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    <td><?php echo $current_user->username; ?></td>
+                    <td><?php echo $current_user->email; ?></td>
+                    <td><?php echo $current_user->logins; ?></td>
+                    <td><?php                            
+                           if ($current_user->has('roles', ORM::factory('role', array('name' => 'config')))){
+                                echo 'configurador';
+                            }
+                            else echo 'visualizador';
+                        ?>
+                    </td>
+                    <td><?php
+                            if($current_user->last_login != 0){echo date("(d/m/Y) H:i:s", $current_user->last_login);}
+                            else echo "não logou";
+                        ?>
+                    </td>
+                    <td><?php echo ($current_user->active == 1)? 'ativo' : 'inativo'; ?></td>
+                    <td>
+                        <a href='<?php echo URL::site('account/edit?id='.$current_user->id, 'http');?>'>Editar</a>                        
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+<?php endif ?>

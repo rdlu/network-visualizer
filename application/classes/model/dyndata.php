@@ -15,7 +15,7 @@ class Model_Dyndata extends ORM
 				//array('Date::toTimestamp', array(':value')),
 			),
 			'cellid' => array(
-				array('trim', array(':value'," \t\n\r\0\x0B-")),
+				array('trim', array(':value'," \t\n\r\0\x0B")),
 			),
 		);
 	}

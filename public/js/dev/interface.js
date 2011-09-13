@@ -549,5 +549,4 @@ SONDA.dadosMaps = function(){
             RIGHTBAR.entitiesPovoa();
             MAPA.gmap = MAPA.init();
             MAPA.povoa(MAPA.gmap);
-
-            });
+        });

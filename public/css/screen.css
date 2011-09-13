@@ -576,3 +576,7 @@ div.nice {
     padding: 5px;
 }
 
+label.error {
+    margin-left: 5px;
+    color: red;
+}

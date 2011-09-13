@@ -15,6 +15,7 @@ class Controller_Welcome extends Controller_Skeleton {
 	}
 
 	public function action_index() {
+           
 		$view = View::factory('index/welcome');
 		$this->template->content = $view;
 		$this->template->extras = View::factory('index/tJS');
