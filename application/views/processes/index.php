@@ -111,7 +111,7 @@
 						success: function(data) {
 							if (data.errors > 0) {
 								var msg = '';
-								jQuery.each(data.messages, function(idx, message) {
+								jQuery.each(data.message, function(idx, message) {
 									//console.log(message);
 									msg += message + '<br />';
 								});
@@ -132,7 +132,7 @@
 											success: function(data) {
 												if (data.errors > 0) {
 													var msg = '';
-													jQuery.each(data.messages, function(idx, message) {
+													jQuery.each(data.message, function(idx, message) {
 														//console.log(message);
 														msg += message + '<br />';
 													});

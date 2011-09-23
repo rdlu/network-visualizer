@@ -82,12 +82,13 @@ class Controller_Skeleton extends Controller_Template {
 
 
 			$scripts = array(
-				"js/dev/jquery-$jqueryVersion.js",
+				"js/jquery-$jqueryVersion.min.js",
 				'js/jquery.tools.min.js',
 				'js/dev/dummyConsole.js',
 				"js/jquery-ui-$juiversion.min.js",
 				'js/jquery.tablesorter.min.js',
 				'js/dev/jquery.inputmask.js',
+				'js/flot/jquery.flot.min.js',
 				//'js/firebug-lite.js',
 			);
 

@@ -16,8 +16,15 @@ class Controller_Reports extends Controller_Skeleton {
 		if($this->auto_render) {
 			parent::before();
 			$this->template->title .= "Relatórios :: ";
+
+			$scripts = array(
+				'js/flot/jquery.flot.min.js',
+			);
+
+			$this->template->scripts = array_merge($scripts,$this->template->scripts);
 		}
 	}
+
 	public function action_Index() {
 		$view = View::factory('reports/index');
 
@@ -89,6 +96,71 @@ class Controller_Reports extends Controller_Skeleton {
 
 		   if(Request::current()->is_ajax()) {
 			   $view->bind('images',$img)->bind('metrics',$metrics)
+			      ->bind('processes',$processes);
+			   $this->response->headers('Cache-Control',"no-cache");
+			   $this->response->body($view);
+		   } else {
+			   $this->template->content = $view;
+		   }
+
+
+
+		} else {
+			$this->template->content = "Não há nenhum processo de medição entre $source->name ($source->ipaddress) e $destination->name ($destination->ipaddress)";
+		}
+	}
+
+	public function action_ViewFlot($sId=0,$dId=0,$start=0,$end=0,$stime=0,$etime=0) {
+		$sId = (int) $sId;
+		$dId = (int) $dId;
+		$view = View::factory('reports/viewFlot');
+		if(Request::current()->is_ajax()) {
+			$this->auto_render = false;
+			$sId = (int) $_POST['source'];
+		   $dId = (int) $_POST['destination'];
+
+			$relative = (isset($_POST['relative']))?$_POST['relative']:false;
+
+			if($relative) {
+				$inicio = strtotime($relative);
+				$end = Date("U");
+			} else {
+				$start = $_POST['startDate'];
+		      $end = $_POST['endDate'];
+		      $stime = $_POST['startHour'];
+		      $etime = $_POST['endHour'];
+				$inicio = Rrd::converteData($start)." ".$stime;
+				$fim = Rrd::converteData($end)." ".$etime;
+			}
+
+		}
+
+	   //Valida dados
+		if(!Valid::data($start)) throw new Kohana_Exception("Start Date not valid",array($start));
+	   if(!Valid::data($end)) throw new Kohana_Exception("End Date not valid",array($end));
+	   if(!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid",array($stime));
+	   if(!Valid::hora($etime)) throw new Kohana_Exception("End time not valid",array($etime));
+
+	   $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
+	   $source = Sprig::factory('entity',array('id'=>$sId))->load();
+	   $destination = Sprig::factory('entity',array('id'=>$dId))->load();
+
+		$count = $processes->count();
+
+		if($count) {
+
+			foreach($processes as $process) {
+				$profile = $process->profile->load();
+				$metrics = $process->metrics->as_array('order');
+				ksort($metrics);
+				//Fire::error($metrics);
+				foreach($metrics as $metric) {
+					$flot[$metric->name] = $this->singleFlot($source->id,$destination->id,$metric->name,$inicio,$fim);
+				}
+			}
+
+		   if(Request::current()->is_ajax()) {
+			   $view->set('results',Zend_Json::encode($flot))->bind('metrics',$metrics)
 			      ->bind('processes',$processes);
 			   $this->response->headers('Cache-Control',"no-cache");
 			   $this->response->body($view);
@@ -220,64 +292,78 @@ class Controller_Reports extends Controller_Skeleton {
 		$end = ($end)?$end:date("U");
 		$pair = Pair::instance($source,$destination);
 
-		$json = $pair->getRrdInstance()->json($metric,$start,$end);
+		$types = array('Max','Avg','Min');
 
-		$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
+		$resultTypes = new stdClass();
 
-		$results = new stdClass();
+		foreach($types as $type) {
+			$json = $pair->getRrdInstance()->json($metric,$start,$end,$type);
+			$obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
 
-		$results->values = new stdClass();
-		$results->values->$metric = array();
+			$results = new stdClass();
 
-		$zero = 0;
+			$results->values = new stdClass();
 
-		if(is_array($obj->meta->legend->entry)) {
-			$results->labels = $obj->meta->legend->entry;
-			foreach($obj->meta->legend->entry as $x => $z) {
-				$rrdlabel = explode(" ",$z);
-				$direction[$x] = $rrdlabel[1];
-				$values[$direction[$x]] = null;
-			}
-			$results->values->$metric = $values;
-		} else {
-			$results->labels = array($obj->meta->legend->entry);
-			$rrdlabel = explode(" ",$obj->meta->legend->entry);
-			$direction[0] = $rrdlabel[1];
-			$values[$direction[0]] = null;
-			$results->values->$metric = $values;
-		}
+			$zero = 0;
 
-		foreach($obj->data->row as $k => $row) {
-			if(is_array($row->v)) {
-				foreach($row->v as $j => $value) {
-					$value = ($value == 'NaN') ? null:$value;
-					$values[$direction[$j]] = array($row->t,$value);
+			if(is_array($obj->meta->legend->entry)) {
+				$results->labels = $obj->meta->legend->entry;
+				foreach($obj->meta->legend->entry as $x => $z) {
+					$rrdlabel = explode(" ",$z);
+					$direction[$x] = $rrdlabel[1];
+					$values[$direction[$x]] = null;
 				}
-				$results->values->$metric = $values;
+				$results->values = $values;
 			} else {
-				$value = ($row->v == 'NaN') ? null:$row->v;
-				$values[$direction[0]] = array($row->t,$value);
-				$results->values->$metric = $values;
+				$results->labels = array($obj->meta->legend->entry);
+				$rrdlabel = explode(" ",$obj->meta->legend->entry);
+				$direction[0] = $rrdlabel[1];
+				$values[$direction[0]] = null;
+				$results->values = $values;
 			}
+
+			foreach($obj->data->row as $k => $row) {
+				if(is_array($row->v)) {
+					foreach($row->v as $j => $value) {
+						$value = ($value == 'NaN') ? null:$value;
+						$values[$direction[$j]][$row->t] = $value;
+					}
+					$results->values = $values;
+				} else {
+					$value = ($row->v == 'NaN') ? null:$row->v;
+					$values[$direction[0]][$row->t] = $value;
+					$results->values = $values;
+				}
+			}
+
+			$resultTypes->$type = $results;
 		}
 
-		return $results;
+		//$json = $pair->getRrdInstance()->json($metric,$start,$end);
+
+		return $resultTypes;
 	}
 
 	protected function multiFlot($source,$destination) {
 		$pair = Pair::instance($source,$destination);
 		$metrics = $pair->getMetrics();
+
+		$results = array();
+
+		foreach($metrics as $k => $metric) {
+			$results[$metric->name] = $this->singleFlot($source,$destination,$metric->name);
+		}
+
+		return $results;
 	}
 
 	public function action_flot($source,$destination=false,$metric=false) {
 		$this->auto_render = false;
 
-		/*$source = $_POST['source'];
-		$destination = (isset($_POST['destination']))?$_POST['destination']:false;
-		$metric = (isset($_POST['metric']))?$_POST['metric']:false;*/
-
-		if($destination) {
-			$results[$destination] = $this->singleFlot($source,$destination,$metric);
+		if($metric) {
+			$results[$metric] = $this->singleFlot($source,$destination,$metric);
+		} else {
+			$results = $this->multiFlot($source,$destination);
 		}
 
 		$this->response->headers('Content-Type','application/json');

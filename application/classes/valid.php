@@ -54,4 +54,19 @@ class Valid extends Kohana_Valid {
 			return true;
 		return false;
 	}
+
+	/**
+	 * Checks whether a string is a valid number (negative and decimal numbers allowed).
+	 *
+	 * Uses {@link http://www.php.net/manual/en/function.localeconv.php locale conversion}
+	 * to allow decimal point to be locale specific.
+	 *
+	 * @param   string   input string
+	 * @return  boolean
+	 */
+	public static function coordinate($str,$separator='.')
+	{
+		// A lookahead is used to make sure the string contains at least one digit (before or after the decimal point)
+		return (bool) preg_match('/^-?+(?=.*[0-9])[0-9]*+'.preg_quote($separator).'?+[0-9]*+$/D', (string) $str);
+	}
 }
