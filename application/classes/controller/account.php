@@ -19,9 +19,8 @@ class Controller_Account extends Controller_Skeleton {
     //public $auth_required = array('login', 'admin');
     
     public $secure_actions = array(
-        'register'  =>  'admin',
-        'index'     =>  'admin',
-        'edit'      =>  'admin',
+        'register'  =>  'admin',        
+        //'edit'      =>  'admin',
         'delete'    =>  'admin',        
         'toogle'    =>  'admin',
     );
@@ -38,7 +37,8 @@ class Controller_Account extends Controller_Skeleton {
 			);
 
 			$scripts = array(
-				'js/dev/account.js'
+				'js/dev/account.js',
+                                'js/dev/validate.js'
 			);
 
 			$this->template->styles = array_merge($styles,$this->template->styles);
@@ -156,56 +156,77 @@ class Controller_Account extends Controller_Skeleton {
         }
 
         public function action_edit(){
-           
+            $current_user = Auth::instance()->get_user();
             //Fire::info($id, 'id');
             $action = $this->request->post('action', null);
-            if($action == 'save'){  /* processa os dados e salva as modificações feitas na conta do usuário */
-                $id = $this->request->post('id', null);
+        //
+            /* processa os dados e salva as modificações feitas na conta do usuário */
+            if($action == 'save'){
+                $id = $this->request->post('id', null); //pega o id do usuario a ser atualizado
                 if($id !== null){
                     $username = $this->request->post('username', null);
-                    $email = $this->request->post('email', null);
-                    $password = $this->request->post('password', null);
-                    $password_confirm = $this->request->post('password_confirm', null);
-                    try {
-                        $user = ORM::factory('user', $id);
-                        $user->username = $username;
-                        $user->email = $email;
-                        if($password != null){
-                            $user->password = $password;  
-                        }
-                        $privilege = $this->request->post('privilege', null);			
-			//privilégios são cumulativos. se a pessoa tem admin, ela ten config. e login.
-                        if($privilege == 'administrador'){
-                            $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
-                            $login_role = new Model_Role(array('name' => 'admin'));
-                            $user->add('roles', $login_role);
-                            $login_role = new Model_Role(array('name' => 'config'));
-                            $user->add('roles', $login_role);
-                            $login_role = new Model_Role(array('name' => 'login'));
-                            $user->add('roles', $login_role);
-                        }
-                        elseif($privilege == 'configurador'){
-                            $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
-                            $login_role = new Model_Role(array('name' => 'config'));
-                            $user->add('roles', $login_role);
-                            $login_role = new Model_Role(array('name' => 'login'));
-                            $user->add('roles', $login_role);
-                        }                              
-                        elseif($privilege == 'visualizador'){
-                            $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
-                            $login_role = new Model_Role(array('name' => 'login'));
-                            $user->add('roles', $login_role);
-                        }
+                    //a conta padrão admin só pode ser modificada por admin
+                    if( ($username != 'admin') || ($username == 'admin' && $current_user->username == 'admin') ){
+                        $email = $this->request->post('email', null);
+                        $password = $this->request->post('password', null);
+                        $password_confirm = $this->request->post('password_confirm', null);
 
-                        $user->save();
-                        $this->request->redirect('account/index');
-                    }
-                    catch(Exception $e){
-                        $errors[] = array('class'=>'error','message'=>'Usuário está inativo.');
-                                    $content->bind('errors',$errors);
+                        //execução/save
+                        try {
+                            $user = ORM::factory('user', $id);
+
+                            //var_dump($current_user->id.' '.$user->id);
+                            //ou o usuário está modificando a própria conta ou ele é administrador
+                            if( ($current_user->id == $id) ||
+                                ($current_user->has('roles', ORM::factory('role', array('name' => 'admin')))) ){
+                                //não renomeia o usuário para 'admin'
+                                //o usuário é o admin e queremos trocar o username dele mesmo
+                                if( ($current_user->username == 'admin' && $id == $current_user->id) ||
+                                    ($current_user->username != 'admin' && $user->username == 'admin') ){
+                                    //naught
+                                }
+                                else $user->username = $username;
+                                $user->email = $email;
+                                if($password != null && $password == $password_confirm){
+                                    $user->password = $password;
+                                }
+                                //somente usuários do grupo administrativo podem alterar permissões de acesso
+                                if($current_user->has('roles', ORM::factory('role', array('name' => 'admin'))))
+                                    $privilege = $this->request->post('privilege', null);
+                                    //privilégios são cumulativos. se a pessoa tem admin, ela ten config. e login.
+                                    if($privilege == 'administrador'){
+                                        $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
+                                        $login_role = new Model_Role(array('name' => 'admin'));
+                                        $user->add('roles', $login_role);
+                                        $login_role = new Model_Role(array('name' => 'config'));
+                                        $user->add('roles', $login_role);
+                                        $login_role = new Model_Role(array('name' => 'login'));
+                                        $user->add('roles', $login_role);
+                                    }
+                                    elseif($privilege == 'configurador'){
+                                        $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
+                                        $login_role = new Model_Role(array('name' => 'config'));
+                                        $user->add('roles', $login_role);
+                                        $login_role = new Model_Role(array('name' => 'login'));
+                                        $user->add('roles', $login_role);
+                                    }
+                                    elseif($privilege == 'visualizador'){
+                                        $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
+                                        $login_role = new Model_Role(array('name' => 'login'));
+                                        $user->add('roles', $login_role);
+                                    }
+                                }
+                                $user->save();
+                                $this->request->redirect('account/index');
+                            
+                        }
+                        catch(Exception $e){
+                            $errors[] = array('class'=>'error','message'=>'Usuário está inativo.');
+                                        $content->bind('errors',$errors);
+                        }
                     }
                 }
-            }
+            } //end of action == save
                /* gera a tela de edição dos dados do usuário */
             else {
                 $id = $this->request->query('id');
@@ -228,10 +249,14 @@ class Controller_Account extends Controller_Skeleton {
                         
         }
         public function action_toogle(){ //torna o usuário ativo ou inativo, dependendo
+            $current_user = Auth::instance()->get_user();
             $id = $this->request->query('id', null);
             if($id != null){
                 $user = ORM::factory('user', $id);
-                if($user->username != 'admin'){ //usuário admin é padrão e não pode ser desativado
+                if($user->username != 'admin' || 
+                  ($current_user->has('roles', ORM::factory('role', array('name' => 'admin'))))      )
+                {
+                    //usuário admin é padrão e não pode ser desativado
                     if($user->active == 1){ //desativando
                         $user->active = 0;
                     }
@@ -275,6 +300,7 @@ class Controller_Account extends Controller_Skeleton {
         protected function check_inactivity($username){
             try {
                 $user = ORM::factory('user')->where('username', '=', $username)->find();
+                //$current_user = Auth::instance()->get_user();
                 //$today = time();
                 $xxx_dias = (int) strtotime('45 days ago');
                 $last_login = (int) $user->last_login; //converte o último login para dias
@@ -284,8 +310,10 @@ class Controller_Account extends Controller_Skeleton {
                     //var_dump($last_login);
                     //var_dump($user);
                     //die();
-                    $user->active = 0;
-                    $user->save();
+                    if($username != 'admin'){
+                        $user->active = 0;
+                        $user->save();
+                    }
                     return true;
                 }
                 else return false;

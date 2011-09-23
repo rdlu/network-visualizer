@@ -35,14 +35,23 @@ class Controller_Winagent extends Controller_Skeleton {
 
     public function action_index(){
         $results_per_page = 20;
-        $page = $this->request->query('page', null);
-        if($page === null || $page <= 0) $page = 1;
+        $page = (int) $this->request->query('page', null);
+        $total_medicoes = count(ORM::factory('dyndata')->find_all());
+        if($page === null || $page < 1){
+            $page = 1;
+        }
+        if($page > ceil($total_medicoes/$results_per_page)){
+            $page = ceil($total_medicoes/$results_per_page);
+        }
         $start_at = ($page -1) * $results_per_page;
         $medicoes = ORM::factory('dyndata')->limit($results_per_page)->offset($start_at)->find_all();
+        
+       
         $view = View::factory('winagent/index')
                     ->bind('medicoes', $medicoes)
                     ->bind('page', $page)
-                    ->bind('results_per_page', $results_per_page);
+                    ->bind('results_per_page', $results_per_page)
+                    ->bind('total_medicoes', $total_medicoes);
         $this->template->content = $view;
     }
-}
+} //ceil($total_medicoes/$results_per_page);

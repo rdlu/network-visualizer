@@ -31,10 +31,16 @@
 
 <div id="pagination" style="text-align: center">
     <span>
-        <a href="<?php if($page >= 1) echo url::site('winagent', 'http')."?page=".($page -1); ?>"> << &nbsp;</a>
-        <?php echo $page; ?>
+        <a href="<?php if($page > 1){echo url::site('winagent', 'http')."?page=".($page -1);} ?>"> << &nbsp;</a>
+        <?php echo $page."/".ceil($total_medicoes/$results_per_page); ?>
         <a href="
             <?php
-                    if(count($medicoes) >= ($results_per_page * $page)){echo url::site('winagent', 'http')."?page=".($page +1);}else {echo "";} ?>"> &nbsp; >> &nbsp;</a>
+                    if( $total_medicoes > ($results_per_page * $page)){echo url::site('winagent', 'http')."?page=".($page +1);}else {echo "";} ?>"> &nbsp; >> &nbsp;</a>
     </span>    
+</div>
+
+<div>
+    <?php //echo "<p>n medicoes: ".$total_medicoes."</p>"; ?>
+    <?php //echo "<p>results_per_page: ".$results_per_page."</p>"; ?>
+    <?php //echo "<p>page: ".$page."</p>"; ?>
 </div>
