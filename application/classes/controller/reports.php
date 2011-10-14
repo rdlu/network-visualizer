@@ -19,6 +19,11 @@ class Controller_Reports extends Controller_Skeleton {
 
 			$scripts = array(
 				'js/flot/jquery.flot.min.js',
+				'js/flot/jquery.flot.crosshair.js',
+				'js/flot/jquery.flot.selection.js',
+				'js/flot/jquery.flot.resize.js',
+				'js/dev/conversion.js',
+				'js/dev/utils.js'
 			);
 
 			$this->template->scripts = array_merge($scripts,$this->template->scripts);
@@ -29,8 +34,8 @@ class Controller_Reports extends Controller_Skeleton {
 		$view = View::factory('reports/index');
 
       $entities = Sprig::factory('entity')->load(NULL, FALSE);
-      $estados = Sprig::factory('uf')->load(NULL, FALSE);
-      $view->bind('entities',$entities);
+      $view->bind('entities',$entities)
+         ->set('defaultManager',Sonda::getDefaultManager());
       $this->template->content = $view;
 	}
 
@@ -155,7 +160,7 @@ class Controller_Reports extends Controller_Skeleton {
 				ksort($metrics);
 				//Fire::error($metrics);
 				foreach($metrics as $metric) {
-					$flot[$metric->name] = $this->singleFlot($source->id,$destination->id,$metric->name,$inicio,$fim);
+					$flot[$metric->name] = $this->singleFlot($source->id,$destination->id,$metric->name,$inicio,$fim,1000,true);
 				}
 			}
 
@@ -287,12 +292,12 @@ class Controller_Reports extends Controller_Skeleton {
 		$this->response->body(Zend_Json::encode($pair->getResult($metric)));
 	}
 
-	protected function singleFlot($source,$destination,$metric,$start=false,$end=false) {
+	protected function singleFlot($source,$destination,$metric,$start=false,$end=false,$multiplier=1,$timeOffset=false) {
 		$start = ($start)?$start:date("U", time() - 3600);
 		$end = ($end)?$end:date("U");
 		$pair = Pair::instance($source,$destination);
 
-		$types = array('Max','Avg','Min');
+		$types = array('Avg','Min','Max');
 
 		$resultTypes = new stdClass();
 
@@ -322,16 +327,20 @@ class Controller_Reports extends Controller_Skeleton {
 				$results->values = $values;
 			}
 
+			$now = new DateTime();
+			$offset = $now->getOffset();
 			foreach($obj->data->row as $k => $row) {
 				if(is_array($row->v)) {
 					foreach($row->v as $j => $value) {
 						$value = ($value == 'NaN') ? null:$value;
-						$values[$direction[$j]][$row->t] = $value;
+						$time = ($timeOffset) ? ($row->t+$offset) : ($row->t);
+						$values[$direction[$j]][$time*$multiplier] = $value;
 					}
 					$results->values = $values;
 				} else {
 					$value = ($row->v == 'NaN') ? null:$row->v;
-					$values[$direction[0]][$row->t] = $value;
+					$time = ($timeOffset) ? ($row->t+$offset) : ($row->t);
+					$values[$direction[0]][$time*$multiplier] = $value;
 					$results->values = $values;
 				}
 			}

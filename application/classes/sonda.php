@@ -19,6 +19,21 @@ class Sonda {
 	protected $version = array('version'=>null);
 
 	/**
+	 * getDefaultManagerId actually returns the most used managaer
+	 * @static
+	 * @return int
+	 */
+	public static function getDefaultManagerId() {
+		$processes = Database::instance()->query(Database::SELECT,"SELECT source_id,count(*) FROM processes GROUP BY source_id ORDER BY count(*) LIMIT 1");
+		return $processes->get("source_id",1);
+	}
+
+	public static function getDefaultManager() {
+		$id = self::getDefaultManagerId();
+		return Sprig::factory('entity',array('id'=>$id))->load()->as_array();
+	}
+
+	/**
 	 * @static
 	 * @param  $id
 	 * @param bool $snmp
