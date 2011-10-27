@@ -170,7 +170,7 @@ class Controller_Synthesizing extends Controller_Skeleton
                                 'throughput_tcp' => $resFromMemCache['throughput_tcp'],
                                 'throughput' => $resFromMemCache['throughput']
                             ),
-                            'target' => $resultss['target'],
+                            'target' => array_merge($resultss['target'], array('version' => Sonda::instance($destination->id)->getVersion())),
                             'thresholds' => $resultss['thresholds']
                         );
                         
@@ -179,8 +179,8 @@ class Controller_Synthesizing extends Controller_Skeleton
 		}
                 
 		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
-		//$this->response->body(Zend_Json::encode($resultss));
-                $this->response->body(Zend_Json::encode($cacheResults));
+		$this->response->body(Zend_Json::encode($resFromMemCache));
+                //$this->response->body(Zend_Json::encode($cacheResults));
                    
 
  }

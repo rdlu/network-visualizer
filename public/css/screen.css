@@ -595,3 +595,11 @@ label.error {
     margin-left: 5px;
     color: red;
 }
+/* Sintetização */
+div#entityList {
+    text-align: center;
+}
+
+table#entityList.tablesorter tbody tr td,table#entityList thead tr th {
+    vertical-align: middle;
+}

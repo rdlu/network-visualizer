@@ -166,16 +166,24 @@ class Rrd {
 			foreach ($this->types[1] as $l2) {
 				$filename = $this->filename($metric, $l1 . $l2);
 				$upstream = abs($data[$l1 . 'DS' . $l2]);
+
+                                //bug fix estranho: tira os números com vírgula, para deixar o RRD trabalhar
+                                $upstream = str_replace(',', '.', $upstream);
+
 				if ($metric != 'rtt') {
 					$downstream = abs($data[$l1 . 'SD' . $l2]);
+                                        //bug fix estranho 2: tira os números com vírgula, para deixar o RRD trabalhar
+                                        $downstream = str_replace(',', '.', $downstream);
+
 					////Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
 					$numbers = "SD $downstream : DS $upstream";
 					//echo date("d.m.Y H:i:s T");
-					//echo "Guardando @$path $filename os valores: $timestamp:$downstream:$upstream\n";
+					//Log::instance()->add(Log::WARNING,  "Guardando @$path/$filename os valores: $timestamp:$downstream:$upstream\n");
 					$ret = rrd_update($path . $filename, "$timestamp:$downstream:$upstream");
 				} else {
 					//echo date("d.m.Y H:i:s T");
 					//echo "Guardando @$path $filename os valores: $upstream\n";
+                                        //Log::instance()->add(Log::WARNING,  "Guardando @$path/$filename os valores: $timestamp:$upstream\n");
 					$ret = rrd_update($path . $filename, "$timestamp:$upstream");
 					$numbers = "RTT $upstream";
 				}

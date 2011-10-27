@@ -1,22 +1,3 @@
-//to do:
-//
-// não deve carregar na caixa de select sondas que realizam medição porém estão 
-// inativas não deve tentar fazer Zend_encode em um array com valores null.
-//
-////----------------
-//to do:
-
-//connect => OK
-//template loader => OK
-//template builder => OK
-//ajax => OK
-
-//em desordem de prioridade:
-////fazer pegar medições das sondas via SNMP => via Rodrigo, Ok
-//SYNTH.update
-//gradiente da barra => OK
-//evitar duplicação de seções => OK
-//fazer os hooks de pop up, delete section => OK
 
 /******************************************************************************/
 var FORMAT = {
@@ -39,7 +20,7 @@ var FORMAT = {
                     if(key == 'pom' || key == 'loss'){
                         unidade = '&#37;'; //'%'
                     }
-                    if(key == 'throughput' || key == 'throughputTCP'){
+                    if(key == 'throughput' || key == 'throughput_tcp'){
                         unidade = 'bps';
                         value = parseFloat(value);
                         if(value > 1000){
@@ -230,7 +211,7 @@ var SYNTH_TEMPLATE = {
                     if(key == 'pom' || key == 'loss'){
                         unidade = '&#37;'; //'%'
                     }
-                    if(key == 'throughput' || key == 'throughputTCP'){
+                    if(key == 'throughput' || key == 'throughput_tcp'){
                         unidade = 'bps';
                         value = parseFloat(value);
                         if(value > 1000){

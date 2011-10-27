@@ -40,7 +40,7 @@ class Controller_Collect extends Controller
 					                          'SDMin'=>$sdMin,
 					                          'SDAvg'=>$sdAvg)
 			                          ));
-
+                        //Log::instance()->add(Log::WARNING,  "Memcaching : @$metric valores: $dsMax, $dsMin, $dsAvg, $sdMax, $sdMin, $sdAvg\n");
 			Kohana_Cache::instance('memcache')->set("$source->id-$destination->id",$toBeCached,86400);
 			if (true || $source->ipaddress == $ip) {
 				$snmp = Snmp::instance($source->ipaddress);

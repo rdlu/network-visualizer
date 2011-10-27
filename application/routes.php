@@ -55,12 +55,12 @@ Route::set('collect',
            'collect/id(/<destination>(/<metric>(/<dsMax>/<dsMin>/<dsAvg>/<sdMax>/<sdMin>/<sdAvg>)))',
            array('destination'=>'[0-9]+',
 	             'metric'=>'[a-z_]+',
-                'dsMax'=>'[0-9.]+',
-                'dsMin'=>'[0-9.]+',
-                'dsAvg'=>'[0-9.]+',
+                'dsMax'=> '.*',//'[0-9.]+', //'^[+-]?\d[.]?\d'
+                'dsMin'=>'.*',//'[0-9.]+',
+                'dsAvg'=>'.*',//'[0-9.]+',
                 'sdMax'=>'.*',
-                'sdMin'=>'[0-9.]+',
-                'sdAvg'=>'[0-9.]+'
+                'sdMin'=>'.*',//'[0-9.]+', //'.*',
+                'sdAvg'=>'.*'//'[0-9.]+'
            ))
 		->defaults(array(
                     'controller'=>'collect',

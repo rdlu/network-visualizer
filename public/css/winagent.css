@@ -1,0 +1,21 @@
+/* 
+    Document   : winagent
+    Created on : 14/10/2011, 15:51:59
+    Author     : marcelo
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+.odd {
+    background-color: #bdbdbd;
+}
+
+input {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
