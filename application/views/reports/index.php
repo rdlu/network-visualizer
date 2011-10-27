@@ -1,7 +1,10 @@
 <table id="filterMenu">
 	<tr>
         <td>Sonda de Origem do Teste (Gerente):&nbsp;
-            <input type="text" name="sonda" id="sonda" size="36"/><img id="sondaSelect" style="border: solid thin #666; background-color: #eee; vertical-align: middle;" src="<?=url::base()?>/images/actions/button_down.png" />
+           <input type="text" name="sonda" id="sonda" size="36"
+                  value="<?=(count($defaultManager))?$defaultManager['name'].' ('.$defaultManager['ipaddress'].')':''?>"/>
+	        <img id="sondaSelect" style="border: solid thin #666; background-color: #eee; vertical-align: middle;"
+	             src="<?=url::base()?>/images/actions/button_down.png" />
         </td>
 		<td>Sonda de Destino do Teste (Agente):&nbsp;
 	        <select name="destino" id="destino" disabled="true">
@@ -9,7 +12,7 @@
 	        </select></td>
 	</tr>
 	<tr>
-		<td><b>Início:</b>&nbsp;&nbsp;&nbsp;&nbsp;Data
+			<td><b>Início:</b>&nbsp;&nbsp;&nbsp;&nbsp;Data
 			<input id="inicio" name="inicio" type="text" size="10" value="<?=date("d/m/Y", mktime(0, 0, 0, date("m"),date("d")-1,date("Y")))?>" />
 			&nbsp;&nbsp;&nbsp;&nbsp;Hora&nbsp;
 			<input id="horaini" type="text" size="6" value="<?=date('H:i')?>" />
@@ -27,6 +30,19 @@
 	</tr>
 </table>
 <div id="resultado"></div>
+<table class="filterMenu">
+	<tr>
+		<td>
+			<strong style="text-shadow: none">Exportação dos valores</strong><br />
+				<em style="font-size: 13px; text-shadow: none">
+					1. Após consultar, selecione o intervalo no gráfico com o mouse (clicar e arrastar)<br />
+					2. Aperte CTRL + C no seu teclado<br />
+					3. Cole no Excel (CTRL + V)<br />
+				</em>
+		</td>
+	</tr>
+</table>
+<textarea name="tempArea" id="tempArea" cols="30" rows="10" style="display: none;"></textarea>
 
 <script type="text/javascript">
 	var sondaAuto;
@@ -42,7 +58,7 @@
 			if($("#sonda").val().length>0 && $("#destino").val() != 0) {
 				//Entao faz a requisição ajax
 				jQuery.ajax({
-					url: "<?=url::site('reports/view')?>",
+					url: "<?=url::site('reports/viewFlot')?>",
                     type: 'post',
 					data: {
 						source: $("#sonda").data("id"),
@@ -137,6 +153,11 @@
 			}
 		});
 
+		<?php if(count($defaultManager)): ?>
+			jQuery("#sonda").data("id",<?=$defaultManager['id']?>);
+			getDestinations(<?=$defaultManager['id']?>);
+		<?php endif; ?>
+
 
 		function getDestinations(id) {
 			$.ajax({
@@ -145,6 +166,7 @@
 				data: {
 					id: id
 				},
+
 				success: function( data ) {
 					$("#destino").html("");
 					if(data.length > 0) {

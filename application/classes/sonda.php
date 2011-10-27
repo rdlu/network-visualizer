@@ -19,6 +19,21 @@ class Sonda {
 	protected $version = array('version'=>null);
 
 	/**
+	 * getDefaultManagerId actually returns the most used managaer
+	 * @static
+	 * @return int
+	 */
+	public static function getDefaultManagerId() {
+		$processes = Database::instance()->query(Database::SELECT,"SELECT source_id,count(*) FROM processes GROUP BY source_id ORDER BY count(*) LIMIT 1");
+		return $processes->get("source_id",1);
+	}
+
+	public static function getDefaultManager() {
+		$id = self::getDefaultManagerId();
+		return Sprig::factory('entity',array('id'=>$id))->load()->as_array();
+	}
+
+	/**
 	 * @static
 	 * @param  $id
 	 * @param bool $snmp
@@ -149,6 +164,22 @@ class Sonda {
 
 		}
 		return $this->version;
+	}
+
+	/**
+	 * Funcao getCachedVersion()
+	 * @return array
+	 */
+
+	public function getCachedVersion() {
+		$cache = Kohana_Cache::instance('memcache')->get("cachedVersion-".$this->sonda->id, array('timestamp'=>0));
+
+		if($cache['timestamp'] < date('U')-3600*24*7) {
+			$toBeCached = array_merge($this->getVersion(),array('timestamp'=>date('U')));
+			Kohana_Cache::instance('memcache')->set("cachedVersion-".$this->sonda->id,$toBeCached,86400);
+		}
+
+		return $cache;
 	}
 
 	public function checkStatus() {
