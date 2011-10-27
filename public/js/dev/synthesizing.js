@@ -176,7 +176,7 @@ var SYNTH_TEMPLATE = {
         var nome = target.name; //suporte à internacionalização entre scripts já! __("#chupafelhadapulta!")
         var rtt = resultados.rtt;
         var loss = resultados.loss;
-        var tpTCP = resultados.throughputTCP;
+        var tpTCP = resultados.throughput_tcp;
         var tpUDP = resultados.throughput;
 
         //console.log("------------ Debug de SYNTH_TEMPLATE --------------");

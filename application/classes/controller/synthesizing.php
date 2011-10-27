@@ -24,6 +24,7 @@ class Controller_Synthesizing extends Controller_Skeleton
 	        $resp[] = $process->source->load()->as_array();
         }
         //Fire::info($resp, 'Array com os dados de origem: ');
+        
         $view->bind('resp', $resp);
         $this->template->content = $view;
     }
@@ -155,13 +156,31 @@ class Controller_Synthesizing extends Controller_Skeleton
 
 		foreach($resp as $destination) {
 			//Resultados do MemCached
-			$cacheResults[$destination->id] = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id");
-			$pair = Pair::instance($source->id,$destination->id);
-			$resultss[] = $pair->lastResults();
+                        $pair = Pair::instance($source->id,$destination->id);
+			$resultss = $pair->lastResults();
+                        $resFromMemCache = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id");
+                        $cacheResults[] = array(
+                            'results' => array(
+                                'jitter' => $resFromMemCache['jitter'],
+                                'loss' => $resFromMemCache['loss'],
+                                'mos' => $resFromMemCache['mos'],
+                                'owd' => $resFromMemCache['owd'],
+                                'pom' => $resFromMemCache['pom'],
+                                'rtt' => $resFromMemCache['rtt'],
+                                'throughput_tcp' => $resFromMemCache['throughput_tcp'],
+                                'throughput' => $resFromMemCache['throughput']
+                            ),
+                            'target' => $resultss['target'],
+                            'thresholds' => $resultss['thresholds']
+                        );
+                        
+			//$pair = Pair::instance($source->id,$destination->id);
+			//$resultss[] = $pair->lastResults();
 		}
-
+                
 		if(Request::current()->is_ajax()) $this->response->headers('Content-Type','application/json');
-		$this->response->body(Zend_Json::encode($resultss));
+		//$this->response->body(Zend_Json::encode($resultss));
+                $this->response->body(Zend_Json::encode($cacheResults));
                    
 
  }

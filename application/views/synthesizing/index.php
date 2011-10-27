@@ -30,7 +30,9 @@
     </form>
 </div>
 
-
+<div>
+    <p><?php //echo $resp2; ?></p>
+</div>
 
 <!-- template para cada seção -->
 
