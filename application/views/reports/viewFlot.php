@@ -7,7 +7,18 @@
 			<div id="selection-<?=$metric->name?>" style="height: 300px; padding: 10px">
 				<strong>> Filtros do gráfico</strong><br />
 				<em style="font-size: 12px;">> Remover valores errôneos</em><br />
-				<label for="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">Upstream: </label>
+
+				<label for="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">Upst: </label>
+				<select name="filterType[<?=$metric->name?>][ds]" id="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">
+					<option value=">=">Acima de</option>
+					<option value="<=">Abaixo de</option>
+				</select>
+				<input type="text" id="filterValue-<?=$metric->name?>-ds" name="filterValue[<?=$metric->name?>][ds]"
+				       maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
+				<em id="filterUnit-<?=$metric->name?>-ds" class="filterUnit-<?=$metric->name?>" style="font-size: 11px;"></em>
+				<br />
+				<?php if($metric->name != 'rtt'): ?>
+				<label for="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">Down: </label>
 				<select name="filterType[<?=$metric->name?>][sd]" id="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">
 					<option value=">=">Acima de</option>
 					<option value="<=">Abaixo de</option>
@@ -16,6 +27,7 @@
 				       maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
 				<em id="filterUnit-<?=$metric->name?>-sd" class="filterUnit-<?=$metric->name?>" style="font-size: 11px;"></em>
 				<br />
+				<?php endif; ?>
 
 				<em style="font-size: 12px;">> Seleção das séries de valores</em>
 			</div>
@@ -62,7 +74,8 @@
 						selection: { mode: "x" }
 					}
 			);
-			choiceContainer.find("input").click(function(evt) {
+			choiceContainer.find("input").bind('change keyup',function(evt) {
+				console.log(evt);
 				graphReport.objects[metric].clearSelection();
 				graphReport.redraw(metric, metricObj);
 			});
@@ -122,30 +135,52 @@
 					data.push(datasets[key]);
 			});
 
-			var rawFilterValueSD = jQuery("#filterValue-"+metric+"-sd").val();
 			var rawFilterValueDS = jQuery("#filterValue-"+metric+"-ds").val();
+			if(metric != 'rtt') {
+				var rawFilterValueSD = jQuery("#filterValue-"+metric+"-sd").val();
+				var filterValueSD = parseFloat($u(rawFilterValueSD,conversion.metrics[metric].target).as(conversion.metrics[metric].original).val());
+			}
 			if(rawFilterValueSD || rawFilterValueDS) {
-				var filterValue = parseFloat($u(rawFilterValue,conversion.metrics[metric].target).as(conversion.metrics[metric].original).val());
-				console.log("Valores do filtro",rawFilterValue,filterValue);
-				var isFilterHigherThan = jQuery("#filterType-"+metric).val() == '>=';
+				var filterValueDS = parseFloat($u(rawFilterValueDS,conversion.metrics[metric].target).as(conversion.metrics[metric].original).val());
+				//console.log("Valores do filtro SD,DS",rawFilterValueSD,filterValueSD,rawFilterValueDS,filterValueDS);
+				var isSDFilterHigherThan = jQuery("#filterType-"+metric+"-sd").val() == '>=';
+				var isDSFilterHigherThan = jQuery("#filterType-"+metric+"-ds").val() == '>=';
 				for(var seriesIdx in data) {
 					var newData=[];
 					console.log(data[seriesIdx]);
 					for(var dataIdx in data[seriesIdx].data) {
 						var testedValue = parseFloat(data[seriesIdx].data[dataIdx][1]);
-						//console.log(data[seriesIdx].data[dataIdx]);
-						if(isFilterHigherThan) {
-							//console.log("Incluir? (<=)", testedValue <= filterValue, testedValue);
-							if(testedValue <= filterValue)
-								newData.push(data[seriesIdx].data[dataIdx]);
-						} else {
-							//console.log("Incluir? (>=)",testedValue >= filterValue,testedValue);
-							if(testedValue >= filterValue)
-								newData.push(data[seriesIdx].data[dataIdx]);
-						}
+						if(data[seriesIdx].path == 'sd')
+							if(isSDFilterHigherThan) {
+								//console.log("Incluir? (<=)", testedValue <= filterValue, testedValue);
+								if(testedValue <= filterValueSD)
+									newData.push(data[seriesIdx].data[dataIdx]);
+								else
+									newData.push([data[seriesIdx].data[dataIdx][0],null]);
+							} else {
+								//console.log("Incluir? (>=)",testedValue >= filterValue,testedValue);
+								if(testedValue >= filterValueSD)
+									newData.push(data[seriesIdx].data[dataIdx]);
+								else
+									newData.push([data[seriesIdx].data[dataIdx][0],null]);
+							}
+						else
+							if(isDSFilterHigherThan) {
+								//console.log("Incluir? (<=)", testedValue <= filterValue, testedValue);
+								if(testedValue <= filterValueDS)
+									newData.push(data[seriesIdx].data[dataIdx]);
+								else
+									newData.push([data[seriesIdx].data[dataIdx][0],null]);
+							} else {
+								//console.log("Incluir? (>=)",testedValue >= filterValue,testedValue);
+								if(testedValue >= filterValueDS)
+									newData.push(data[seriesIdx].data[dataIdx]);
+								else
+									newData.push([data[seriesIdx].data[dataIdx][0],null]);
+							}
 					}
-					console.log("newData",newData.length);
-					data[seriesIdx].data = jQuery(newData);
+					//console.log("newData",newData.length);
+					if((rawFilterValueSD && data[seriesIdx].path == 'sd') || (rawFilterValueDS && data[seriesIdx].path == 'ds')) data[seriesIdx].data = jQuery(newData);
 				}
 
 			}
@@ -174,8 +209,13 @@
 		resultsWithLabels: function (metric, metricObj, type, path) {
 			var results = graphReport.results(metric, metricObj, type, path);
 			var caminho = (path == "ds") ? "Up" : "Down";
-			if (metric == 'rtt') caminho = "";
-			return { data: results, label: titleCaps(metric) + " " + caminho + " (" + type + ") = 0.0", label2: caminho + "stream (" + type + ")" };
+			if (metric == 'rtt') caminho = "Roundtrip ";
+			return {
+				data: results, label: titleCaps(metric) + " " + caminho + " (" + type + ") = 0.0",
+				label2: caminho + "stream (" + type + ")",
+				type: type,
+				path: path
+			};
 
 		},
 		datasetWithKeys: function(metric, metricObj) {
@@ -259,7 +299,8 @@
 		graphReport.drawAll();
 
 		jQuery.each(graphReport.response, function(idx,el) {
-			jQuery("#filterUnit-"+idx).append(conversion.metrics[idx].target);
+			jQuery("#filterUnit-"+idx+"-sd").append(conversion.metrics[idx].target);
+			if(idx!='rtt') jQuery("#filterUnit-"+idx+"-ds").append(conversion.metrics[idx].target);
 		});
 
 

@@ -64,6 +64,9 @@ var conversion = {
             throw new Error('Incompatible units; cannot convert from "' + this.currentUnit + '" to "' + this.targetUnit + '"');
         }
 
+        if(current.factor < 0) var precision = parseInt(current.factor*(-1));
+        //console.info(precision,current.factor,current.multiplier);
+
         return (this.value * (current.multiplier / target.multiplier)).toFixed(precision);
     };
     unitConverter.prototype.toString = function (precision) {
@@ -72,8 +75,8 @@ var conversion = {
     unitConverter.prototype.debug = function () {
         return this.value + ' ' + this.currentUnit + ' is ' + this.val() + ' ' + this.targetUnit;
     };
-    unitConverter.addUnit = function (baseUnit, actualUnit, multiplier) {
-        table[actualUnit] = { base: baseUnit, actual: actualUnit, multiplier: multiplier };
+    unitConverter.addUnit = function (baseUnit, actualUnit, multiplier, factor) {
+        table[actualUnit] = { base: baseUnit, actual: actualUnit, multiplier: multiplier, factor: factor };
     };
 
     var prefixes = ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k', 'h', 'da', '', 'd', 'c', 'm', 'u', 'n', 'p', 'f', 'a', 'z', 'y'];
@@ -84,18 +87,18 @@ var conversion = {
     for (var j = 0; j < units.length; j++) {
         var base = units[j];
         for (var i = 0; i < prefixes.length; i++) {
-            unitConverter.addUnit(base, prefixes[i] + base, Math.pow(10, factors[i]));
+            unitConverter.addUnit(base, prefixes[i] + base, Math.pow(10, factors[i]),factors[i]);
         }
     }
 
     // we use the SI gram unit as the base; this allows
     // us to convert between SI and English units
-    unitConverter.addUnit('g', 'ounce', 28.3495231);
-    unitConverter.addUnit('g', 'oz', 28.3495231);
-    unitConverter.addUnit('g', 'pound', 453.59237);
-    unitConverter.addUnit('g', 'lb', 453.59237);
-    unitConverter.addUnit("%","%",1);
-    unitConverter.addUnit("unit","unit",1);
+    unitConverter.addUnit('g', 'ounce', 28.3495231,1);
+    unitConverter.addUnit('g', 'oz', 28.3495231,1);
+    unitConverter.addUnit('g', 'pound', 453.59237,1);
+    unitConverter.addUnit('g', 'lb', 453.59237,1);
+    unitConverter.addUnit("%","%",1,1);
+    unitConverter.addUnit("unit","unit",1,1);
 
 
     window.$u = function (value, unit) {
