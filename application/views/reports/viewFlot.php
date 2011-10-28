@@ -6,7 +6,7 @@
 			<div id="flot-<?=$metric->name?>" style="height: 320px; width: 80%; margin-right: 5px; float: left"></div>
 			<div id="selection-<?=$metric->name?>" style="height: 300px; padding: 10px">
 				<strong>> Filtros do gráfico</strong><br />
-				<em style="font-size: 12px;">> Remover valores errôneos</em><br />
+				<em style="font-size: 12px;">> Remover valores:</em><br />
 
 				<label for="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">Upst: </label>
 				<select name="filterType[<?=$metric->name?>][ds]" id="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">
@@ -38,6 +38,9 @@
 <script type="text/javascript">
 	var graphReport = {
 		response: <?=$results?>,
+		source: <?=Zend_Json::encode($source)?>,
+		destination: <?=Zend_Json::encode($destination)?>,
+		range: { start: "<?=$startDate." ".$startHour?>", end: "<?=$endDate." ".$endHour?>"  },
 		objects: {},
 		draw: function(metric, metricObj) {
 			var datasets = graphReport.datasetWithKeys(metric, metricObj);
@@ -75,7 +78,7 @@
 					}
 			);
 			choiceContainer.find("input").bind('change keyup',function(evt) {
-				console.log(evt);
+				//console.log(evt);
 				graphReport.objects[metric].clearSelection();
 				graphReport.redraw(metric, metricObj);
 			});
@@ -110,18 +113,7 @@
 
 			//controle de selecao
 			$("#flot-" + metric).bind("plotselected", function(event, ranges) {
-				var data2 = {};
-				var choiceContainer = jQuery("#selection-" + metric);
-				choiceContainer.find("input:checked").each(function () {
-					var key = $(this).attr("name");
-					if (key && datasets[key])
-						data2[key] = datasets[key];
-				});
-				//console.log(event,ranges,metric,metricObj,data2);
-
-				if (data.length > 0) {
-
-				}
+				graphReport.exportTable(metric,ranges.xaxis,graphReport.objects[metric].getData());
 			});
 
 		},
@@ -147,7 +139,7 @@
 				var isDSFilterHigherThan = jQuery("#filterType-"+metric+"-ds").val() == '>=';
 				for(var seriesIdx in data) {
 					var newData=[];
-					console.log(data[seriesIdx]);
+					//console.log(data[seriesIdx]);
 					for(var dataIdx in data[seriesIdx].data) {
 						var testedValue = parseFloat(data[seriesIdx].data[dataIdx][1]);
 						if(data[seriesIdx].path == 'sd')
@@ -271,7 +263,7 @@
 				else if (p2 == null)
 					y = p1result;
 				else
-					y = p1result + (p2result - p1result) * (pos.x - p1time) / (p2time - p1time);
+					y = p1result; //+ (p2result - p1result) * (pos.x - p1time) / (p2time - p1time);
 
 				var legends = jQuery(target).find(".legendLabel");
 
@@ -291,6 +283,49 @@
 				'background-color': '#fee',
 				opacity: 0.80
 			}).appendTo("body").fadeIn(200);
+		},
+		exportTable: function(metric, range, data) {
+			//console.log(metric,range,data);
+			var source = graphReport.source.name+" ("+graphReport.source.ipaddress+")";
+			var destination = graphReport.destination.name+" ("+graphReport.destination.ipaddress+")";
+			var from = new Date(parseInt(range.from)+7200000).toLocaleString();
+			var to = new Date(parseInt(range.to)+7200000).toLocaleString();
+
+			var table = "<table>\r\n\t<tr><th>Resultados de medições da métrica "+metric+" em "+conversion.metrics[metric].original+"</th></tr>";
+			table+= "\r\n\t<tr><th>Sonda Origem: "+source+"</th>\r\n\t<th>Sonda Destino "+destination+"</th></tr>";
+			table+= "\r\n\t<tr><th>Data Inicio: "+from+"</th>\r\n\t<th>Data Fim: "+to+"</th></tr>";
+			table+= "\r\n\t<tr><th>Timestamp</th> ";
+			var line,col;
+			for(col=0; col<data.length;++col) {
+					table+="<th>"+data[col].label2+"</th>";
+			}
+			table+="</tr>";
+			for(line = 0; line < data[0].data.length; ++line) {
+				var timestamp = parseInt(data[0].data[line][0]);
+				if(range.from > timestamp || range.to < timestamp) continue;
+				var d = new Date(timestamp+7200000);
+				var formatedDate = d.getFullYear()+"-"+d.getMonth().padZero()+"-"+d.getDate().padZero()+" "+d.getHours().padZero()+":"+d.getMinutes().padZero()+":"+d.getSeconds().padZero();
+				table+="\r\n\t<tr><td>"+formatedDate+"</td>";
+				for(col=0; col<data.length;++col) {
+					var value = (data[col].data[line][1] == null)?"":conversion._value(metric,data[col].data[line][1]);
+					table+="<td>"+value+"</td>"
+				}
+				table+="</tr>";
+			}
+			table+= "\r\n</table>";
+
+			jQuery("#tempArea").val(table);
+			jQuery("#clipboardArea").dialog({
+				modal:true,
+				title:"Dados a serem copiados para o Excel",
+				minWidth:550,
+				buttons: {
+					Ok: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+			jQuery("#tempArea").select().focus();
 		}
 	};
 
