@@ -304,7 +304,7 @@
 				var timestamp = parseInt(data[0].data[line][0]);
 				if(range.from > timestamp || range.to < timestamp) continue;
 				var d = new Date(timestamp+7200000);
-				var formatedDate = d.getFullYear()+"-"+d.getMonth().padZero()+"-"+d.getDate().padZero()+" "+d.getHours().padZero()+":"+d.getMinutes().padZero()+":"+d.getSeconds().padZero();
+				var formatedDate = d.getFullYear()+"-"+(d.getMonth()+1).padZero()+"-"+d.getDate().padZero()+" "+d.getHours().padZero()+":"+d.getMinutes().padZero()+":"+d.getSeconds().padZero();
 				table+="\r\n\t<tr><td>"+formatedDate+"</td>";
 				for(col=0; col<data.length;++col) {
 					var value = (data[col].data[line][1] == null)?"":conversion._value(metric,data[col].data[line][1]);
