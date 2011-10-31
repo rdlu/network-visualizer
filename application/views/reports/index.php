@@ -42,7 +42,21 @@
 		</td>
 	</tr>
 </table>
-<textarea name="tempArea" id="tempArea" cols="30" rows="10" style="display: none;"></textarea>
+<div id="clipboardArea" style="display: none; width: 350px">
+	<textarea name="tempArea" id="tempArea" cols="55" rows="10"></textarea>
+<table class="filterMenu">
+	<tr>
+		<td>
+			<strong style="text-shadow: none">Instruções</strong><br />
+				<em style="font-size: 13px; text-shadow: none">
+					2. Aperte CTRL + C no seu teclado<br />
+					3. Cole no Excel (CTRL + V)<br />
+				</em>
+		</td>
+	</tr>
+</table>
+</div>
+<div id="dialog-modal" title="Carregando, aguarde." style="display: none">Aguarde enquanto a informação requisitada é obtida...</div>
 
 <script type="text/javascript">
 	var sondaAuto;
@@ -68,12 +82,16 @@
 						endDate: $("#fim").val(),
 						endHour: $("#horafim").val()
 					},
+					beforeSend: function() {
+						jQuery("#dialog-modal").dialog({modal:true});
+					},
 					success: function( data ) {
+						jQuery("#dialog-modal").dialog('close');
 						$("#resultado").html("");
                   $("#resultado").html(data);
 					},
 					error: function(status,msg,error) {
-						$("#resultado").html("");
+						$("#resultado").html("Erro na obtenção da informação. Recarregue seu navegador (tecla F5) e tente novamente.");
 						err(msg);
 					}
 				});

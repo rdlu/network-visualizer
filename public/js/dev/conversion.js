@@ -30,8 +30,16 @@ var conversion = {
       }
 
       return value + " " + metricProperties.original;
-  }
+  },
+  _value: function(metric,value) {
+       var metricProperties = this.metrics[metric];
 
+      if(metricProperties.system == "si") {
+          return $u(value,metricProperties.original).as(metricProperties.original).val(0);
+      }
+
+      return value;
+  }
 };
 
 /**
@@ -107,3 +115,10 @@ var conversion = {
     };
 
 })();
+
+Number.prototype.padZero= function(len){
+ var s= String(this), c= '0';
+ len= len || 2;
+ while(s.length < len) s= c + s;
+ return s;
+}

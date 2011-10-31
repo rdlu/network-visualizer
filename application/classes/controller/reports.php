@@ -165,8 +165,15 @@ class Controller_Reports extends Controller_Skeleton {
 			}
 
 		   if(Request::current()->is_ajax()) {
-			   $view->set('results',Zend_Json::encode($flot))->bind('metrics',$metrics)
-			      ->bind('processes',$processes);
+			   $view->set('results',Zend_Json::encode($flot))
+			         ->bind('startDate',$start)
+			         ->bind('endDate',$end)
+			         ->bind('startHour',$stime)
+			         ->bind('endHour',$etime)
+					   ->bind('metrics',$metrics)
+			         ->bind('processes',$processes)
+					   ->set('source',$source->as_array())
+					   ->set('destination',$destination->as_array());
 			   $this->response->headers('Cache-Control',"no-cache");
 			   $this->response->body($view);
 		   } else {
