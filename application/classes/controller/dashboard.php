@@ -42,8 +42,11 @@
         
 	$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id'), FALSE);
         $resp = array();
+        $sources = null;
         foreach($processes as $process) {
-            $sources[] = $process->source->load(Db::select()->limit(1));
+            if($sources === null){
+                $sources[] = $process->source->load();
+            }
             $destinations[] = $process->destination->load();
         }
         
