@@ -78,58 +78,7 @@
                 //$resultss[] = $pair->lastResults();
             }
 
-            //início do código para print
-             $resFromMemCache[] = array('source' => 1,
-                                           'destination' => array(
-                                               'id' => 2,
-                                               'name' => 'CE_FOR_01',
-                                               'city' => 'Fortaleza',
-                                               'ipaddress' => '200.xxx.xxx.xxx',
-                                               'status' => 2,
-                                               'address' => '',
-                                               'addressnum' => '',
-                                               'district' => 'Fortaleza',
-                                               'state' => 'Ceará',
-                                               'updated' => $destination->updated,
-                                               'system' => $system
-                                           ),
-                                           'results' => Kohana_Cache::instance('memcache')->get("$source->id-$destination->id")
-                );
-             $resFromMemCache[] = array('source' => 1,
-                                           'destination' => array(
-                                               'id' => 2,
-                                               'name' => 'RJ_RIO_02',
-                                               'city' => 'Rio de Janeiro',
-                                               'ipaddress' => '200.xxx.xxx.xxx',
-                                               'status' => 3,
-                                               'address' => '',
-                                               'addressnum' => '',
-                                               'district' => 'Rio de Janeiro',
-                                               'state' => 'RJ',
-                                               'updated' => $destination->updated,
-                                               'system' => $system
-                                           ),
-                                           'results' => Kohana_Cache::instance('memcache')->get("$source->id-$destination->id")
-                );
-                
-                $resFromMemCache[] = array('source' => 1,
-                                           'destination' => array(
-                                               'id' => 2,
-                                               'name' => 'RS_UFRGS_01',
-                                               'city' => 'Rio Grande do Sul',
-                                               'ipaddress' => '200.xxx.xxx.xxx',
-                                               'status' => 0,
-                                               'address' => '',
-                                               'addressnum' => '',
-                                               'district' => 'Rio de Janeiro',
-                                               'state' => 'RJ',
-                                               'updated' => $destination->updated,
-                                               'system' => $system
-                                           ),
-                                           'results' => Kohana_Cache::instance('memcache')->get("$source->id-$destination->id")
-                );
-                
-            //fim
+            
 
              if(!$this->request->is_ajax()){
                     //var_dump($resFromMemCache);
