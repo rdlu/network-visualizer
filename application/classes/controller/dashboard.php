@@ -54,7 +54,7 @@
             foreach($destinations as $destination) {
                 //Resultados do MemCached
                 $pair = Pair::instance($source->id,$destination->id);
-                $system = Sonda::instance($destination->id)->getVersion();
+                $system = Sonda::instance($destination->id)->getCachedVersion();
                 //var_dump($system); die();
                 //$resultss = $pair->lastResults();
                 $resFromMemCache[] = array('source' => $source->id, 
