@@ -54,7 +54,7 @@
         </thead>
         <tbody>            
             <?php foreach($medicoes as $medicao): ?>
-                <tr id="<?php echo $medicao->id ?>">
+                <tr >
                     <td><?php echo $medicao->username; ?></td>
                     <td><?php echo $medicao->cellid; ?></td>
                     <td><?php echo date('d/m/Y <br/> H:i:s', $medicao->timestamp); ?></td>
@@ -71,7 +71,7 @@
                     <td><?php echo ($medicao->taxaErros? $medicao->taxaErros : "-"); ?></td>
                     <td><?php echo ($medicao->mtu? $medicao->mtu : "-"); ?></td>
                     <td><?php echo ($medicao->atrasoDNS? $medicao->atrasoDNS : "-"); ?></td>
-                    <td title="Clique para ver a rota completa"><?php if(strlen($medicao->rota) > 10)echo(substr($medicao->rota, 0, 22))." ..."; else echo $medicao->rota; ?></td>
+                    <td id="<?php echo $medicao->id ?>" class="rota" title="Clique para ver a rota completa"><?php if(strlen($medicao->rota) > 10)echo(substr($medicao->rota, 0, 22))." ..."; else echo $medicao->rota; ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

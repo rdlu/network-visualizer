@@ -52,7 +52,7 @@ $(document).ready(function(){
             height: 220,
             resizable: false
 	});
-        $('tr').each(function(){
+        $('.rota').each(function(){
             $(this).click(function(event){
                 var id = $(this).attr('id');
                 console.log(id);
