@@ -43,7 +43,7 @@
 	$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id'), FALSE);
         $resp = array();
         foreach($processes as $process) {
-            $sources[] = $process->source->load();
+            $sources[] = $process->source->load(Db::select()->limit(1));
             $destinations[] = $process->destination->load();
         }
         
@@ -81,6 +81,6 @@
                 //$pair = Pair::instance($source->id,$destination->id);
                 //$resultss[] = $pair->lastResults();
             }
-        }       
+        }
     }
 }

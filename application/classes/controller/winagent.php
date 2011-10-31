@@ -144,7 +144,7 @@ class Controller_Winagent extends Controller_Skeleton {
         return $page;
     }
 
-    public function start_at($page, $total_medicoes, $results_per_page){        
+    public function start_at($page, $total_medicoes, $results_per_page){
         $start_at = ($page -1) * $results_per_page;
         return($start_at);
     }
