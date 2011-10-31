@@ -50,3 +50,16 @@ table.atable thead tr .headerSortDown, table.atable thead tr .headerSortUp {
 background-color: #8dbdd8;
 }
 
+table {
+    text-align: center;
+}
+
+table#floatbar.tablesorter tbody tr, table#floatbar.tablesorter thead th {
+    text-align: center;
+        vertical-align: middle;
+
+}
+
+html body div#container div#content table#floatbar.tablesorter tbody tr td  {
+    vertical-align: middle;
+}

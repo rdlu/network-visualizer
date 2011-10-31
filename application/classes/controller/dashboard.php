@@ -26,20 +26,19 @@
 
     public function after(){
         
-            //$styles = array(
-		//'css/map.css' => 'all',
-            //);            
+            $styles = array(
+		'css/dashboard.css' => 'all',
+            );            
             $scripts = array(
                     'js/dev/jquery.floatheader.js',
                     'js/dev/dashboard.js'                    
             );
-            //$this->template->styles = array_merge($styles, $this->template->styles);
+            $this->template->styles = array_merge($this->template->styles, $styles);
             $this->template->scripts = array_merge($scripts, $this->template->scripts);
-            parent::after();
-        	
+            parent::after();        	
     }
 
-    public function action_index() {      
+    public function action_index() {
         
 	$processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id'), FALSE);
         $resp = array();
@@ -52,6 +51,8 @@
             foreach($destinations as $destination) {
                 //Resultados do MemCached
                 $pair = Pair::instance($source->id,$destination->id);
+                $system = Sonda::instance($destination->id)->getVersion();
+                //var_dump($system); die();
                 //$resultss = $pair->lastResults();
                 $resFromMemCache[] = array('source' => $source->id, 
                                            'destination' => array(
@@ -64,7 +65,8 @@
                                                'addressnum' => $destination->addressnum,
                                                'district' => $destination->district,
                                                'state' => $destination->state,
-                                               'updated' => $destination->updated
+                                               'updated' => $destination->updated,
+                                               'system' => $system
                                            ),
                                            'results' => Kohana_Cache::instance('memcache')->get("$source->id-$destination->id")
                 );

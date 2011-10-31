@@ -11,7 +11,7 @@ return array(
             'href'=>'reports'),
         'synthesizing'=>array(
             'title'=>__('Sintetização'),
-            'href'=>'synthesizing'),
+            'href'=>'dashboard'),
         'admin'=>array(
             'title'=>__('Administrar'),
             'submenu'=>array(

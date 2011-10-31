@@ -1,34 +1,46 @@
-<?php var_dump($medicoes); ?>
+<?php //var_dump($medicoes); ?>
 <table id="floatbar" class="tablesorter">    
     <thead class="">
         <tr>
             <th>Sonda</th>
             <th>Localização</th>
             <th>Última atualização</th>
-            <th>Throughput TCP</th>
-            <th>Throughput</th>
-            <th>Rtt</th>
-            <th>Jitter</th>
-            <th>Loss</th>
-            <th>Mos</th>
-            <th>Owd</th>
-            <th>Pom</th>
+            <th>Throughput TCP <br />up / down (mbps)</th>
+            <th>Throughput <br />up / down (mbps)</th>
+            <th>Rtt (ms)</th>
+            <th>Jitter <br />up / down (ms)</th>
+            <th>Loss <br />up / down (%)</th>
+            <th>Mos <br />up / down</th>
+            <th>Owd <br />up / down (ms)</th>
+            <th>Pom <br />up / down (%)</th>
         </tr>
     </thead>
     <tbody>       
         <?php foreach($medicoes as $medicao): ?>
         <tr>
-            <td><?php echo $medicao['destination']['name']; ?></td>
+            <td><?php   echo
+                (
+                 '<h2>'.$medicao['destination']['name'].'</h2><i>'
+                .'<p style="text-align: center; font-size: 80%">Versão: '.$medicao['destination']['system']['version']
+                .' '.$medicao['destination']['system']['nmVersion']
+                //.'<p style="text-align: left">ddnsVersion: '.$medicao['destination']['system']['ddnsVersion'].'</p>'
+                //.'<p style="text-align: left">Versão Gparc: '.$medicao['destination']['system']['gparcVersion'].'</p>'
+                .' '.( (strtolower($medicao['destination']['system']['modemInfo']) == 'none')? '' : $medicao['destination']['system']['modemInfo'] )
+                .' '.strstr($medicao['destination']['system']['osVersion'], '-', true).'</p></i>'
+                );
+                ?>
+            </td>
+            
             <td><?php echo $medicao['destination']['city']; ?></td>
-            <td><?php echo (date('d/m/Y - H:i:s', $medicao['destination']['updated'])); ?></td>
-            <td><?php echo $medicao['results']["full-throughput_tcp"]["DSAvg"].' - '.$medicao['results']["full-throughput_tcp"]["SDAvg"]; ?></td>
-            <td><?php echo $medicao['results']["full-throughput"]["DSAvg"].' - '.$medicao['results']["full-throughput"]["SDAvg"]; ?></td>
-            <td><?php echo $medicao['results']["full-rtt"]["DSAvg"]; ?></td>
-            <td><?php echo $medicao['results']["full-jitter"]["DSAvg"].' - '.$medicao['results']["full-jitter"]["SDAvg"]; ?></td>
-            <td><?php echo $medicao['results']["full-loss"]["DSAvg"].' - '.$medicao['results']["full-loss"]["SDAvg"]; ?></td>
-            <td><?php echo $medicao['results']["full-mos"]["DSAvg"].' - '.$medicao['results']["full-mos"]["SDAvg"]; ?></td>
-            <td><?php echo $medicao['results']["full-owd"]["DSAvg"].' - '.$medicao['results']["full-owd"]["SDAvg"]; ?></td>
-            <td><?php echo $medicao['results']["full-pom"]["DSAvg"].' - '.$medicao['results']["full-pom"]["SDAvg"]; ?></td>
+            <td type="text" style="width: 80px"><?php echo (date('d/m/Y H:i:s', $medicao['destination']['updated'])); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-throughput_tcp"]["DSAvg"], 'throughput').' / '.Convert::format($medicao['results']["full-throughput_tcp"]["SDAvg"], 'throughput'); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-throughput"]["DSAvg"], 'throughput').' / '.Convert::format($medicao['results']["full-throughput"]["SDAvg"], 'throughput'); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-rtt"]["DSAvg"], 'rtt'); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-jitter"]["DSAvg"], 'jitter' ).' / '.Convert::format($medicao['results']["full-jitter"]["SDAvg"], 'jitter' ); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-loss"]["DSAvg"], 'loss' ).' / '.Convert::format($medicao['results']["full-loss"]["SDAvg"], 'loss'); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-mos"]["DSAvg"], 'mos' ).' / '.Convert::format($medicao['results']["full-mos"]["SDAvg"], 'mos'); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-owd"]["DSAvg"], 'owd').' / '.Convert::format($medicao['results']["full-owd"]["SDAvg"], 'owd'); ?></td>
+            <td><?php echo Convert::format($medicao['results']["full-pom"]["DSAvg"], 'pom').' / '.Convert::format($medicao['results']["full-pom"]["SDAvg"], 'pom'); ?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>
