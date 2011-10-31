@@ -74,7 +74,6 @@ class Controller_Welcome extends Controller_Skeleton
 						$agentes[] = $process->destination->id;
 						$before = $process->destination->id;
 					}
-
 				}
 				$before = 0;
 				foreach ($entity->processes_as_destination as $process) {
