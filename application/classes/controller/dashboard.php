@@ -47,7 +47,7 @@
             if($sources === null){
                 $sources[] = $process->source->load(Db::select()->limit(1));
             }
-            $destinations[] = $process->destination->load(Db::select()->order_by('state'));
+            $destinations[] = $process->destination->load(Db::select()->group_by('state'));
         }
         
         foreach($sources as $source){
