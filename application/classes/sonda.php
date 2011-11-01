@@ -150,7 +150,7 @@ class Sonda {
 		return $this->class;
 	}
 
-	public function getVersion($put_in_cache = false) {
+	public function getVersion($put_in_cache = true) {
 		if(!$this->version['version']) {
 
 			try {
