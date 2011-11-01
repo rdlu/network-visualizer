@@ -150,7 +150,7 @@ class Sonda {
 		return $this->class;
 	}
 
-	public function getVersion() {
+	public function getVersion($put_in_cache = false) {
 		if(!$this->version['version']) {
 
 			try {
@@ -161,7 +161,10 @@ class Sonda {
 					$this->version[$k] = null;
 				}
 			}
-
+                        if($put_in_cache){
+                            $toBeCached = array_merge($this->getVersion(),array('timestamp'=>date('U')));
+                            Kohana_Cache::instance('memcache')->set("cachedVersion-".$this->sonda->id,$toBeCached,86400);
+                        }
 		}
 		return $this->version;
 	}

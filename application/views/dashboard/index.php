@@ -44,7 +44,7 @@
             </td>            
 
             <td><?php echo $medicao['destination']['city'].' - '.$medicao['destination']['state']; ?></td>
-            <td type="text" style="width: 80px"><?php echo (date('d/m/Y H:i:s', $medicao['destination']['updated'])); ?></td>
+            <td style="width: 80px"><?php echo (date('d/m/Y H:i:s', $medicao['destination']['updated'])); ?></td>
             <td><?php echo Convert::format($medicao['results']["full-throughput_tcp"]["DSAvg"], 'throughput').' / '.Convert::format($medicao['results']["full-throughput_tcp"]["SDAvg"], 'throughput'); ?></td>
             <td><?php echo Convert::format($medicao['results']["full-throughput"]["DSAvg"], 'throughput').' / '.Convert::format($medicao['results']["full-throughput"]["SDAvg"], 'throughput'); ?></td>
             <td><?php echo Convert::format($medicao['results']["full-rtt"]["DSAvg"], 'rtt'); ?></td>

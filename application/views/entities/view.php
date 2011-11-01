@@ -1,3 +1,4 @@
+
 <table id="filterMenu">
 	<tr>
 		<td style="text-align:left"><a href="<?=url::base()?>entities/" class="filterMenu"><img
@@ -53,8 +54,9 @@
 	</fieldset>
 	<fieldset>
 		<legend>Avançado:</legend>
-		<?php foreach ($version = $status->getVersion() as $k => $v): ?>
-		<span class="iblock"><span class="label"><?= $k ?>: </span><strong><?=$v?></strong></span><br />
+		<?php foreach ($version = $status->getVersion(true) as $k => $v): ?>
+                <span class="iblock"><span class="label"><?= $k ?>: </span><strong><?=$v?></strong></span><?php //if($k == 'version')echo '&nbsp;&nbsp;<a href="'.'">HEY</a>'; ?>
+                <br />
 		<?php endforeach; ?><br /><br />
 		<?php if(Auth::instance()->logged_in('admin')): ?>
 		<span class="button" id="remover"  onclick="deleter.removeSonda();">
