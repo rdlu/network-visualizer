@@ -8,8 +8,8 @@
             <th>Sonda</th>            
             <th>Localização</th>
             <th>Última atualização</th>
-            <th>Throughput TCP <br />up / down (mbps)</th>
-            <th>Throughput <br />up / down (mbps)</th>
+            <th>Throughput TCP <br />up / down (Mbps)</th>
+            <th>Throughput <br />up / down (Mbps)</th>
             <th>Rtt (ms)</th>
             <th>Jitter <br />up / down (ms)</th>
             <th>Loss <br />up / down (%)</th>
