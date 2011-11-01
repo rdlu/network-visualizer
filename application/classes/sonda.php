@@ -162,7 +162,7 @@ class Sonda {
 				}
 			}
                         if($put_in_cache){
-                            $toBeCached = array_merge($this->getVersion(),array('timestamp'=>date('U')));
+                            $toBeCached = array_merge($this->version, array('timestamp'=>date('U')));
                             Kohana_Cache::instance('memcache')->set("cachedVersion-".$this->sonda->id,$toBeCached,86400);
                         }
 		}
