@@ -85,8 +85,8 @@ class Controller_Winagent extends Controller_Skeleton {
                                 ->bind('page', $page)
                                 ->bind('results_per_page', $results_per_page)
                                 ->bind('total_medicoes', $total_medicoes)
-                                ->bind('filter', $filter)
-                                ->bind('q', $q);
+                                ->bind('filter', $filter) //opcional: filtro para os dados
+                                ->bind('q', $q);            //opcional: query para os filtros
         $this->template->content = $view;
     }
     public function action_filters(){

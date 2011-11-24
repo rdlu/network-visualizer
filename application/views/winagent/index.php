@@ -1,3 +1,5 @@
+<?php $total_pages = ceil($total_medicoes/$results_per_page) ?>
+
 <div id="tabs" style="display: none">
 	<ul>
 		<li><a href="#usuario">Usuário</a></li>
@@ -64,10 +66,10 @@
                     <td><?php echo $medicao->loss_down.'%'. ' / '.$medicao->loss_up.'%'; ?></td>
                     <td><?php printf('%.2f / %.2f', $medicao->jitter_down*1000, $medicao->jitter_up*1000); ?></td>
                     <td><?php echo $medicao->pom_down.'%'.' / '.$medicao->pom_up.'%'; ?></td>
-                    <td><?php echo ($medicao->modem? $medicao->modem : "-"); ?></td>
-                    <td><?php echo ($medicao->modoSelecaoRede? $medicao->modoSelecaoRede : "-"); ?></td>
-                    <td><?php echo ($medicao->tecnoConexao? $medicao->tecnoConexao : "-"); ?></td>
+                    <td style="white-space: nowrap"><?php echo ($medicao->modem? $medicao->modem : "-"); ?></td>
                     <td><?php echo ($medicao->forcaSinal? $medicao->forcaSinal : "-"); ?></td>
+                    <td><?php echo ($medicao->modoSelecaoRede? $medicao->modoSelecaoRede : "-"); ?></td>
+                    <td><?php echo ($medicao->tecnoConexao? $medicao->tecnoConexao : "-"); ?></td>                    
                     <td><?php echo ($medicao->taxaErros? $medicao->taxaErros : "-"); ?></td>
                     <td><?php echo ($medicao->mtu? $medicao->mtu : "-"); ?></td>
                     <td><?php echo ($medicao->atrasoDNS? $medicao->atrasoDNS : "-"); ?></td>
@@ -77,13 +79,13 @@
         </tbody>
     </table>
 <div id="pagination" style="text-align: center">
-    <?php if($filter === null && $q === null ) : ?> 
-        <span>
-            <a href="<?php if($page > 1){echo url::site('winagent', 'http')."?page=".($page -1);} ?>"> << &nbsp;</a>
-            <?php echo $page."/".ceil($total_medicoes/$results_per_page); ?>
-            <a href="
-                <?php
-                        if( $total_medicoes > ($results_per_page * $page)){echo url::site('winagent', 'http')."?page=".($page +1);}else {echo "";} ?>"> &nbsp; >> &nbsp;</a>
+    <?php if($filter === null && $q === null ) : ?>
+        <span>            
+            <a href="<?php if( ($total_medicoes > ($results_per_page * $page)) && ($total_pages > 3)){echo url::site('winagent', 'http')."?page=1";} ?>"> << &nbsp;</a>
+            <a href="<?php if($page > 1){echo url::site('winagent', 'http')."?page=".($page -1);} ?>"> < &nbsp;</a>
+            <?php echo "Página ".$page."/".$total_pages; ?>
+            <a href="<?php if( $total_medicoes > ($results_per_page * $page)){echo url::site('winagent', 'http')."?page=".($page +1);}else {echo "";} ?>"> &nbsp; > &nbsp;</a>
+            <a href="<?php if( ($total_medicoes > ($results_per_page * $page)) && ($total_pages > 3)){echo url::site('winagent', 'http')."?page=".($total_pages);}else {echo "";} ?>"> &nbsp; >> &nbsp;</a>
         </span>
     <?php endif ?>
 

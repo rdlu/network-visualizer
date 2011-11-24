@@ -62,9 +62,10 @@ table#floatbar.tablesorter tbody tr, table#floatbar.tablesorter thead th {
 
 html body div#container div#content table#floatbar.tablesorter tbody tr td  {
     vertical-align: middle;
+
 }
 
-tr {
+tr {    
     border-bottom: solid #FFF 1px;
     margin-bottom: 5px;
 }

@@ -20,7 +20,7 @@ var perfect = [
     "longitude":"-47.433333",
     "agentes":[],
     "gerentes":[26]
-    },{
+},{
     "id":26,
     "ip":"143.54.10.94",
     "nome":"rj-nm-ub-man-1",
@@ -101,13 +101,13 @@ var Template = {
             RIGHTBAR.mostraDestaque(id);
             MAPA.desenhaLinhas(id, MAPA.gmap);
             SONDA.clicked(id);
-            });
+        });
         link.attr('id', 'sblink'+id).addClass('sondaLink').addClass('sondaBg');
         template.appendTo('#entities');                                          //coloca o template no HTML
-        //alert(template.text());
-        },
-        //retorna o template para a sonda que fica em destaque
-        sondaDestaque: function(id, ip, nome, status, endereco, localidade){
+    //alert(template.text());
+    },
+    //retorna o template para a sonda que fica em destaque
+    sondaDestaque: function(id, ip, nome, status, endereco, localidade){
         //alert(id);
         var alvo = $('#sondaDestaque');
         alvo.empty(); //limpa a div
@@ -123,17 +123,17 @@ var Template = {
         template.find('.sondaStatusImg').attr({
             src: st,
             alt: status
-            });
+        });
         template.appendTo('#sondaDestaque'); 
-        }
-        };
+    }
+};
 
-        /******************************************************************************/
-        /* Right bar: exibe a informção das sondas na barra do lado direito ***********/
-        /******************************************************************************/
-        var RIGHTBAR = {
-        /* Povoa o elemento entidades do HTML com as sondas em formato reduzido */
-        entitiesPovoa: function(){
+/******************************************************************************/
+/* Right bar: exibe a informção das sondas na barra do lado direito ***********/
+/******************************************************************************/
+var RIGHTBAR = {
+    /* Povoa o elemento entidades do HTML com as sondas em formato reduzido */
+    entitiesPovoa: function(){
         $('#entities').empty();
         var sondas = CACHED.JSONresponse;
         $.each(sondas, function(){            
@@ -144,9 +144,9 @@ var Template = {
             var status = sonda.status;
 
             Template.sondaItemBox(id, ip, nome, status);
-            });
-        },
-        mostraDestaque: function(id){
+        });
+    },
+    mostraDestaque: function(id){
         if( CACHED.loaded == false) CACHED.infoMapaJ();
         //cata esses valores do cache
         var sonda = SONDA.getFromCache(id);
@@ -175,40 +175,40 @@ var Template = {
             async: false, //necessário, ou terá problema de sincronicidade
             cache: false,
             success: function(dados){
-            endereco = dados.endereco;
-            localidade = dados.localidade;
-            status = parseInt(status);
-            if (dados.status != status){
-            status = dados.status;
-            //SONDA.atualizaStatus(id, status); //atualiza o status no cache e nas views
-            //MAPA.atualizaStatus(id, status);
+                endereco = dados.endereco;
+                localidade = dados.localidade;
+                status = parseInt(status);
+                if (dados.status != status){
+                    status = dados.status;
+                //SONDA.atualizaStatus(id, status); //atualiza o status no cache e nas views
+                //MAPA.atualizaStatus(id, status);
+                }
             }
-            }
-            });
+        });
         
         Template.sondaDestaque(id, ip, nome, status, endereco, localidade);
-        },
-        atualizaStatus: function(id, status){
+    },
+    atualizaStatus: function(id, status){
         $('#sb'+id).find('#sblink'+id).removeClass().addClass('sondaLink').addClass('sondaStatus'+status);
-        },
-        clicked: function(id){
+    },
+    clicked: function(id){
         $('#sblink' + SONDA.lastClicked).removeClass('sondaBgClicked').addClass('sondaBg');
         $('#sblink' + id).removeClass('sondaBg').addClass('sondaBgClicked');
-        }
-        }
-        //essa variável foi criada em desacordo com o cache, para fim de agilizar a codificação
-        var SONDA = {
-        clicked: function(id){
+    }
+}
+//essa variável foi criada em desacordo com o cache, para fim de agilizar a codificação
+var SONDA = {
+    clicked: function(id){
         if(SONDA.lastClicked != id){
-        RIGHTBAR.clicked(id);
-        MAPA.clicked(id);
+            RIGHTBAR.clicked(id);
+            MAPA.clicked(id);
 
-        SONDA.lastClicked = id;
-        console.log('dentro de SONDA.clicked: ', SONDA.lastClicked);
+            SONDA.lastClicked = id;
+            console.log('dentro de SONDA.clicked: ', SONDA.lastClicked);
         }
-        }
-        };
-        /* obsoleta
+    }
+};
+/* obsoleta
 SONDA.dadosMaps = function(){
      $.ajax({
         type: 'get',
@@ -221,70 +221,70 @@ SONDA.dadosMaps = function(){
     })
 }
 */
-        SONDA.getStatus = function(id){
-        sonda = SONDA.getFromCache(id);
-        return (sonda.status);
-        }
-        SONDA.getFromCache = function(id){
-        var sondas = CACHED.JSONresponse;
-        var found = null;
-        $.each(sondas, function(){
-            var sonda = $(this)[0];
-            if (sonda.id == id){
+SONDA.getStatus = function(id){
+    sonda = SONDA.getFromCache(id);
+    return (sonda.status);
+}
+SONDA.getFromCache = function(id){
+    var sondas = CACHED.JSONresponse;
+    var found = null;
+    $.each(sondas, function(){
+        var sonda = $(this)[0];
+        if (sonda.id == id){
             found = sonda;
-            }
-            });
-        /* código antigo que usava o cache xml
+        }
+    });
+    /* código antigo que usava o cache xml
     var sonda = $('sonda:[id=s'+id+']'); //CONTINUE DAQUI -> Isso não está mais funcionando...'sonda:[id=s'+id+']'
         */
-        return (found);
-        }
-        //devolve o nome da imagem que representa o estado
-        SONDA.statusImg = function(st){
-        switch(st){
+    return (found);
+}
+//devolve o nome da imagem que representa o estado
+SONDA.statusImg = function(st){
+    switch(st){
         case (0): {
-        return ("icon_cinza.png");
-        break;
+            return ("icon_cinza.png");
+            break;
         }
         case (1): {
-        return ("icon_verde.png");
-        break;
+            return ("icon_verde.png");
+            break;
         }
         case (2): {
-        return ("icon_amarelo.png");
-        break;
+            return ("icon_amarelo.png");
+            break;
         }
         case (3):
-        return ("icon_vermelho.png");
-        break;
-        }
-        }
+            return ("icon_vermelho.png");
+            break;
+    }
+}
 
-        /* Atualiza o status no cache e troca os ícones nos locais correspondentes */
-        SONDA.atualizaStatus = function(id, status){ //atualiza o status no
-        var sonda = $('#cache > entities sonda:[id=s'+id+']');
-        //atualiza cache
-        sonda.find('status').text(status);
-        //atualiza barra da direita
-        RIGHTBAR.atualizaStatus(id, status);
-        //atualiza mapa
-        MAPA.atualizaStatus(id, status);
-        //se tiver mais alguma outra view, deve ter outras funções que atualizem o status
-        }
-        SONDA.lastClicked = null;
+/* Atualiza o status no cache e troca os ícones nos locais correspondentes */
+SONDA.atualizaStatus = function(id, status){ //atualiza o status no
+    var sonda = $('#cache > entities sonda:[id=s'+id+']');
+    //atualiza cache
+    sonda.find('status').text(status);
+    //atualiza barra da direita
+    RIGHTBAR.atualizaStatus(id, status);
+    //atualiza mapa
+    MAPA.atualizaStatus(id, status);
+//se tiver mais alguma outra view, deve ter outras funções que atualizem o status
+}
+SONDA.lastClicked = null;
 
-        /***************************************************************************************/
-        /*************** CACHE PARA AS SONDAS **************************************************/
-        /***************************************************************************************/
+/***************************************************************************************/
+/*************** CACHE PARA AS SONDAS **************************************************/
+/***************************************************************************************/
 
-        // A variável CACHE.JSONresponse armazena os dados das sondas.
-        // Para inicializá-la, use CACHED.infoMapaJ
+// A variável CACHE.JSONresponse armazena os dados das sondas.
+// Para inicializá-la, use CACHED.infoMapaJ
 
-        //Para pegar informações de uma sonda específica, use SONDA.getFromCache(id); onde id é o id da sonda
+//Para pegar informações de uma sonda específica, use SONDA.getFromCache(id); onde id é o id da sonda
 
-        var CACHED = {
-        //loaded: false,
-        infoMedicoes: function(sondaOrigemId){
+var CACHED = {
+    //loaded: false,
+    infoMedicoes: function(sondaOrigemId){
         $.ajax({
             type: 'get',
             url: '../mom/synthesizing/destsondas/'+sondaOrigemId,
@@ -292,60 +292,60 @@ SONDA.dadosMaps = function(){
             async: false, //necessário, ou terá problema de sincronicidade
             cache: false,
             success: function(medicoes){
-            CACHED.medicoes = medicoes;
+                CACHED.medicoes = medicoes;
             //CACHED.last = true;
             }
-            });
-        },
-        infoMapaJ: function(){
+        });
+    },
+    infoMapaJ: function(){
         $.ajax({
             url: MOM.info_mapa_json,
             type: 'get',
             dataType: 'json',
             async: false,
             success: function(JSONresp){
-            CACHED.JSONresponse = JSONresp;
-            CACHED.loaded = true;
-            console.log('todas info das sondas', JSONresp);
+                CACHED.JSONresponse = JSONresp;
+                CACHED.loaded = true;
+                console.log('todas info das sondas', JSONresp);
             }
-            })
-        },
-        infoMedicoesSondaOrigem: function(sondaOrigemId){
+        })
+    },
+    infoMedicoesSondaOrigem: function(sondaOrigemId){
         $.ajax({
             url: MOM.infoMedicoesSondaOrigem+sondaOrigemId,
             type: 'get',
             dataType: 'json',
             async: false,
             success: function(data){
-            CACHED.medicoes = data;
+                CACHED.medicoes = data;
             }
-            })
-        }
-        };
+        })
+    }
+};
 
-        var MAPA = {
-        iconeVerde: 'verdeNormal.png', //markerGimp.png',
-        iconeAmarelo: 'amareloNormal2.png', //markerAmarelo.png',
-        iconeVermelho: 'vermelhoNormal.png',//'markerVermelho.png',
-        iconeCinza: 'cinzaNormal.png',
-        iconeVerdeClicked: 'verdeSelecionado.png', //markerVerdeV2.png',
-        iconeAmareloClicked: 'amareloSelecionado2.png', //markerAmareloClicked.png',
-        iconeVermelhoClicked: 'vermelhoSelecionado.png',//'markerVermelho.png',
-        iconeCinzaClicked: 'cinzaSelecionado.png', //'markerCinza.png',
+var MAPA = {
+    iconeVerde: 'verdeNormal.png', //markerGimp.png',
+    iconeAmarelo: 'amareloNormal2.png', //markerAmarelo.png',
+    iconeVermelho: 'vermelhoNormal.png',//'markerVermelho.png',
+    iconeCinza: 'cinzaNormal.png',
+    iconeVerdeClicked: 'verdeSelecionado.png', //markerVerdeV2.png',
+    iconeAmareloClicked: 'amareloSelecionado2.png', //markerAmareloClicked.png',
+    iconeVermelhoClicked: 'vermelhoSelecionado.png',//'markerVermelho.png',
+    iconeCinzaClicked: 'cinzaSelecionado.png', //'markerCinza.png',
         
-        init: function(){
+    init: function(){
         //inicia o mapa
         var latlng = new google.maps.LatLng(-21.698265, -46.757812);
         var opcoes = {
-        zoom: 4,
-        center: latlng,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+            zoom: 4,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         var gmap = new google.maps.Map(document.getElementById("mapa"), opcoes);
         return (gmap);
-        },
-        //pega os pontos do cache e desenha no mapa
-        povoa: function(gmap){
+    },
+    //pega os pontos do cache e desenha no mapa
+    povoa: function(gmap){
         var sondas = CACHED.JSONresponse;
             
         $.each(sondas, function(){            
@@ -369,152 +369,158 @@ SONDA.dadosMaps = function(){
                 title: nome,
                 icon: iconePath,
                 shadow: iconePath
-                });
+            });
 
             //MAPA.marcadores[id].setMap(gmap);
             google.maps.event.addListener(MAPA.marcadores[id], 'click', function(){
                 RIGHTBAR.mostraDestaque(id);
                 MAPA.desenhaLinhas(id, gmap);
                 SONDA.clicked(id); //efeitos para visualização do clique
-                });
+            });
             //google.maps.event.addListener(MAPA.marcadores[id], 'mouseover', function(){MAPA.marcadores[id].setOptions( 'labelClass': {'opacity': 0.5}} ));
             MAPA.marcadores[id].setMap(gmap);
-            })
-        },
-        desenhaLinhas: function(id, gmap){
+        })
+    },
+    desenhaLinhas: function(id, gmap){
          
         if(id != MAPA.ultimaLinhaDesenhada){ //só desenha se não tiver desenhado ainda
-        MAPA.deletaLinhas(MAPA.ultimaLinhaDesenhada, gmap);
-        var sonda = SONDA.getFromCache(id);
-        console.log(sonda);
-        MAPA.linhas = [];
-        MAPA.ultimaLinhaDesenhada = id;
-        //pega os valores das medições
-        CACHED.infoMedicoesSondaOrigem(id);
-        var medicoes = CACHED.medicoes;
-        console.log("------------------------------");
-        console.log("medicoes: ", medicoes);
-        //para pegar o objeto certo que contém as medições terei que entrar em cada um deles, verificar o medicoes.target.id,
-        //e, se for o correto, retornar o medicoes.results
-        console.log("id da sonda de origem: ", id);
-        console.log("------------------------------");
-        //itera sobre as medições dos agentes e gerentes
+            MAPA.deletaLinhas(MAPA.ultimaLinhaDesenhada, gmap);
+            var sonda = SONDA.getFromCache(id);
+            console.log(sonda);
+            MAPA.linhas = [];
+            MAPA.ultimaLinhaDesenhada = id;
+            //pega os valores das medições
+            CACHED.infoMedicoesSondaOrigem(id);
+            var medicoes = CACHED.medicoes;
+            console.log("------------------------------");
+            console.log("medicoes: ", medicoes);
+            //para pegar o objeto certo que contém as medições terei que entrar em cada um deles, verificar o medicoes.target.id,
+            //e, se for o correto, retornar o medicoes.results
+            console.log("id da sonda de origem: ", id);
+            console.log("------------------------------");
+            //itera sobre as medições dos agentes e gerentes
 
-        $.each(sonda.agentes, function(key, value){
-            var med = value;
-            var coord = [];
-            coord.push(MAPA.myLatlng[id]);
-            coord.push(MAPA.myLatlng[med]);
-            //desenha as linhas
-            //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
-            //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
-            var linha = new google.maps.Polyline({
-                path: coord,
-                map: gmap,
-                strokeColor: "#EE8844", /*#FF0000*/
-                strokeOpacity: 0.8,
-                strokeWeight: 3
+            $.each(sonda.agentes, function(key, value){
+                var med = value;
+                var coord = [];
+                coord.push(MAPA.myLatlng[id]);
+                coord.push(MAPA.myLatlng[med]);
+                console.log('MAPA.myLatlng[id]: ', MAPA.myLatlng[id]);
+                console.log('MAPA.myLatlng[med]: ', MAPA.myLatlng[med]);
+                console.log( (MAPA.myLatlng[id].Na == MAPA.myLatlng[med].Na && MAPA.myLatlng[id].Oa == MAPA.myLatlng[med].Oa )? true : false);
+                //desenha as linhas
+                //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
+                //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
+                var linha = new google.maps.Polyline({
+                    path: coord,
+                    map: gmap,
+                    strokeColor: "#EE8844", /*#FF0000*/
+                    strokeOpacity: 0.8,
+                    strokeWeight: 3
                 });
-            // TO_DO : função que pegue 1 JSON com as medições do agente
-            // CUIDAR : tem duas funções: uma que cuida das linhas claras e outra das linhas escuras.]
-            //          isso é estúpido, refatorar
-            google.maps.event.addListener(linha, 'mouseover', function(){
-                //alert("mOUs3 Ouv4h1!1");
-                // TO_DO: adicionar infoView aqui
-                //code sample:
-                /*
+                // TO_DO : função que pegue 1 JSON com as medições do agente
+                // CUIDAR : tem duas funções: uma que cuida das linhas claras e outra das linhas escuras.]
+                //          isso é estúpido, refatorar
+                google.maps.event.addListener(linha, 'mouseover', function(){
+                    //alert("mOUs3 Ouv4h1!1");
+                    // TO_DO: adicionar infoView aqui
+                    //code sample:
+                    /*
                         coordInfoWindow = new google.maps.InfoWindow({content: "Chicago, IL"});
                         coordInfoWindow.setContent(latlngStr + worldCoordStr + pixelCoordStr + tileCoordStr);
                         coordInfoWindow.setPosition(chicago); //seta o ponto
                         coordInfoWindow.open(map);
                         */
-                });
-            (MAPA.linhas).push(linha);
+                    });
+                (MAPA.linhas).push(linha);
             });
-        $.each(sonda.gerentes, function(key, value){
-            var med = value;
-            var coord = [];
-            coord.push(MAPA.myLatlng[id]);
-            coord.push(MAPA.myLatlng[med]);
-            //desenha as linhas
-            //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
-            //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
-            var linha = new google.maps.Polyline({
-                path: coord,
-                map: gmap,
-                strokeColor: "#EE9955",
-                strokeOpacity: 0.6,
-                strokeWeight: 2
+            $.each(sonda.gerentes, function(key, value){
+                var med = value;
+                var coord = [];
+                coord.push(MAPA.myLatlng[id]);
+                coord.push(MAPA.myLatlng[med]);
+                console.log('MAPA.myLatlng[id]: ', MAPA.myLatlng[id]);
+                console.log('MAPA.myLatlng[med]: ', MAPA.myLatlng[med]);
+                console.log( (MAPA.myLatlng[id].Na == MAPA.myLatlng[med].Na && MAPA.myLatlng[id].Oa == MAPA.myLatlng[med].Oa )? true : false);
+                //desenha as linhas
+                //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
+                //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
+                var linha = new google.maps.Polyline({
+                    path: coord,
+                    map: gmap,
+                    strokeColor: "#EE9955",
+                    strokeOpacity: 0.6,
+                    strokeWeight: 2
                 });
-            google.maps.event.addListener(linha, 'mouseover', function(){
-                //alert("mOUs3 Ouv4h1!1");
-                });
-            (MAPA.linhas).push(linha);
+                google.maps.event.addListener(linha, 'mouseover', function(){
+                    //alert("mOUs3 Ouv4h1!1");
+                    });
+                (MAPA.linhas).push(linha);
             });
         }
-        },
-        deletaLinhas: function(){
+    },
+    deletaLinhas: function(){
         $.each(MAPA.linhas, function(i, k){
             MAPA.linhas[i].setMap(null);
-            })
-        },
-        /* retorna uma string com o nome da imagem que representa o status */
-        statusImg: function(status){
+        })
+    },
+    /* retorna uma string com o nome da imagem que representa o status */
+    statusImg: function(status){
         switch(status){
-        case (0): {
-        return (MAPA.iconeCinza);
-        break; //haha
+            case (0): {
+                return (MAPA.iconeCinza);
+                break; //haha
+            }
+            case (1): {
+                return (MAPA.iconeVerde);
+                break; //haha
+            }
+            case (2): {
+                return (MAPA.iconeAmarelo);
+                break; //haha
+            }
+            default:
+            case (3): { //fallthrough
+                return (MAPA.iconeVermelho);
+                break;
+            }
         }
-        case (1): {
-        return (MAPA.iconeVerde);
-        break; //haha
-        }
-        case (2): {
-        return (MAPA.iconeAmarelo);
-        break; //haha
-        }
-        default:
-        case (3): { //fallthrough
-        return (MAPA.iconeVermelho);
-        break;
-        }
-        }
-        },
-        statusImgClicked: function(status){
+    },
+    statusImgClicked: function(status){
         switch(status){
-        case (0): {
-        return (MAPA.iconeCinzaClicked);
-        break; //haha
+            case (0): {
+                return (MAPA.iconeCinzaClicked);
+                break; //haha
+            }
+            case (1): {
+                return (MAPA.iconeVerdeClicked);
+                break; //haha
+            }
+            case (2): {
+                return (MAPA.iconeAmareloClicked);
+                break; //haha
+            }
+            default:
+            case (3): { //fallthrough
+                return (MAPA.iconeVermelhoClicked);
+                break;
+            }
         }
-        case (1): {
-        return (MAPA.iconeVerdeClicked);
-        break; //haha
-        }
-        case (2): {
-        return (MAPA.iconeAmareloClicked);
-        break; //haha
-        }
-        default:
-        case (3): { //fallthrough
-        return (MAPA.iconeVermelhoClicked);
-        break;
-        }
-        }
-        },
-        atualizaStatus: function(id, status){
+    },
+    atualizaStatus: function(id, status){
         var iconePath = MOM.imgDir + MAPA.statusImg(status);
         MAPA.marcadores[id].setIcon(iconePath);
-        },
-        desenhaTodasLinhas: function(){
+    },
+    desenhaTodasLinhas: function(){
         if (MAPA.todasLinhasDesenhadas == false){
-        var sondas = CACHED.JSONresponse;
-        $.each(sondas, function(){
-            var id = sonda.id;
-            MAPA.desenhaLinhas(id, gmap);
+            var sondas = CACHED.JSONresponse;
+            $.each(sondas, function(){
+                var id = sonda.id;
+                MAPA.desenhaLinhas(id, gmap);
             });
         }
-        },
-        clicked: function(id){
+    },
+    clicked: function(id){
         //atualiza o novo
         var status = SONDA.getStatus(id);
         console.log('status', status);
@@ -525,28 +531,29 @@ SONDA.dadosMaps = function(){
          
         //retorna o último clicado ao normal
         if(SONDA.lastClicked != null){
-        status = SONDA.getStatus(SONDA.lastClicked);
-        iconePath = MOM.imgDir + MAPA.statusImg(status);
-        MAPA.marcadores[SONDA.lastClicked].setIcon(iconePath);
+            status = SONDA.getStatus(SONDA.lastClicked);
+            iconePath = MOM.imgDir + MAPA.statusImg(status);
+            MAPA.marcadores[SONDA.lastClicked].setIcon(iconePath);
         }
-        }
-        }
-        MAPA.marcadores = [];
-        MAPA.myLatlng = []; //não deixar o código com 400 linhas. Wirlau diz que é o número da morte
-        MAPA.linhas = [];
-        MAPA.ultimaLinhaDesenhada = null;
-        MAPA.todasLinhasDesenhadas = false;
-        /******************************************************************************/
-        /*************************** INÍCIO DO MAIN ***********************************/
-        /******************************************************************************/
+    }
+}
+MAPA.marcadores = [];
+MAPA.myLatlng = []; //não deixar o código com 400 linhas. Wirlau diz que é o número da morte
+MAPA.linhas = [];
+MAPA.ultimaLinhaDesenhada = null;
+MAPA.ultimaCoordenadaDesenhada = {};
+MAPA.todasLinhasDesenhadas = false;
+/******************************************************************************/
+/*************************** INÍCIO DO MAIN ***********************************/
+/******************************************************************************/
 
-        $(document).ready(function(){
-            //inicia os elementos na tela
-            //CACHED.init();
-            CACHED.infoMapaJ();
-            //inicia os dados para povoar o lado direito com sondas em formato Box
-            console.log("CACHED.JSONresponse: ", CACHED.JSONresponse);
-            RIGHTBAR.entitiesPovoa();
-            MAPA.gmap = MAPA.init();
-            MAPA.povoa(MAPA.gmap);
-        });
+$(document).ready(function(){
+    //inicia os elementos na tela
+    //CACHED.init();
+    CACHED.infoMapaJ();
+    //inicia os dados para povoar o lado direito com sondas em formato Box
+    console.log("CACHED.JSONresponse: ", CACHED.JSONresponse);
+    RIGHTBAR.entitiesPovoa();
+    MAPA.gmap = MAPA.init();
+    MAPA.povoa(MAPA.gmap);
+});
