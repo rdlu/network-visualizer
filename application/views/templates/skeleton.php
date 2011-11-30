@@ -15,11 +15,12 @@
             </div>
             <div id="content">
                 <?php echo $content ?>
+                <div class="pagination" style="text-align: center"><?php if(isset($pagination)) echo $pagination ?></div>
             </div>
             <div id="footer">
                 <?php echo $footer ?>
             </div>
-        </div>
+        </div>        
         <?php if(isset($extras)) echo $extras; ?>
     </body>
 </html>

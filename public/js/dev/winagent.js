@@ -29,9 +29,26 @@ jQuery(function($){
 
 
 $(document).ready(function(){
-    $(function() {
-	$( "#tabs" ).tabs();
+    $( "#tabs" ).tabs(); //ok
+    $('#dialog').dialog({
+		autoOpen: false,
+      	modal: true,
+		bgiframe: true,
+        width: 400,
+        height: 270,
+        resizable: false
     });
+
+    $('#filtro_btn').click(function(e){
+        e.preventDefault();
+        $("#dialog").dialog('option', 'buttons', {
+                
+        });
+        $("#dialog").dialog("open");
+        //$("#tabs").toggle();
+    });
+    
+
 
     //coloca o datepicker
 	$('.datepicker').datepicker();
@@ -48,8 +65,8 @@ $(document).ready(function(){
             autoOpen: false,
             modal: true,
             bgiframe: true,
-            width: 450,
-            height: 220,
+            //width: 450,
+            //height: 800,
             resizable: false
 	});
         $('.rota').each(function(){
@@ -58,15 +75,13 @@ $(document).ready(function(){
                 console.log(id);
                 console.log($("#rota_"+id));
                 $("#rota_"+id).dialog('option', 'buttons', {
-                    "Fechar" : function() {
-                        $(this).dialog("close");
-                    }
+                    
                 });
                 $("#rota_"+id).dialog("open");
             });
         });
 
-        $('.button').button();
+        //$('.button').button();
 
 	$('.validate').validate({
 		rules: {

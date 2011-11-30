@@ -1,37 +1,16 @@
-<?php $total_pages = ceil($total_medicoes/$results_per_page) ?>
-
-<div id="tabs" style="display: none">
-	<ul>
-		<li><a href="#usuario">Usuário</a></li>
-		<li><a href="#data">Data</a></li>
-		<li><a href="#cell_id">Cell Id</a></li>
-	</ul>
-	<div id="usuario">
-            <form action="<?php echo url::site('winagent', 'http');  ?>" method="get" enctype="application/x-www-form-urlencoded">
-                <h2>Nome do usuário</h2><br />
-                <input type="hidden" name="filter" value="username" />                
-                <input type="text" id="username" name="q"/><br />
-                <input type="submit" class="button" />
-            </form>
-	</div>
-	<div id="data">
-            <form class="validate" action="<?php echo url::site('winagent/filters?type=data', 'http');  ?>" method="get" enctype="application/x-www-form-urlencoded">
-                <h2>Data da medição</h2><br />
-                <label for="inicio">Data de início</label><input class="datepicker" type="text" style="width: 100px" id="inicio" name="inicio" /><br />
-		<label for="fim">Data de término</label><input class="datepicker" type="text" style="width: 100px" id="fim" name="fim" /><br />
-                <input type="hidden" name="filter" value="data" />
-                <input type="submit" class="button" />
-            </form>
-	</div>
-	<div id="cell_id">
-            <form action="<?php echo url::site('winagent', 'http');  ?>" method="get" enctype="application/x-www-form-urlencoded">
-                <h2>Cell Id</h2><br />
-                <input type="hidden" name="filter" value="cellid" />
-                <input type="text" id="cellid" name="q"/><br />
-                <input type="submit" class="button" />
-            </form>
-	</div>
+<div id="opt">
+    <a id="filtro_btn" href="#">
+        <span class="button2">
+            Filtros
+       </span>
+    </a>
+    <a href="<?php echo url::site('winagent', 'http') ?>">
+        <span class="button2">
+            Mostrar todas medições
+       </span>
+    </a>
 </div>
+
 <table id="entityList" class="tablesorter" style="text-align: center">
         <thead>
             <tr>
@@ -78,33 +57,7 @@
             <?php endforeach; ?>
         </tbody>
     </table>
-<div id="pagination" style="text-align: center">
-    <?php if($filter === null && $q === null ) : ?>
-        <span>            
-            <a href="<?php if( ($total_medicoes > ($results_per_page * $page)) && ($total_pages > 3)){echo url::site('winagent', 'http')."?page=1";} ?>"> << &nbsp;</a>
-            <a href="<?php if($page > 1){echo url::site('winagent', 'http')."?page=".($page -1);} ?>"> < &nbsp;</a>
-            <?php echo "Página ".$page."/".$total_pages; ?>
-            <a href="<?php if( $total_medicoes > ($results_per_page * $page)){echo url::site('winagent', 'http')."?page=".($page +1);}else {echo "";} ?>"> &nbsp; > &nbsp;</a>
-            <a href="<?php if( ($total_medicoes > ($results_per_page * $page)) && ($total_pages > 3)){echo url::site('winagent', 'http')."?page=".($total_pages);}else {echo "";} ?>"> &nbsp; >> &nbsp;</a>
-        </span>
-    <?php endif ?>
 
-    <?php if($filter !== null && $q !== null ) : ?>
-        <span>
-            <a href="<?php if($page > 1){echo url::site('winagent', 'http')."?page=".($page -1)."&filter=$filter"."&q=$q";} ?>"> << &nbsp;</a>
-            <?php echo $page."/".ceil($total_medicoes/$results_per_page); ?>
-            <a href="
-                <?php
-                        if( $total_medicoes > ($results_per_page * $page)){
-                            echo url::site('winagent', 'http')."?page=".($page +1)."&filter=$filter"."&q=$q";
-                        }
-                        else {
-                            echo "";
-                        } ?>"> &nbsp; >> &nbsp;</a>
-        </span>
-    <?php endif ?>
-
-</div>
 
 <div>
     <?php //echo "<p>n medicoes: ".$total_medicoes."</p>"; ?>
@@ -119,3 +72,37 @@
         </div>
     <?php endif; ?>
 <?php endforeach; ?>
+
+<div id="dialog" title="Filtros">
+    <div id="tabs">
+            <ul>
+                    <li><a href="#usuario">Usuário</a></li>
+                    <li><a href="#data">Data</a></li>
+                    <li><a href="#cell_id">Cell Id</a></li>
+            </ul>
+            <div id="usuario">
+                <form action="<?php echo url::site('winagent', 'http');  ?>" method="get" enctype="application/x-www-form-urlencoded">
+                    <h2>Nome do usuário</h2><br />
+                    <input type="hidden" name="filter" value="username" />
+                    <input type="text" id="username" name="q"/><br />
+                    <input type="submit" value="Enviar" class="button" />
+                </form>
+            </div>
+            <div id="data">
+                <form action="<?php echo url::site('winagent', 'http');  ?>" method="get" enctype="application/x-www-form-urlencoded">                <h2>Data da medição</h2><br />
+                    <label style="width: 150px; display: inline-block" for="inicio">Data de início</label><input class="datepicker" type="text" style="width: 100px" id="inicio" name="inicio" /><br />
+                    <label style="width: 150px; display: inline-block" for="fim">Data de término</label><input class="datepicker" type="text" style="width: 100px" id="fim" name="fim" /><br />
+                    <input type="hidden" name="filter" value="timestamp" />
+                    <input type="submit" value="Enviar" class="button" />
+                </form>
+            </div>
+            <div id="cell_id">
+                <form action="<?php echo url::site('winagent', 'http');  ?>" method="get" enctype="application/x-www-form-urlencoded">
+                    <h2>Cell Id</h2><br />
+                    <input type="hidden" name="filter" value="cellid" />
+                    <input type="text" id="cellid" name="q"/><br />
+                    <input type="submit" value="Enviar" class="button" />
+                </form>
+            </div>
+    </div>
+</div>

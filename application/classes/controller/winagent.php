@@ -39,34 +39,78 @@ class Controller_Winagent extends Controller_Skeleton {
         $page = (int) $this->request->query('page', null);
         $filter = $this->request->query('filter', null);
         $q = $this->request->query('q', null);
+        $inicio = null;
+        $fim = null;
         if($q === null && $filter === null){
-            $total_medicoes = count(ORM::factory('dyndata')->find_all());
-            $page = $this->set_page($page, $total_medicoes, $results_per_page);
-            $start_at = $this->start_at($page, $total_medicoes, $results_per_page);
-            $medicoes = ORM::factory('dyndata')->order_by('timestamp', 'DESC')->limit($results_per_page)->offset($start_at)->find_all();
+            $pagination = Pagination::factory(array(
+       		'total_items'    => ORM::factory('dyndata')->count_all(),
+       		'items_per_page' => $results_per_page,
+       		'view'           => 'pagination/floating',
+       		'auto_hide'      => FALSE,
+            ));            
+            
+            $medicoes = ORM::factory('dyndata')->order_by('timestamp', 'DESC')->limit($pagination->items_per_page)
+                                    ->offset($pagination->offset)->find_all();;
         }
         else {
             switch($filter){
                 case 'username': {
-                    $username = $this->request->query('q', null);
-                    $total_medicoes = count(ORM::factory('dyndata')->where('username', 'like', $username.'%')->find_all());
-                    $page = $this->set_page($page, $total_medicoes, $results_per_page);
-                    $start_at = $this->start_at($page, $total_medicoes, $results_per_page);
-                    $medicoes = ORM::factory('dyndata')->where('username', 'like', $username.'%')->order_by('timestamp', 'DESC')->limit($results_per_page)->offset($start_at)->find_all();
+                    $username = $this->request->query('q', null);                  
+
+                    $pagination = Pagination::factory(array(
+       			'total_items'    => ORM::factory('dyndata')->where('username', 'like', $username.'%')->count_all(),
+       			'items_per_page' => $results_per_page,
+       			'view'           => 'pagination/floating',
+       			'auto_hide'      => FALSE,
+                    ));			
+
+                    $medicoes = ORM::factory('dyndata')
+                                    ->where('username', 'like', $username.'%')
+                                    ->order_by('timestamp', 'DESC')
+                                    ->limit($pagination->items_per_page)
+                                    ->offset($pagination->offset)->find_all();
                     //var_dump($start_at); die();
                     break;
                 }
                 case 'cellid': {
                     $cellid = $this->request->query('q', null);
-                    $total_medicoes = count(ORM::factory('dyndata')->where('cellid', '=', $cellid)->find_all());
-                    $page = $this->set_page($page, $total_medicoes, $results_per_page);
-                    $start_at = $this->start_at($page, $total_medicoes, $results_per_page);
-                    $medicoes = ORM::factory('dyndata')->where('cellid', '=', $cellid)->order_by('timestamp', 'DESC')->limit($results_per_page)->offset($start_at)->find_all();
+                    $pagination = Pagination::factory(array(
+       			'total_items'    => ORM::factory('dyndata')->where('cellid', '=', $cellid)->count_all(),
+       			'items_per_page' => $results_per_page,
+       			'view'           => 'pagination/floating',
+       			'auto_hide'      => FALSE,
+                    ));
 
+                    $medicoes = ORM::factory('dyndata')->where('cellid', '=', $cellid)->order_by('timestamp', 'DESC')->limit($pagination->items_per_page)
+                                    ->offset($pagination->offset)->find_all();
                     break;
                 }
                 case 'timestamp': {
+                    $inicio = $this->request->query('inicio', null);
+                    $fim = $this->request->query('fim', null);
+                    $q='inicio='.$inicio.'&fim='.$fim;                    
+                    
 
+                    $inicio = strtotime(substr($inicio, 3, 2).'/'.substr($inicio, 0, 2).'/'.substr($inicio, -4));
+                    $fim = strtotime(substr($fim, 3, 2).'/'.substr($fim, 0, 2).'/'.substr($fim, -4));
+
+                    if($inicio > $fim){
+                        $tmp = $inicio;
+                        $inicio = $fim;
+                        $fim = $tmp;
+                    }      
+
+                    $pagination = Pagination::factory(array(
+       			'total_items'    => ORM::factory('dyndata')->where('timestamp', '>=', $inicio)->where('timestamp', '<=', $fim)->count_all(),
+       			'items_per_page' => $results_per_page,
+       			'view'           => 'pagination/floating',
+       			'auto_hide'      => FALSE,
+                    ));
+
+                    $medicoes = ORM::factory('dyndata')->where('timestamp', '>=', $inicio)
+                            ->where('timestamp', '<=', $fim)->order_by('timestamp', 'DESC')
+                            ->limit($pagination->items_per_page)
+                            ->offset($pagination->offset)->find_all();
                     break;
                 }
             }
@@ -82,13 +126,14 @@ class Controller_Winagent extends Controller_Skeleton {
        
         $view = View::factory('winagent/index')
                                 ->bind('medicoes', $medicoes)
-                                ->bind('page', $page)
-                                ->bind('results_per_page', $results_per_page)
-                                ->bind('total_medicoes', $total_medicoes)
                                 ->bind('filter', $filter) //opcional: filtro para os dados
                                 ->bind('q', $q);            //opcional: query para os filtros
+        $this->template->pagination = $pagination->render();
         $this->template->content = $view;
     }
+
+    
+
     public function action_filters(){
         $type = $this->request->query('type', null);
         if($type !== null){

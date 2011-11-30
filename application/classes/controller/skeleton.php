@@ -45,6 +45,7 @@ class Controller_Skeleton extends Controller_Template {
 
 		if ($this->auto_render) {
 			// Initialize empty values
+                        $this->template->pagination = '';
 			$this->template->title = 'NetmetricMoM :: ';
 			$this->template->content = '';
 			$this->template->header = View::factory('templates/mainmenu');
