@@ -55,8 +55,7 @@ class Controller_Account extends Controller_Skeleton {
 			Request::current()->redirect('account/myaccount');
 		}
             */
-		#Load the view
-		$content = $this->template->content = View::factory('account/register');
+		
                 
 		#If there is a post and $_POST is not empty
 		if ($_POST) {
@@ -92,9 +91,11 @@ class Controller_Account extends Controller_Skeleton {
 				#redirect to the user account
 				$this->request->redirect('account/index');
 			}
-                        catch (ORM_Validation_Exception $e) {
-				$content->errors = $e->errors('account/register');
-				//Fire::info($e->errors());
+                        catch (Exception $e) {
+                                #Load the view
+                                $this->template->content = View::factory('account/register')
+                                                            ->bind('error', $error);
+				
 			}
 		}
 	}
@@ -149,20 +150,34 @@ class Controller_Account extends Controller_Skeleton {
         public function action_index(){
             $this->template->title .= 'Controle de usuários';
             $users = ORM::factory('user')->find_all();
+            $current_user = Auth::instance()->get_user();
             $view = View::factory('account/index')
-                    ->bind('users', $users);
+                    ->bind('users', $users)
+                    ->bind('current_user', $current_user);
             //Fire::info($users);
             $this->template->content = $view;
         }
 
         public function action_edit(){
             $current_user = Auth::instance()->get_user();
+            //teste recorrente e possível ponto de falha:
+            $eh_admin = $current_user->has('roles', ORM::factory('role', array('name' => 'admin')));
             //Fire::info($id, 'id');
             $action = $this->request->post('action', null);
         //
             /* processa os dados e salva as modificações feitas na conta do usuário */
             if($action == 'save'){
                 $id = $this->request->post('id', null); //pega o id do usuario a ser atualizado
+
+                //nova lógica:
+                /* 
+                 * pega o user com o id, se não existe, aborta
+                 * 1) verifica se o user não é o admin; para o admin, só aceita troca de senha
+                 * 2) usuário admin trocando os dados: acesso irrestrito; apenas não pode alterar o nome da conta admin
+                 * 3) usuários demais: só podem mudar suas próprias contas
+                 */
+
+              
                 if($id !== null){
                     $username = $this->request->post('username', null);
                     //a conta padrão admin só pode ser modificada por admin
@@ -173,12 +188,18 @@ class Controller_Account extends Controller_Skeleton {
 
                         //execução/save
                         try {
+                            //BUG: quando você modifica uma conta de um usuário logado (mesmo que indiretamente)
+                            //aquele usuário cai do sistema
+                            // ex: se eu pegar o usuário teste e tentar renomeá-lo para admin,
+                            // o controle vai tentar pegar o usuário pelo ORM na linha abaixo:
                             $user = ORM::factory('user', $id);
+                            //o sistema não permite que ele altere o nome, mas isso vai regenerar a sessão de admin
+                            // problema é que não deveria ser permitido alterar contas de usuários logados...
 
                             //var_dump($current_user->id.' '.$user->id);
                             //ou o usuário está modificando a própria conta ou ele é administrador
                             if( ($current_user->id == $id) ||
-                                ($current_user->has('roles', ORM::factory('role', array('name' => 'admin')))) ){
+                                ($eh_admin) ){
                                 //não renomeia o usuário para 'admin'
                                 //o usuário é o admin e queremos trocar o username dele mesmo
                                 if( ($current_user->username == 'admin' && $id == $current_user->id) ||
@@ -191,7 +212,8 @@ class Controller_Account extends Controller_Skeleton {
                                     $user->password = $password;
                                 }
                                 //somente usuários do grupo administrativo podem alterar permissões de acesso
-                                if($current_user->has('roles', ORM::factory('role', array('name' => 'admin'))))
+                                //BUG: o usuário admin não pode ter sua permissão de acesso mudada
+                                if($eh_admin && ($username != 'admin' || $current_user->username != 'admin'))
                                     $privilege = $this->request->post('privilege', null);
                                     //privilégios são cumulativos. se a pessoa tem admin, ela ten config. e login.
                                     if($privilege == 'administrador'){
@@ -254,7 +276,7 @@ class Controller_Account extends Controller_Skeleton {
             if($id != null){
                 $user = ORM::factory('user', $id);
                 if($user->username != 'admin' || 
-                  ($current_user->has('roles', ORM::factory('role', array('name' => 'admin'))))      )
+                  ($eh_admin)      )
                 {
                     //usuário admin é padrão e não pode ser desativado
                     if($user->active == 1){ //desativando
@@ -324,6 +346,12 @@ class Controller_Account extends Controller_Skeleton {
                                    //Não retorna false pq o erro é diferente
             }
         }
+
+        function errorMsg($int){
+            //aqui colocarei futuramente todas mensagens de erro.
+            //será que isso é viável?
+        }
+
 }
 
 

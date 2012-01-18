@@ -15,6 +15,7 @@
         <thead>
             <tr>
                 <th>Usuário</th>
+                <th>Perfil</th>
                 <th>Cell Id</th>
                 <th>Data</th>
                 <th>Rtt (ms)</th>
@@ -37,6 +38,7 @@
             <?php foreach($medicoes as $medicao): ?>
                 <tr >
                     <td><?php echo $medicao->username; ?></td>
+                    <td><?php echo $medicao->perfil; ?></td>
                     <td><?php echo $medicao->cellid; ?></td>
                     <td><?php echo date('d/m/Y <br/> H:i:s', $medicao->timestamp); ?></td>
                     <td><?php printf('%.2f', $medicao->rtt*1000); ?></td>

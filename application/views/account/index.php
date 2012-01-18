@@ -1,4 +1,3 @@
-<?php $current_user = Auth::instance()->get_user(); ?>
 <?php if($current_user->has('roles', ORM::factory('role', array('name' => 'admin')))) : ?>
     <div id="account_options">
         <a href="<?php echo URL::site('account/register', 'http'); ?>">           
@@ -88,7 +87,7 @@
                     </td>
                     <td><?php echo ($current_user->active == 1)? 'ativo' : 'inativo'; ?></td>
                     <td>
-                        <a href='<?php echo URL::site('account/edit?id='.$current_user->id, 'http');?>'>Editar</a>                        
+                        <a href='<?php echo URL::site('account/edit?id='.$current_user->id, 'http');?>'>Editar</a>
                     </td>
                 </tr>
         </tbody>

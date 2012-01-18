@@ -405,9 +405,10 @@ var MAPA = {
                 var coord = [];
                 coord.push(MAPA.myLatlng[id]);
                 coord.push(MAPA.myLatlng[med]);
+                console.log('coord: ', coord);
                 console.log('MAPA.myLatlng[id]: ', MAPA.myLatlng[id]);
                 console.log('MAPA.myLatlng[med]: ', MAPA.myLatlng[med]);
-                console.log( (MAPA.myLatlng[id].Na == MAPA.myLatlng[med].Na && MAPA.myLatlng[id].Oa == MAPA.myLatlng[med].Oa )? true : false);
+                console.log( (MAPA.myLatlng[id].Na === MAPA.myLatlng[med].Na && MAPA.myLatlng[id].Oa === MAPA.myLatlng[med].Oa )? true : false);
                 //desenha as linhas
                 //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
                 //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
@@ -439,9 +440,10 @@ var MAPA = {
                 var coord = [];
                 coord.push(MAPA.myLatlng[id]);
                 coord.push(MAPA.myLatlng[med]);
+                console.log('coord: ', coord);
                 console.log('MAPA.myLatlng[id]: ', MAPA.myLatlng[id]);
                 console.log('MAPA.myLatlng[med]: ', MAPA.myLatlng[med]);
-                console.log( (MAPA.myLatlng[id].Na == MAPA.myLatlng[med].Na && MAPA.myLatlng[id].Oa == MAPA.myLatlng[med].Oa )? true : false);
+                console.log( (MAPA.myLatlng[id].Na === MAPA.myLatlng[med].Na && MAPA.myLatlng[id].Oa === MAPA.myLatlng[med].Oa )? true : false);
                 //desenha as linhas
                 //MAPA.deletaLinhas(MAPA.ultimaDesenhada, gmap);
                 //talvez deva limpar a matriz existente: corre o risco da referência das linhas ficar perdidas
