@@ -47,4 +47,51 @@ class Controller_Tools extends Controller {
 
 		}
 	}
+
+    public function action_createResultTables() {
+        $this->auto_render = false;
+        $this->response->headers('Content-Type','text/plain');
+        $profiles = Sprig::factory('profile')->load(NULL, FALSE);
+        $metrics = Sprig::factory('metric')->load(NULL, FALSE);
+
+        foreach($profiles as $profile) {
+            foreach($metrics as  $metric) {
+                $model = Model_Results::factory($profile->id, $metric->id)->createDB();
+                echo $metric->name."-".$profile->id." \n";
+            }
+        }
+    }
+
+    public function action_testSQL($process_id,$metricPlugin) {
+        $this->auto_render = false;
+        $this->response->headers('Content-Type','text/plain');
+        $process = Sprig::factory('process', array('id' => $process_id))->load();
+
+        if ($process->count() == 0) {
+            echo "Process $process_id does not exist.\n";
+        }
+        $destination = $process->destination->load();
+        $source = $process->source->load();
+        $profile = $process->profile->load();
+        $metric = Sprig::factory('metric')->load(Db::select()->where('plugin', '=', $metricPlugin));
+
+        $toBeSQLed = array(
+            'dsmax'=>lcg_value()+rand(0,10),
+            'dsmin'=>lcg_value()+mt_rand(0,10),
+            'dsavg'=>lcg_value()+mt_rand(0,10),
+            'sdmax'=>lcg_value()+rand(0,10),
+            'sdmin'=>lcg_value()+rand(0,10),
+            'sdavg'=>lcg_value()+mt_rand(0,10),
+            'timestamp' => date("U"),
+            'stored' => date("U"),
+            'process_id' => $process->id,
+            'source_name' => $source->name,
+            'destination_name' => $destination->name,
+
+        );
+
+        var_dump($toBeSQLed);
+        Model_Results::factory($profile->id,$metric->id)->insert($process->id,$toBeSQLed);
+
+    }
 }

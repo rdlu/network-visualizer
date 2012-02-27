@@ -8,7 +8,7 @@
 				<strong>> Filtros do gráfico</strong><br />
 				<em style="font-size: 12px;">> Remover valores:</em><br />
 
-				<label for="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">Upst: </label>
+				<label for="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">Down: </label>
 				<select name="filterType[<?=$metric->name?>][ds]" id="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">
 					<option value=">=">Acima de</option>
 					<option value="<=">Abaixo de</option>
@@ -18,7 +18,7 @@
 				<em id="filterUnit-<?=$metric->name?>-ds" class="filterUnit-<?=$metric->name?>" style="font-size: 11px;"></em>
 				<br />
 				<?php if($metric->name != 'rtt'): ?>
-				<label for="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">Down: </label>
+				<label for="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">Up: </label>
 				<select name="filterType[<?=$metric->name?>][sd]" id="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">
 					<option value=">=">Acima de</option>
 					<option value="<=">Abaixo de</option>
@@ -34,7 +34,19 @@
 		</div>
 		<?php endforeach; ?>
 	</div>
-</div>
+</div><br />
+<table class="filterMenu">
+    <tr>
+        <td>
+            <strong style="text-shadow: none">Exportação dos valores</strong><br />
+            <em style="font-size: 13px; text-shadow: none">
+                1. Após consultar, selecione o intervalo no gráfico com o mouse (clicar e arrastar)<br />
+                2. Aperte CTRL + C no seu teclado<br />
+                3. Cole no Excel (CTRL + V)<br />
+            </em>
+        </td>
+    </tr>
+</table>
 <script type="text/javascript">
 	var graphReport = {
 		response: <?=$results?>,
@@ -200,7 +212,7 @@
 		},
 		resultsWithLabels: function (metric, metricObj, type, path) {
 			var results = graphReport.results(metric, metricObj, type, path);
-			var caminho = (path == "ds") ? "Up" : "Down";
+			var caminho = (path == "ds") ? "Down" : "Up";
 			if (metric == 'rtt') caminho = "Roundtrip ";
 			return {
 				data: results, label: titleCaps(metric) + " " + caminho + " (" + type + ") = 0.0",
