@@ -29,7 +29,7 @@
         <td>Formato do relatório:
             <span id="typeImg"><input type="radio" name="dbchoice" id="radioImg" value="img" checked="checked"/><label for="radioImg">RRD Estático</label></span>
             <span id="typeFlot"><input type="radio" name="dbchoice" id="radioFlot" value="flot"/><label for="radioFlot">RRD Interativo</label></span>
-            <span id="typeSQL"><input type="radio" name="dbchoice" id="radioSQL" value="sql" disabled="disabled" /><label for="radioSQL">SQL Interativo</label></span>
+            <span id="typeSQL"><input type="radio" name="dbchoice" id="radioSQL" value="sql" /><label for="radioSQL">SQL Interativo</label></span>
             <span id="typeXport"><input type="radio" name="dbchoice" id="radioXport" value="xport" /><label for="radioXport">Arquivo CSV (Excel)</label></span>
         </td>
 		<td><span class="button" id="consultar"><img src="<?=url::base()?>images/actions/tick.png" alt="Consultar">&nbsp;Consultar</span></td>
