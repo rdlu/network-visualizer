@@ -145,13 +145,13 @@ class Rrd {
 		return $this;
 	}
 
-	/**
-	 * Funcao que atualiza os dados de um arquivo RRD
-	 * @param  int $profileId
-	 * @param  string $metric
-	 * @param  array $data
-	 * @return Rrd
-	 */
+    /**
+     * Funcao que atualiza os dados de um arquivo RRD
+     * @param int $metric
+     * @param array $data
+     * @param string $timestamp
+     * @return Rrd
+     */
 	public function update($metric, array $data, $timestamp = 'N') {
 		if ($timestamp == 'N') {
 			$ts = date("d.m.Y H:i:s T");
@@ -325,7 +325,7 @@ class Rrd {
 	public function last($metric, $m = 'Avg') {
 		$path = $this->path();
 		$filename = $this->filename($metric, "Last" . $m);
-		return exec("rrdtool last $path$filename", $resp, $code);
+		return (int) exec("rrdtool last $path$filename", $resp, $code);
 	}
 
 	public static function sci2num($value) {

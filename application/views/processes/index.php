@@ -1,7 +1,8 @@
 <table id="filterMenu">
 	<tr>
 		<td>Sonda de Origem da Medição:
-			<input type="text" name="sonda" id="sonda" size="30"/>
+			<input type="text" name="sonda" id="sonda" size="30"
+                value="<?=(count($defaultManager))?$defaultManager['name'].' ('.$defaultManager['ipaddress'].')':''?>"/>
 			<img id="sondaSelect" style="border: solid thin #666; background-color: #eee; vertical-align: middle;" src="<?=url::base()?>/images/actions/button_down.png" />
 				
 		</td>
@@ -67,6 +68,11 @@
 			}
 		});
 	});
+
+    <?php if(count($defaultManager)): ?>
+    jQuery("#sonda").data("id",<?=$defaultManager['id']?>);
+    listProcesses({id:<?=$defaultManager['id']?>,ipaddress:"<?=$defaultManager['ipaddress']?>"});
+    <?php endif; ?>
 
 	function listProcesses(sonda) {
 		if (sonda.id != 0) $('#newlink').attr('href', newlink + sonda.id);

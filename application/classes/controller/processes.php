@@ -20,7 +20,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 		$entities = Sprig::factory('entity')->load(NULL, FALSE);
 		$estados = Sprig::factory('uf')->load(NULL, FALSE);
-		$view->bind('entities', $entities);
+		$view->bind('entities', $entities)->set('defaultManager',Sonda::getDefaultManager());
 		$this->template->content = $view;
 	}
 

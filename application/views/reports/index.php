@@ -26,22 +26,17 @@
 		</td>
 	</tr>
 	<tr>
-		<td colspan="2"><span class="button" id="consultar"><img src="<?=url::base()?>images/actions/tick.png" alt="Consultar">&nbsp;Consultar</span></td>
+        <td>Formato do relatório:
+            <span id="typeImg"><input type="radio" name="dbchoice" id="radioImg" value="img" checked="checked"/><label for="radioImg">RRD Estático</label></span>
+            <span id="typeFlot"><input type="radio" name="dbchoice" id="radioFlot" value="flot"/><label for="radioFlot">RRD Interativo</label></span>
+            <span id="typeSQL"><input type="radio" name="dbchoice" id="radioSQL" value="sql" /><label for="radioSQL">SQL Interativo</label></span>
+            <span id="typeXport"><input type="radio" name="dbchoice" id="radioXport" value="xport" /><label for="radioXport">Arquivo CSV (Excel)</label></span>
+        </td>
+		<td><span class="button" id="consultar"><img src="<?=url::base()?>images/actions/tick.png" alt="Consultar">&nbsp;Consultar</span></td>
 	</tr>
 </table>
 <div id="resultado"></div>
-<table class="filterMenu">
-	<tr>
-		<td>
-			<strong style="text-shadow: none">Exportação dos valores</strong><br />
-				<em style="font-size: 13px; text-shadow: none">
-					1. Após consultar, selecione o intervalo no gráfico com o mouse (clicar e arrastar)<br />
-					2. Aperte CTRL + C no seu teclado<br />
-					3. Cole no Excel (CTRL + V)<br />
-				</em>
-		</td>
-	</tr>
-</table>
+
 <div id="clipboardArea" style="display: none; width: 350px">
 	<textarea name="tempArea" id="tempArea" cols="55" rows="10"></textarea>
 <table class="filterMenu">
@@ -60,7 +55,50 @@
 
 <script type="text/javascript">
 	var sondaAuto;
-	$(function() {
+    function makeRequest(type) {
+        var urlType;
+        switch(type) {
+            case 'flot':
+                urlType = "<?=url::site('reports/viewFlot')?>";
+                break;
+            case 'img':
+                urlType = "<?=url::site('reports/view')?>";
+                break;
+            case 'sql':
+                urlType = "<?=url::site('reports/viewSql')?>";
+                break;
+            case 'xport':
+                urlType = "<?=url::site('reports/viewXport')?>";
+                break;
+        }
+        jQuery.ajax({
+            url:urlType,
+            type:'post',
+            data:{
+                source:$("#sonda").data("id"),
+                destination:$("#destino").val(),
+                startDate:$("#inicio").val(),
+                startHour:$("#horaini").val(),
+                endDate:$("#fim").val(),
+                endHour:$("#horafim").val()
+            },
+            beforeSend:function () {
+                jQuery("#dialog-modal").dialog({modal:true});
+            },
+            success:function (data) {
+                jQuery("#dialog-modal").dialog('close');
+                $("#resultado").html("");
+                $("#resultado").html(data);
+            },
+            error:function (status, msg, error) {
+                jQuery("#dialog-modal").dialog('close');
+                $("#resultado").html("Erro na obtenção da informação. Recarregue seu navegador (tecla F5) e tente novamente.");
+                err(msg);
+            }
+        });
+    }
+
+    $(function() {
 		$("#fimNow").click(function() {
 			$("#fim").val($.datepicker.formatDate('dd/mm/yy',new Date()));
 			$("#horafim").val(new Date().getHours()+':'+new Date().getMinutes());
@@ -70,32 +108,9 @@
 			//log($("#sonda").data("id") + $("#destino").val());
 			//checa se tudo foi preenchido corretamente
 			if($("#sonda").val().length>0 && $("#destino").val() != 0) {
-				//Entao faz a requisição ajax
-				jQuery.ajax({
-					url: "<?=url::site('reports/viewFlot')?>",
-                    type: 'post',
-					data: {
-						source: $("#sonda").data("id"),
-						destination: $("#destino").val(),
-						startDate: $("#inicio").val(),
-						startHour: $("#horaini").val(),
-						endDate: $("#fim").val(),
-						endHour: $("#horafim").val()
-					},
-					beforeSend: function() {
-						jQuery("#dialog-modal").dialog({modal:true});
-					},
-					success: function( data ) {
-						jQuery("#dialog-modal").dialog('close');
-						$("#resultado").html("");
-                  $("#resultado").html(data);
-					},
-					error: function(status,msg,error) {
-						$("#resultado").html("Erro na obtenção da informação. Recarregue seu navegador (tecla F5) e tente novamente.");
-						err(msg);
-					}
-				});
-			} else {
+                //Entao faz a requisição ajax
+                makeRequest($("input:radio[name=dbchoice]:checked").val());
+            } else {
 				var $dialog = $('<div></div>').html('A sonda de origem e/ou destino não foram escolhidas.').dialog({
 					autoOpen: true,
 					modal: true,

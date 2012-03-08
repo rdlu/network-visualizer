@@ -42,6 +42,30 @@ class Controller_Collect extends Controller
 			                          ));
                         //Log::instance()->add(Log::WARNING,  "Memcaching : @$metric valores: $dsMax, $dsMin, $dsAvg, $sdMax, $sdMin, $sdAvg\n");
 			Kohana_Cache::instance('memcache')->set("$source->id-$destination->id",$toBeCached,86400);
+
+            //WARNING: A ordem importa
+            $toBeSQLed = array(
+                'process_id' => $process->id,
+                'dsavg'=>$dsAvg,
+                'sdavg'=>$sdAvg,
+                'dsmin'=>$dsMin,
+                'sdmin'=>$sdMin,
+                'dsmax'=>$dsMax,
+                'sdmax'=>$sdMax,
+                'timestamp' => date("U"),
+                'source_name' => $source->name,
+                'destination_name' => $destination->name,
+                'stored' => date("U"),
+            );
+
+
+            /*foreach($toBeSQLed as $k => $result) {
+                Kohana_Log::instance()->add(Kohana_Log::DEBUG,'@SQL '.$k.': '.$result);
+            }*/
+
+            Model_Results::factory($profile->id,$metric->id)->insert($process->id,$toBeSQLed);
+
+
 			if (true || $source->ipaddress == $ip) {
 				$snmp = Snmp::instance($source->ipaddress);
 				$simple = $snmp->group('agentSimple', array('pid' => $id));

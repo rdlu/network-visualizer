@@ -187,6 +187,174 @@ class Controller_Reports extends Controller_Skeleton {
 		}
 	}
 
+    public function action_viewXport($sId=0,$dId=0) {
+        $sId = (int) $sId;
+        $dId = (int) $dId;
+        $view = View::factory('reports/viewXport');
+        if(Request::current()->is_ajax()) {
+            $this->auto_render = false;
+            $sId = (int) $_POST['source'];
+            $dId = (int) $_POST['destination'];
+        }
+
+        $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
+        $source = Sprig::factory('entity',array('id'=>$sId))->load();
+        $destination = Sprig::factory('entity',array('id'=>$dId))->load();
+
+        $count = $processes->count();
+
+        if($count) {
+
+            foreach($processes as $process) {
+                $profile = $process->profile->load();
+                $metrics = $process->metrics->as_array('order');
+                ksort($metrics);
+            }
+
+            if(Request::current()->is_ajax()) {
+                $view->bind('metrics',$metrics)
+                    ->bind('processes',$processes)
+                    ->set('source',$source->as_array())
+                    ->set('destination',$destination->as_array());
+                $this->response->headers('Cache-Control',"no-cache");
+                $this->response->body($view);
+            } else {
+                $this->template->content = $view;
+            }
+
+        } else {
+            $this->template->content = "Não há nenhum processo de medição entre $source->name ($source->ipaddress) e $destination->name ($destination->ipaddress)";
+        }
+
+    }
+
+    public function action_xport() {
+        $this->auto_render = false;
+        $startDate = $_POST['startDate'];
+        $startHour = $_POST['startHour'];
+        $endDate = $_POST['endDate'];
+        $endHour = $_POST['endHour'];
+        $metricId = $_POST['metric'];
+        $sourceId = (int) $_POST['source'];
+        $destinationId = (int) $_POST['destination'];
+
+        $source = Sprig::factory('entity',array('id'=>$sourceId))->load();
+        $destination = Sprig::factory('entity',array('id'=>$destinationId))->load();
+        $metric = Sprig::factory('metric',array('id'=>$metricId))->load();
+        $profile = $metric->profile->load();
+        $process = Sprig::factory('process')->load(
+            DB::select()->where('destination_id','=',$destinationId)
+                ->where('source_id','=',$sourceId)
+                ->where('profile_id','=',$profile->id)
+        );
+
+        $filename = "momreport-".$destination->name."-".$metric->name."-".$startDate.$startHour."-".$endDate.$endHour;
+
+        list($day, $month, $year) = explode('/', $startDate);
+        list($hour, $minutes) = explode(':', $startHour);
+        $startTimestamp = mktime($hour, $minutes, 0, $month, $day, $year);
+        $startSQLTimestamp = $year."-".$month."-".$day." ".$startHour;
+
+        list($day, $month, $year) = explode('/', $endDate);
+        list($hour, $minutes) = explode(':', $endHour);
+        $endTimestamp = mktime($hour, $minutes, 0, $month, $day, $year);
+        $endSQLTimestamp = $year."-".$month."-".$day." ".$endHour;
+
+        $results = Model_Results::factory($profile->id,$metric->id)->query($process->id,$startSQLTimestamp,$endSQLTimestamp);
+
+        $separator = ";";
+        $values = array(
+            "timestamp"=>"Horario",
+            "dsavg"=>"Up (Avg)",
+            "sdavg"=>"Down (Avg)",
+            "dsmin"=>"Up (Min)",
+            "sdmin"=>"Down (Min)",
+            "dsmax"=>"Up (Max)",
+            "sdmax"=>"Down (Max)"
+        );
+        $header = implode($separator,$values);
+        $body = "";
+
+        foreach($results as $result) {
+            $line = "";
+            foreach($values as $column => $name) {
+                $line .= str_replace(".",",",$result[$column]).$separator;
+            }
+            $body .= $line."\r\n";
+        }
+
+        $this->response->headers("Content-Disposition", "attachment;filename=$filename.csv");
+        $this->response->headers('Content-Type','text/csv');
+
+        $this->response->body($header."\r\n".$body);
+    }
+
+    public function action_viewSql($sId=0,$dId=0) {
+        $sId = (int) $sId;
+        $dId = (int) $dId;
+        $view = View::factory('reports/viewSql');
+        if(Request::current()->is_ajax()) {
+            $this->auto_render = false;
+            $sId = (int) $_POST['source'];
+            $dId = (int) $_POST['destination'];
+
+            $relative = (isset($_POST['relative']))?$_POST['relative']:false;
+
+            if($relative) {
+                $inicio = strtotime($relative);
+                $end = Date("U");
+            } else {
+                $start = $_POST['startDate'];
+                $end = $_POST['endDate'];
+                $stime = $_POST['startHour'];
+                $etime = $_POST['endHour'];
+                $inicio = Date::toTimestamp($start." ".$stime,'%d/%m/%Y %H:%M');
+                $fim = Date::toTimestamp($end." ".$etime,'%d/%m/%Y %H:%M');
+            }
+
+        }
+
+        $processes = Sprig::factory('process')->load(DB::select()->where('destination_id','=',$dId)->where('source_id','=',$sId),false);
+        $source = Sprig::factory('entity',array('id'=>$sId))->load();
+        $destination = Sprig::factory('entity',array('id'=>$dId))->load();
+
+        $count = $processes->count();
+
+        if($count) {
+
+            foreach($processes as $process) {
+                $profile = $process->profile->load();
+                $metrics = $process->metrics->as_array('order');
+                ksort($metrics);
+                //Fire::error($metrics);
+                foreach($metrics as $metric) {
+                    $flot[$metric->name] = $this->singleSQLFlot($source->id,$destination->id,$metric->id,$inicio,$fim,1000,true);
+                }
+            }
+
+            if(Request::current()->is_ajax()) {
+                $view->set('results',Zend_Json::encode($flot))
+                    ->bind('startDate',$start)
+                    ->bind('endDate',$end)
+                    ->bind('startHour',$stime)
+                    ->bind('endHour',$etime)
+                    ->bind('metrics',$metrics)
+                    ->bind('processes',$processes)
+                    ->set('source',$source->as_array())
+                    ->set('destination',$destination->as_array());
+                $this->response->headers('Cache-Control',"no-cache");
+                $this->response->body($view);
+            } else {
+                $this->template->content = $view;
+            }
+
+
+
+        } else {
+            $this->template->content = "Não há nenhum processo de medição entre $source->name ($source->ipaddress) e $destination->name ($destination->ipaddress)";
+        }
+    }
+
 	public function action_xml($pId=0,$metric,$start='25/01/2011',$end='25/01/2011',$stime='13:00',$etime='14:00') {
 		if(true || Request::current()->is_ajax()) {
 			$this->auto_render = false;
@@ -298,6 +466,113 @@ class Controller_Reports extends Controller_Skeleton {
 //		$this->response->headers('Content-Type','application/json');
 		$this->response->body(Zend_Json::encode($pair->getResult($metric)));
 	}
+
+    protected function singleCSV($source,$destination,$metric,$start=false,$end=false,$multiplier=1,$timeOffset=false) {
+        $start = ($start)?$start:date("U", time() - 3600);
+        $end = ($end)?$end:date("U");
+        $pair = Pair::instance($source,$destination);
+        $c = ";";
+
+        //$types = array('Avg','Min','Max');
+        $type = 'Avg';
+        $line = "\r\n";
+        $exportString = $metric.$c.$source.$c.$destination.$c.$start.$c.$end.$line;
+
+        //foreach($types as $type) {
+            $json = $pair->getRrdInstance()->json($metric,$start,$end,$type);
+            $obj = Zend_Json::decode($json,Zend_Json::TYPE_OBJECT)->xport;
+            
+
+            if(is_array($obj->meta->legend->entry)) {
+                foreach($obj->meta->legend->entry as $x => $z) {
+                    $entries[0][$x] = $z;
+                }
+            } else {
+                $results->labels = array($obj->meta->legend->entry);
+                $rrdlabel = explode(" ",$obj->meta->legend->entry);
+                $direction[0] = $rrdlabel[1];
+                $values[$direction[0]] = null;
+                $results->values = $values;
+            }
+
+            $now = new DateTime();
+            $offset = $now->getOffset();
+            foreach($obj->data->row as $k => $row) {
+                if(is_array($row->v)) {
+                    foreach($row->v as $j => $value) {
+                        $value = ($value == 'NaN') ? null:$value;
+                        $time = ($timeOffset) ? ($row->t+$offset) : ($row->t);
+                        $values[$direction[$j]][$time*$multiplier] = $value;
+                    }
+                    $results->values = $values;
+                } else {
+                    $value = ($row->v == 'NaN') ? null:$row->v;
+                    $time = ($timeOffset) ? ($row->t+$offset) : ($row->t);
+                    $values[$direction[0]][$time*$multiplier] = $value;
+                    $results->values = $values;
+                }
+            }
+
+            $resultTypes->$type = $results;
+        //}
+    }
+
+    protected function singleSQLFlot($source,$destination,$metricId,$start=false,$end=false,$multiplier=1,$timeOffset=false) {
+        $start = ($start)?$start:date("U", time() - 3600);
+        $end = ($end)?$end:date("U");
+        $pair = Pair::instance($source,$destination);
+
+        $types = array('Avg','Min','Max');
+
+        $resultTypes = new stdClass();
+
+        $metric = Sprig::factory('metric',array('id'=>$metricId))->load();
+        $profile = $metric->profile->load();
+        $process = Sprig::factory('process')->load(
+            DB::select()->where('destination_id','=',$pair->getDestination()->id)
+                ->where('source_id','=',$pair->getSource()->id)
+                ->where('profile_id','=',$profile->id)
+        );
+
+        $startSQLTimestamp = date("Y-m-d H:i:s",$start);
+        $endSQLTimestamp = date("Y-m-d H:i:s",$end);
+        $results = Model_Results::factory($profile->id,$metric->id)->query($process->id,$startSQLTimestamp,$endSQLTimestamp);
+
+        $return = new stdClass();
+
+        foreach($types as $type) {
+            $return->$type = new stdClass();
+            $return->$type->labels = array("$metric ds","$metric sd");
+            $return->$type->values = new stdClass();
+            $return->$type->values->ds = new stdClass();
+            $return->$type->values->sd = new stdClass();
+        }
+
+        foreach($results as $line) {
+            foreach($types as $type) {
+                $type2= strtolower($type);
+                $ts = Date::sqlTimestamp2Unix($line['timestamp'])*1000;
+                $return->$type->values->ds->$ts = $line['ds'.$type2];
+                $return->$type->values->sd->$ts = $line['sd'.$type2];
+            }
+
+        }
+
+        return $return;
+    }
+
+    protected function multiSQLFlot($source,$destination) {
+        $pair = Pair::instance($source,$destination);
+        $metrics = $pair->getMetrics();
+
+        $results = array();
+
+        foreach($metrics as $k => $metric) {
+            $results[$metric->name] = $this->singleSQLFlot($source,$destination,$metric->name);
+        }
+
+        return $results;
+    }
 
 	protected function singleFlot($source,$destination,$metric,$start=false,$end=false,$multiplier=1,$timeOffset=false) {
 		$start = ($start)?$start:date("U", time() - 3600);
