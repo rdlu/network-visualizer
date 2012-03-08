@@ -9,10 +9,15 @@ class Date extends Kohana_Date {
 		return mktime($a['tm_hour'], $a['tm_min'], $a['tm_sec'], $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900);
 	}
 
-    public static function sqlTimestamp2Unix($str) {
+    public static function sqlTimestamp2Unix($str,$localtime=false) {
         $format = '%Y-%m-%d %H:%M:%S';
         $a = strptime($str, $format);
-        return date("U", mktime($a['tm_hour'], $a['tm_min'], $a['tm_sec'], $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900));
+        $retorno = date("U", mktime($a['tm_hour'], $a['tm_min'], $a['tm_sec'], $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900));
+
+        if($localtime) {
+            $retorno = $retorno + date("Z");
+        }
+        return $retorno;
     }
 
     public static function intl2sql($str) {

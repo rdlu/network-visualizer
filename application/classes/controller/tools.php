@@ -70,6 +70,7 @@ class Controller_Tools extends Controller {
         if ($process->count() == 0) {
             echo "Process $process_id does not exist.\n";
         }
+
         $destination = $process->destination->load();
         $source = $process->source->load();
         $profile = $process->profile->load();

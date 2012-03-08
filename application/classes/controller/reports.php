@@ -551,7 +551,7 @@ class Controller_Reports extends Controller_Skeleton {
         foreach($results as $line) {
             foreach($types as $type) {
                 $type2= strtolower($type);
-                $ts = Date::sqlTimestamp2Unix($line['timestamp'])*1000;
+                $ts = Date::sqlTimestamp2Unix($line['timestamp'],true)*1000;
                 $return->$type->values->ds->$ts = $line['ds'.$type2];
                 $return->$type->values->sd->$ts = $line['sd'.$type2];
             }
