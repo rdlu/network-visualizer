@@ -16,7 +16,7 @@
             <tr>
                 <th>Usuário</th>
                 <th>Perfil</th>
-                <th>Cell Id - Lac</th>
+                <th>Cell Id / Lac</th>
                 <th>Data</th>
                 <th>Rtt (ms)</th>
                 <th>TP TCP <br />down / up (Mbps)</th>
@@ -39,12 +39,18 @@
                 <tr >
                     <td><?php echo $medicao->username; ?></td>
                     <td><?php echo $medicao->perfil; ?></td>
-                    <td><?php echo $medicao->cellid; ?>
+                    <td><?php
+                            if(!empty($medicao->cellid) && $medicao->cellid !== null && $medicao->cellid != 0)
+                                echo $medicao->cellid;
+                            else
+                                echo ("-");
+                        ?>
                         <?php
                             //puxadinho na tabela para incluir condicionalmente o lac
                             if(!empty($medicao->lac) && $medicao->lac !== null && $medicao->lac != 0){
-                                echo " - $medicao->lac";
+                                echo " / $medicao->lac";
                             }
+                            else { echo " / -";}
                         ?>
                     </td>
                     <td><?php echo date('d/m/Y <br/> H:i:s', $medicao->timestamp); ?></td>
