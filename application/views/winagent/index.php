@@ -16,7 +16,7 @@
             <tr>
                 <th>Usuário</th>
                 <th>Perfil</th>
-                <th>Cell Id / Lac</th>
+                <th>Cell Id / LAC</th>
                 <th>Data</th>
                 <th>Rtt (ms)</th>
                 <th>TP TCP <br />down / up (Mbps)</th>
