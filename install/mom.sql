@@ -1,34 +1,27 @@
--- phpMyAdmin SQL Dump
--- version 3.3.7deb5build0.10.10.1
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: Aug 30, 2011 at 03:06 PM
--- Server version: 5.1.49
--- PHP Version: 5.3.3-1ubuntu9.5
+/*
+SQLyog Ultimate v9.51 
+MySQL - 5.1.61-0ubuntu0.11.10.1 : Database - mom_dev
+*********************************************************************
+*/
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
---
--- Database: `mom_dev`
---
+/*!40101 SET SQL_MODE=''*/;
 
--- --------------------------------------------------------
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`mom_dev` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
---
--- Table structure for table `dyndata`
---
+USE `mom_dev`;
 
-CREATE TABLE IF NOT EXISTS `dyndata` (
+/*Table structure for table `dyndata` */
+
+CREATE TABLE `dyndata` (
   `username` varchar(16) NOT NULL,
   `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
-  `cellid` int(10) unsigned NOT NULL,
+  `cellid` varchar(5) NOT NULL,
   `loss_down` int(10) unsigned NOT NULL,
   `loss_up` int(10) unsigned NOT NULL,
   `jitter_down` float NOT NULL,
@@ -40,17 +33,15 @@ CREATE TABLE IF NOT EXISTS `dyndata` (
   `rtt` float unsigned NOT NULL,
   `throughputtcp_down` float NOT NULL,
   `throughputtcp_up` float NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  UNIQUE KEY `id` (`id`),
   KEY `username` (`username`),
   KEY `cellid` (`cellid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `entities` */
 
---
--- Table structure for table `entities`
---
-
-CREATE TABLE IF NOT EXISTS `entities` (
+CREATE TABLE `entities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(127) NOT NULL,
   `ipaddress` varchar(255) NOT NULL,
@@ -70,15 +61,11 @@ CREATE TABLE IF NOT EXISTS `entities` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `entities_name_uniq` (`name`),
   UNIQUE KEY `ipUnique` (`ipaddress`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=31 ;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `metrics` */
 
---
--- Table structure for table `metrics`
---
-
-CREATE TABLE IF NOT EXISTS `metrics` (
+CREATE TABLE `metrics` (
   `id` int(1) NOT NULL AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,
   `plugin` varchar(20) NOT NULL,
@@ -89,30 +76,25 @@ CREATE TABLE IF NOT EXISTS `metrics` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `uniqueProfileMetric` (`id`,`profile_id`),
-  KEY `profile_id` (`profile_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
+  KEY `profile_id` (`profile_id`),
+  CONSTRAINT `metrics_ibfk_1` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `metrics_processes` */
 
---
--- Table structure for table `metrics_processes`
---
-
-CREATE TABLE IF NOT EXISTS `metrics_processes` (
+CREATE TABLE `metrics_processes` (
   `process_id` int(3) DEFAULT NULL,
   `metric_id` int(1) DEFAULT NULL,
   `limit` int(10) DEFAULT NULL,
   UNIQUE KEY `UniqueMetricProcess` (`process_id`,`metric_id`),
-  KEY `FK_metrics_processes2` (`metric_id`)
+  KEY `FK_metrics_processes2` (`metric_id`),
+  CONSTRAINT `FK_metrics_processes` FOREIGN KEY (`process_id`) REFERENCES `processes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_metrics_processes2` FOREIGN KEY (`metric_id`) REFERENCES `metrics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `processes` */
 
---
--- Table structure for table `processes`
---
-
-CREATE TABLE IF NOT EXISTS `processes` (
+CREATE TABLE `processes` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
   `added` int(11) NOT NULL DEFAULT '0',
   `updated` int(11) NOT NULL DEFAULT '0',
@@ -126,16 +108,15 @@ CREATE TABLE IF NOT EXISTS `processes` (
   KEY `processes_source_id_idx` (`source_id`),
   KEY `processes_destination_id_idx` (`destination_id`),
   KEY `processes_profile_id_idx` (`profile_id`),
-  KEY `FK_processes321` (`threshold_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=160 ;
+  KEY `FK_processes321` (`threshold_id`),
+  CONSTRAINT `processes_ibfk_1` FOREIGN KEY (`source_id`) REFERENCES `entities` (`id`),
+  CONSTRAINT `processes_ibfk_2` FOREIGN KEY (`destination_id`) REFERENCES `entities` (`id`),
+  CONSTRAINT `processes_ibfk_3` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `profiles` */
 
---
--- Table structure for table `profiles`
---
-
-CREATE TABLE IF NOT EXISTS `profiles` (
+CREATE TABLE `profiles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   `polling` int(11) NOT NULL,
@@ -151,55 +132,41 @@ CREATE TABLE IF NOT EXISTS `profiles` (
   `status` smallint(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `profiles_name_uniq` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `roles` */
 
---
--- Table structure for table `roles`
---
-
-CREATE TABLE IF NOT EXISTS `roles` (
+CREATE TABLE `roles` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   `description` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `roles_users` */
 
---
--- Table structure for table `roles_users`
---
-
-CREATE TABLE IF NOT EXISTS `roles_users` (
+CREATE TABLE `roles_users` (
   `user_id` int(10) unsigned NOT NULL,
   `role_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`user_id`,`role_id`),
-  KEY `fk_role_id` (`role_id`)
+  KEY `fk_role_id` (`role_id`),
+  CONSTRAINT `roles_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `roles_users_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `thresholdprofiles` */
 
---
--- Table structure for table `thresholdprofiles`
---
-
-CREATE TABLE IF NOT EXISTS `thresholdprofiles` (
+CREATE TABLE `thresholdprofiles` (
   `id` int(1) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) CHARACTER SET latin1 NOT NULL,
   `desc` text CHARACTER SET latin1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `thresholdvalues` */
 
---
--- Table structure for table `thresholdvalues`
---
-
-CREATE TABLE IF NOT EXISTS `thresholdvalues` (
+CREATE TABLE `thresholdvalues` (
   `thresholdprofile_id` int(1) unsigned NOT NULL,
   `metric_id` int(1) NOT NULL,
   `min` double NOT NULL,
@@ -207,16 +174,29 @@ CREATE TABLE IF NOT EXISTS `thresholdvalues` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Uniquethresmetric` (`thresholdprofile_id`,`metric_id`),
-  KEY `FK_thresholdvalues` (`metric_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
+  KEY `FK_thresholdvalues` (`metric_id`),
+  CONSTRAINT `FK_thresholdvalues` FOREIGN KEY (`metric_id`) REFERENCES `metrics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_thresholdvalues1` FOREIGN KEY (`thresholdprofile_id`) REFERENCES `thresholdprofiles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+/*Table structure for table `user_tokens` */
 
---
--- Table structure for table `users`
---
+CREATE TABLE `user_tokens` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `user_agent` varchar(40) NOT NULL,
+  `token` varchar(32) NOT NULL,
+  `created` int(10) unsigned NOT NULL,
+  `expires` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_token` (`token`),
+  KEY `fk_user_id` (`user_id`),
+  CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `users` (
+/*Table structure for table `users` */
+
+CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(127) NOT NULL,
   `username` varchar(32) NOT NULL DEFAULT '',
@@ -229,67 +209,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_username` (`username`),
   UNIQUE KEY `uniq_email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=23 ;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `user_tokens`
---
-
-CREATE TABLE IF NOT EXISTS `user_tokens` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL,
-  `user_agent` varchar(40) NOT NULL,
-  `token` varchar(32) NOT NULL,
-  `created` int(10) unsigned NOT NULL,
-  `expires` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_token` (`token`),
-  KEY `fk_user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `metrics`
---
-ALTER TABLE `metrics`
-  ADD CONSTRAINT `metrics_ibfk_1` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `metrics_processes`
---
-ALTER TABLE `metrics_processes`
-  ADD CONSTRAINT `FK_metrics_processes` FOREIGN KEY (`process_id`) REFERENCES `processes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_metrics_processes2` FOREIGN KEY (`metric_id`) REFERENCES `metrics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `processes`
---
-ALTER TABLE `processes`
-  ADD CONSTRAINT `processes_ibfk_1` FOREIGN KEY (`source_id`) REFERENCES `entities` (`id`),
-  ADD CONSTRAINT `processes_ibfk_2` FOREIGN KEY (`destination_id`) REFERENCES `entities` (`id`),
-  ADD CONSTRAINT `processes_ibfk_3` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`);
-
---
--- Constraints for table `roles_users`
---
-ALTER TABLE `roles_users`
-  ADD CONSTRAINT `roles_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `roles_users_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `thresholdvalues`
---
-ALTER TABLE `thresholdvalues`
-  ADD CONSTRAINT `FK_thresholdvalues` FOREIGN KEY (`metric_id`) REFERENCES `metrics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_thresholdvalues1` FOREIGN KEY (`thresholdprofile_id`) REFERENCES `thresholdprofiles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `user_tokens`
---
-ALTER TABLE `user_tokens`
-  ADD CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
