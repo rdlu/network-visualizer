@@ -15,7 +15,8 @@
         <thead>
             <tr>
                 <th>Usuário</th>
-                <th>Cell Id</th>
+                <th>Perfil</th>
+                <th>Cell Id / LAC</th>
                 <th>Data</th>
                 <th>Rtt (ms)</th>
                 <th>TP TCP <br />down / up (Mbps)</th>
@@ -37,7 +38,21 @@
             <?php foreach($medicoes as $medicao): ?>
                 <tr >
                     <td><?php echo $medicao->username; ?></td>
-                    <td><?php echo $medicao->cellid; ?></td>
+                    <td><?php echo $medicao->perfil; ?></td>
+                    <td><?php
+                            if(!empty($medicao->cellid) && $medicao->cellid !== null && $medicao->cellid != 0)
+                                echo $medicao->cellid;
+                            else
+                                echo ("-");
+                        ?>
+                        <?php
+                            //puxadinho na tabela para incluir condicionalmente o lac
+                            if(!empty($medicao->lac) && $medicao->lac !== null && $medicao->lac != 0){
+                                echo " / $medicao->lac";
+                            }
+                            else { echo " / -";}
+                        ?>
+                    </td>
                     <td><?php echo date('d/m/Y <br/> H:i:s', $medicao->timestamp); ?></td>
                     <td><?php printf('%.2f', $medicao->rtt*1000); ?></td>
                     <td><?php printf('%.2f / %.2f', $medicao->throughputtcp_down/1000000, $medicao->throughputtcp_up/1000000); ?></td>
