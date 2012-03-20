@@ -19,7 +19,7 @@ USE `mom_dev`;
 
 /*Data for the table `metrics` */
 
-insert  into `metrics`(`id`,`name`,`plugin`,`desc`,`profile_id`,`reverse`,`order`) values (1,'throughput','throughput','Vazão de dados',2,0,1),(2,'jitter','jitter','Flutuação na latência',1,1,5),(3,'capacity','bandwith','Capacidade no gargalo (experimental)',2,0,9),(4,'loss','loss','Perda de pacotes transmitidos ',1,1,4),(5,'owd','owd','Latência unidirecional',1,1,7),(6,'mos','mos','Mean Opinion Score',1,0,8),(7,'pom','pom','Pacotes fora de ordem',1,1,6),(8,'rtt','rtt','Latência ida e volta',1,1,3),(9,'throughputTCP','throughput_tcp','Vazão de dados sob TCP',3,0,2);
+insert  into `metrics`(`id`,`name`,`plugin`,`desc`,`profile_id`,`reverse`,`order`) values (1,'throughput','throughput','Vazão de dados',2,0,1),(2,'jitter','jitter','Flutuação na latência',1,1,5),(3,'capacity','bandwidth','Capacidade no gargalo (experimental)',2,0,9),(4,'loss','loss','Perda de pacotes transmitidos ',1,1,4),(5,'owd','owd','Latência unidirecional',1,1,7),(6,'mos','mos','Mean Opinion Score',1,0,8),(7,'pom','pom','Pacotes fora de ordem',1,1,6),(8,'rtt','rtt','Latência ida e volta',1,1,3),(9,'throughputTCP','throughput_tcp','Vazão de dados sob TCP',3,0,2);
 
 /*Data for the table `profiles` */
 
