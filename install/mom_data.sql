@@ -2,7 +2,8 @@
 SQLyog Ultimate v9.51 
 MySQL - 5.1.61-0ubuntu0.11.10.1 : Database - mom_dev
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -22,7 +23,7 @@ insert  into `metrics`(`id`,`name`,`plugin`,`desc`,`profile_id`,`reverse`,`order
 
 /*Data for the table `profiles` */
 
-insert  into `profiles`(`id`,`name`,`polling`,`count`,`probeCount`,`probeSize`,`gap`,`qosType`,`qosValue`,`timeout`,`protocol`,`description`,`status`) values (1,'RTT',300,100,1,100,100,0,0,6,0,'Perfil exclusivo para testes de latência de resposta.',1),(2,'ThroughputUDP',300,10,40,500,2000,0,0,5,0,'Perfil definido exclusivamente para medição de vazão de dados via UDP.',1),(3,'throughputTCP',600,1,600,1488,100,0,0,15,1,'blah!',1);
+insert  into `profiles`(`id`,`name`,`polling`,`count`,`probeCount`,`probeSize`,`gap`,`qosType`,`qosValue`,`timeout`,`protocol`,`description`,`status`) values (1,'RTT',300,100,1,100,100,0,0,6,0,'Perfil exclusivo para testes de latência de resposta.',1),(2,'ThroughputUDP',300,10,40,500,2000,0,0,5,0,'Perfil definido exclusivamente para medição de vazão de dados via UDP.',1),(3,'throughputTCP',300,1,600,1488,100,0,0,15,1,'blah!',1);
 
 /*Data for the table `roles` */
 
