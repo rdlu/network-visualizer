@@ -34,6 +34,8 @@ if [ ! -z "$1" ]
 #	cp application/config/database.php.example application/config/database.php
 #	vim application/config/database.php
 
+	cp ./install/redirector.php /var/www/index.php
+
 	echo "Copiando a extensao do rrdtool para o PHP"
 	cp ./install/rrdtool/rrdtool.so /usr/lib/php5/20090626
 	cp ./install/rrdtool/rrdtool.ini /etc/php5/conf.d/
