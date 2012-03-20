@@ -27,7 +27,7 @@ if [ ! -z "$1" ]
 	mysql -u root < ./install/post-install.sql
 
 #	echo "++++++++ Criando o arquivo public/.htaccess para o Apache"
-#	cp public/example.htaccess public/.htaccess
+	cp public/example.htaccess public/.htaccess
 #	vim public/.htaccess
 	
 #	echo "++++++++ Criando os arquivos de configurações"

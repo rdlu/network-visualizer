@@ -12,6 +12,7 @@ class Model_Entity extends Sprig {
             /**
              *  Endereco IPv4
              */
+            'isAndroid'=>new Sprig_Field_Boolean(array('label'=>'Agente Android')),
             'ipaddress' => new Sprig_Field_Char(array('label'=>'Endereço IP',
                     'min_length'=>7,
                     'max_length'=>255,

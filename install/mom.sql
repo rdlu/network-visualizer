@@ -2,7 +2,8 @@
 SQLyog Ultimate v9.51 
 MySQL - 5.1.61-0ubuntu0.11.10.1 : Database - mom_dev
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -58,6 +59,7 @@ CREATE TABLE `entities` (
   `state` varchar(250) DEFAULT NULL,
   `latitude` varchar(10) DEFAULT NULL,
   `longitude` varchar(10) DEFAULT NULL,
+  `isAndroid` BOOL NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `entities_name_uniq` (`name`),
   UNIQUE KEY `ipUnique` (`ipaddress`)

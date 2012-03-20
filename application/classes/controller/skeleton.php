@@ -78,7 +78,7 @@ class Controller_Skeleton extends Controller_Template {
 				'css/cupertino/jquery-ui-1.8.15.custom.css' => 'all',
 			);
 
-			$jqueryVersion = "1.6.2";
+			$jqueryVersion = "1.7.1";
 			$juiversion = "1.8.15.custom";
 
 
