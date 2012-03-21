@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "--------  Setup Netmetric MoM ----------"
+echo "########################  Setup Netmetric MoM  ########################"
 
 #grupo no gentoo,archlinux,outras distros
 #group=httpd
@@ -7,7 +7,7 @@ echo "--------  Setup Netmetric MoM ----------"
 #group=www-data
 if [ ! -z "$1" ]
   then
-	echo "Configurando Permissoes dos Diretorios data/*, cache e logs..."
+	echo "######  Configurando Permissoes dos Diretorios data/*, cache e logs... #####"
 	chmod ug+rwx data/* application/cache/ application/logs/
 	chmod o-wx data/* application/cache/ application/logs/
 #	ln -s /usr/share/netmetric-mom/public /var/www/mom
@@ -15,15 +15,16 @@ if [ ! -z "$1" ]
 	echo Permissoes OK
 
 
-	echo "++++++++ Configurando grupos dos arquivos para o do servidor web"
+	echo "##### Configurando grupos dos arquivos para o do servidor web #####"
 	chgrp -R $1 *
 
-	echo "++++++++ Criando a database no MySQL"
+	echo "###### Criando a database no MySQL ######"
 
 	mysql -u root < ./install/create-db.sql
 	mysql -u root -D mom_dev < ./install/mom.sql
 	mysql -u root -D mom_dev < ./install/mom_data.sql
 	mysql -u root < ./install/mom_address.sql
+	mysql -u root < ./install/mom_cep.sql
 	mysql -u root < ./install/post-install.sql
 
 #	echo "++++++++ Criando o arquivo public/.htaccess para o Apache"
@@ -36,11 +37,11 @@ if [ ! -z "$1" ]
 
 	cp ./install/redirector.php /var/www/index.php
 
-	echo "Copiando a extensao do rrdtool para o PHP"
+	echo "###### Copiando a extensao do rrdtool para o PHP ######"
 	cp ./install/rrdtool/rrdtool.so /usr/lib/php5/20090626
 	cp ./install/rrdtool/rrdtool.ini /etc/php5/conf.d/
 
-	echo "Ultimos ajustes do apache 2"
+	echo "##### Ultimos ajustes do apache 2 #####"
 	a2enmod rewrite
 	cp ./install/ssl-cert-snakeoil.key /etc/ssl/private/
 	cp ./install/ssl-cert-snakeoil.pem /etc/ssl/certs/
@@ -49,6 +50,7 @@ if [ ! -z "$1" ]
 	a2ensite default-ssl
 	apache2ctl restart
 	rm -rf ./install/post-install.sql
+	echo "##### MoM Instalado #####"
 
 else
 	echo "Falta parametro obrigatorio: grupo usado pelo apache (ex: www-data no Ubuntu)"
