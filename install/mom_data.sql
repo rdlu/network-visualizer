@@ -39,7 +39,9 @@ insert  into `thresholdvalues`(`thresholdprofile_id`,`metric_id`,`min`,`max`,`id
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`email`,`username`,`password`,`last_password`,`logins`,`last_login`,`last_pchange`,`active`) values (3,'admin@netmetric.com','admin','7eae0ffa48f709f72c88c4fc62a3407a03a03e1a88f8de5fea5e2a8559c1705f',NULL,373,1331232038,NULL,1);
+insert  into `users`(`id`,`email`,`username`,`password`,`last_password`,`logins`,`last_login`,`last_pchange`,`active`) values (1,'admin@netmetric.com','admin','7eae0ffa48f709f72c88c4fc62a3407a03a03e1a88f8de5fea5e2a8559c1705f',NULL,373,1331232038,NULL,1);
+
+insert into `roles_users`(`user_id`,`role_id`) values (1,1),(1,2),(1,3);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

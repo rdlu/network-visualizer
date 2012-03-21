@@ -46,6 +46,7 @@ if [ ! -z "$1" ]
 	cp ./install/ssl-cert-snakeoil.pem /etc/ssl/certs/
 	chown root /etc/ssl/private/ssl-cert-snakeoil.key
 	a2enmod ssl
+	a2ensite default-ssl
 	apache2ctl restart
 	rm -rf ./install/post-install.sql
 
