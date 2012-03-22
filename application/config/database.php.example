@@ -1,9 +1,7 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
-return array
-(
-	'default' => array
-	(
+return array(
+	'default' => array(
 		'type'       => 'mysql',
 		'connection' => array(
 			/**
@@ -28,8 +26,7 @@ return array
 		'caching'      => FALSE,
 		'profiling'    => TRUE,
 	),
-	'production' => array
-	(
+	'production' => array(
 		'type'       => 'mysql',
 		'connection' => array(
 			'hostname'   => 'localhost',
@@ -43,4 +40,18 @@ return array
 		'caching'      => FALSE,
 		'profiling'    => TRUE,
 	),
+	'results' => array(
+		'type'       => 'mysql',
+		'connection' => array(
+			'hostname'   => 'localhost',
+			'database'   => 'mom_results',
+			'username'   => 'mom',
+			'password'   => 'upY3tsLrHSszHtwC',
+			'persistent' => FALSE,
+		),
+		'table_prefix' => '',
+		'charset'      => 'utf8',
+		'caching'      => FALSE,
+		'profiling'    => TRUE,
+	)
 );

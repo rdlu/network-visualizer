@@ -32,10 +32,12 @@ if [ ! -z "$1" ]
 #	vim public/.htaccess
 	
 #	echo "++++++++ Criando os arquivos de configurações"
-#	cp application/config/database.php.example application/config/database.php
+	cp application/config/database.php.example application/config/database.php
+	cp application/config/network.php.example application/config/network.php
 #	vim application/config/database.php
 
 	cp ./install/redirector.php /var/www/index.php
+	rm /var/www/index.html
 
 	echo "###### Copiando a extensao do rrdtool para o PHP ######"
 	cp ./install/rrdtool/rrdtool.so /usr/lib/php5/20090626
