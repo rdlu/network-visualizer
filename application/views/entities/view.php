@@ -111,6 +111,7 @@
 								if (data.errors > 0) {
 									var msg = '';
 									jQuery.each(data.message, function(idx, message) {
+                                        console.log(message+idx);
 										if(idx != 0) msg += message + '<br />';
 									});
 									dialog.html("<b>Não foi possível remover o processo:</b><br />" + msg + "Você pode forçar a remoção, em caso das sondas já terem sido desativadas.");
@@ -128,7 +129,7 @@
 													dialog.dialog("option", "buttons", {});
 												},
 												success: function(data) {
-													if (data.errors > 0) {
+													if (undefined!=data.message[4]) {
 														var msg = '';
 														jQuery.each(data.message, function(idx, message) {
 															if(idx != 0) msg += message + '<br />';

@@ -106,7 +106,7 @@ class Pair {
 			$sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic');
 			//disableAgent
 			$sourceSnmp->setGroup('disableAgent', $values, array('id' => $process->id));
-			sleep(5);
+			sleep(2);
 			//removeAgent
 			$sourceSnmp->setGroup('removeAgent', $values, array('id' => $process->id));
 
