@@ -75,7 +75,7 @@
     <?php endif; ?>
 
 	function listProcesses(sonda) {
-		if (sonda.id != 0) $('#newlink').attr('href', newlink + sonda.id);
+		if (sonda.id != 0) $('#newlink').attr('href', '<?=url::base()?>processes/new/' + sonda.id);
 		else $('#newlink').attr('href', newlink);
 		jQuery.ajax({
 			url: "<?=url::site('processes/list')?>/" + sonda.ipaddress,

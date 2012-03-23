@@ -113,8 +113,9 @@ class Controller_Entities extends Controller_Skeleton
 		$this->action_edit(0);
 	}
 
-	public function action_remove($id)
+	public function action_remove()
 	{
+        $id = (int) $_POST['id'];
 		$entity = Sprig::factory('entity');
 		if ($id != 0) {
 			$entity->id = $id;
