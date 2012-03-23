@@ -52,6 +52,7 @@ if [ ! -z "$1" ]
 	a2ensite default-ssl
 	apache2ctl restart
 	rm -rf ./install/post-install.sql
+	php /usr/share/netmetric-mom/public/index.php --uri=tools/createResultTables
 	echo "##### MoM Instalado #####"
 
 else

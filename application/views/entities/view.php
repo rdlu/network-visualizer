@@ -200,7 +200,7 @@
 								},
 								success: function(data) {
 									if(!data.error) {
-										dialog2.html(data.message);
+										dialog2.html(data);
 										dialog2.dialog("option", "buttons", {
 											OK: function() {
 												dialog2.dialog("close");
@@ -208,7 +208,7 @@
 											}
 										});
 									} else {
-										dialog2.html(data.message);
+										dialog2.html(data);
 										dialog2.dialog("option", "buttons", {
 											OK: function() {
 												dialog2.dialog("close");
