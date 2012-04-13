@@ -29,7 +29,11 @@ class Snmp {
 	 * @return Snmp
 	 */
 	public static function instance($address = NULL,$community='suppublic',$options = array()) {
-		if ($address === NULL) {
+		if(Kohana::config('network.snmpproxy.active')) {
+            return SnmpProxy::instance($address,$community,$options);
+        }
+
+        if ($address === NULL) {
 			// Use the default instance name
 			$address = Snmp::$default;
 		}

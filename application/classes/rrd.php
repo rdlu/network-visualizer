@@ -103,7 +103,7 @@ class Rrd {
 		$fourthPrecision = 31449600 / 21600; //anual mantem 6h
 		$fifthPrecision = 157248000 / 43200; //5-anual mantem 12h
 
-        $stepsToLook1 =
+        	//$stepsToLook1 =
 
 		$opts[] = "-s";
 		$opts[] = "$step";
