@@ -209,7 +209,7 @@ class SnmpProxy
             //Fire::info("$key: $value");
 
             try {
-                $result = snmp2_set($this->address,$this->community,$oid['oid'],$type,$value,$this->timeout,$this->retries);
+                $result = $this->setValue($oid['oid'],$type,$value);
             } catch (Exception $err) {
                 $code = $err->getCode();
                 $msg = $err->getMessage();                $oe = $oid['oid'];
