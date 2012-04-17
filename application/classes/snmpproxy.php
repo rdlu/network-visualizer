@@ -77,6 +77,7 @@ class SnmpProxy
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
             $response = curl_exec($ch);
+            $info = curl_getinfo($ch);
             curl_close($ch);
         } catch (Exception $err) {
             $code = $err->getCode();
@@ -108,6 +109,11 @@ class SnmpProxy
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $response = curl_exec($ch);
+            $info = curl_getinfo($ch);
+
+            if ($response === false || $info['http_code'] != 504) {
+                throw new Snmp_Exception("Servidor de proxy SNMP reportou erro de upstream",0);
+            }
             curl_close($ch);
         } catch (Exception $err) {
             $code = $err->getCode();

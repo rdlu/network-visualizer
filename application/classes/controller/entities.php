@@ -8,7 +8,13 @@ class Controller_Entities extends Controller_Skeleton
 	// Controls access for separate actions
 	// 'adminpanel' => 'admin' will only allow users with the role admin to access action_adminpanel
 	// 'moderatorpanel' => array('login', 'moderator') will only allow users with the roles login and moderator to access action_moderatorpanel
-	public $secure_actions = array('remove' => array('admin', 'config'), 'edit' => array('admin', 'config'), 'new' => array('admin', 'config'));
+	public $secure_actions = array('remove' => array('admin', 'config'),
+        'edit' => array('admin', 'config'),
+        'new' => array('admin', 'config'),
+        'list' => array('admin','config','login'),
+        'view' => array('admin','config','login'),
+        'byCity' => array('admin','config','login'),
+        'topTenManagers' => array('admin','config','login'));
 
 	public function before()
 	{
