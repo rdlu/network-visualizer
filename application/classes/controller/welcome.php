@@ -59,7 +59,7 @@ class Controller_Welcome extends Controller_Skeleton
 
 	public function action_infoMapaJ()
 	{
-		if (true||Request::current()->is_ajax()) {
+		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
 			$query = DB::select()->order_by('status', 'DESC');
 			$entities = Sprig::factory('entity')->load($query, FALSE);
