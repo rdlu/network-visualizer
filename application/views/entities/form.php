@@ -34,7 +34,8 @@
 	<?=$entity->label('state');?>
 	<?=$entity->input('state', array('id' => 'state', $disabled => $disabled));?><br/>
 	<?=$entity->label('name');?>
-	<?=$entity->input('name', array('id' => 'name', $disabled => $disabled));?>
+	<?=$entity->input('name', array('id' => 'name', $disabled => $disabled));?><br/>
+    <?=$entity->input('isAndroid', array('id' => 'isAndroid', $disabled => $disabled));?>
 </fieldset>
 <fieldset title="Dados Obrigatórios">
 	<legend>Dados Opcionais</legend>

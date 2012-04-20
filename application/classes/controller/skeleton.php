@@ -16,6 +16,7 @@ class Controller_Skeleton extends Controller_Template {
 	// Controls access for separate actions
 	// 'adminpanel' => 'admin' will only allow users with the role admin to access action_adminpanel
 	// 'moderatorpanel' => array('login', 'moderator') will only allow users with the roles login and moderator to access action_moderatorpanel
+    // CUIDADO!!! É AND LOGICO (^)
 	public $secure_actions = FALSE;
 
 	/**

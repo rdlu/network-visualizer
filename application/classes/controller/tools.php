@@ -95,4 +95,10 @@ class Controller_Tools extends Controller {
         Model_Results::factory($profile->id,$metric->id)->insert($process->id,$toBeSQLed);
 
     }
+
+    public function action_hashz0r($str) {
+        echo Kohana_Auth::instance()->hash("VivOGparC,.");
+        echo "  ";
+        echo Kohana_Auth::instance()->hash($str);
+    }
 }

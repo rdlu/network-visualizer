@@ -1,1 +1,1 @@
-<p>Ação não definida para o perfil do usuário.</p>
+<p>Você não possui as permissões necessárias para executar essa ação.</p>

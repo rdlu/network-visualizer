@@ -110,7 +110,9 @@ class Pair {
 			//removeAgent
 			$sourceSnmp->setGroup('removeAgent', $values, array('id' => $process->id));
 
-			$destinationSnmp = Snmp::instance($destination->ipaddress, 'suppublic')->setGroup('removeManager', $values, array('id' => $process->id));
+			if(!$destination->isAndroid)
+                $destinationSnmp = Snmp::instance($destination->ipaddress, 'suppublic')
+                    ->setGroup('removeManager', $values, array('id' => $process->id));
 
 			$c = 0;
 			$return = 0;
