@@ -84,8 +84,7 @@ class Controller_Account extends Controller_Skeleton {
                         catch (Exception $e) {
                                 #Load the view
                                 $this->template->content = View::factory('account/register')
-                                                            ->bind('error', $error);
-				
+                                                            ->bind('error', $error);				
 			}
 		}
                 else{
@@ -247,7 +246,7 @@ class Controller_Account extends Controller_Skeleton {
                 }
             }
         }
-
+/*
         public function action_edit2(){
             $current_user = Auth::instance()->get_user();
             //teste recorrente e possível ponto de falha:
@@ -357,7 +356,7 @@ class Controller_Account extends Controller_Skeleton {
                 }
             }
                         
-        }
+        } */
         
         public function action_toogle(){ //torna o usuário ativo ou inativo, dependendo
             $current_user = Auth::instance()->get_user();
