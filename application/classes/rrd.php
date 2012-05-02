@@ -96,32 +96,34 @@ class Rrd {
 	 * @return Rrd
 	 */
 	public function create($metric, $step) {
-		$heartbeat = 3 * $step;
-		$mainPrecision = 1209600 / $step; //1 semana
-		$secondaryPrecision = 2628000 / $step; //1 mes
-		$thirdPrecision = 15768000 / $step; //6 meses
-		$fourthPrecision = 31536000 / $step; //1 anos
-		$fifthPrecision = 157680000 / $step; //5anos
+        $heartbeat = 3 * $step; //tempo de espera ate dar missing
+		$mainPrecision = 604800 / $step; //semanal mantem todos
+		$secondaryPrecision = 2592000 / 3600; //mensal mantem 1h
+		$thirdPrecision = 15724800 / 10800; //semestral mantem 3h
+		$fourthPrecision = 31449600 / 21600; //anual mantem 6h
+		$fifthPrecision = 157248000 / 43200; //5-anual mantem 12h
+
+        	//$stepsToLook1 =
 
 		$opts[] = "-s";
 		$opts[] = "$step";
 		$opts[] = "DS:downstream:GAUGE:$heartbeat:U:U";
 		if ($metric != 'rtt')
 			$opts[] = "DS:upstream:GAUGE:$heartbeat:U:U";
-		$opts[] = "RRA:LAST:0.5:1:$mainPrecision"; //step por step
-		$opts[] = "RRA:AVERAGE:0.5:4:$secondaryPrecision"; //a cada 4 steps
-		$opts[] = "RRA:AVERAGE:0.5:16:$thirdPrecision"; //a cada 16 steps
-		$opts[] = "RRA:AVERAGE:0.5:32:$fourthPrecision"; //a cada 32 steps
-		$opts[] = "RRA:AVERAGE:0.5:64:$fifthPrecision"; //a cada 100 steps
-		$opts[] = "RRA:MAX:0.5:1:$mainPrecision";
-		$opts[] = "RRA:MAX:0.5:4:$secondaryPrecision";
+		$opts[] = "RRA:LAST:0.5:1:$mainPrecision";
+		$opts[] = "RRA:AVERAGE:0.5:12:$secondaryPrecision";
+		$opts[] = "RRA:AVERAGE:0.5:36:$thirdPrecision";
+		$opts[] = "RRA:AVERAGE:0.5:72:$fourthPrecision";
+		$opts[] = "RRA:AVERAGE:0.5:144:$fifthPrecision";
+		/*$opts[] = "RRA:MAX:0.5:1:$mainPrecision";
+		$opts[] = "RRA:MAX:0.5:12:$secondaryPrecision";
 		//$opts[] = "RRA:MAX:0.5:16:$thirdPrecision";
 		//$opts[] = "RRA:MAX:0.5:100:$fourthPrecision";
 		$opts[] = "RRA:MIN:0.5:1:$mainPrecision";
-		$opts[] = "RRA:MIN:0.5:4:$secondaryPrecision";
+		$opts[] = "RRA:MIN:0.5:12:$secondaryPrecision";
 		//$opts[] = "RRA:MIN:0.5:16:$thirdPrecision";
 		//$opts[] = "RRA:MIN:0.5:100:$fourthPrecision";
-		//Fire::group('Created RRD Files: ');
+		//Fire::group('Created RRD Files: ');*/
 		$path = $this->path();
 		if (!is_dir($path)) {
 			//Fire::info('Creating Directory ' . $path);

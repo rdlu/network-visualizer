@@ -207,6 +207,13 @@ class Controller_Processes extends Controller_Skeleton {
 				//Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
 				$source = $process->source->load();
 				$destination = $process->destination->load();
+
+                if($destination->isAndroid) {
+                    $e['errors'] = null;
+                    $e['message'] = "Entidade de destino $destination->name ($destination->ipaddress) tem o sistema Android e dispensa configurações adicionais.";
+                    $e['class'] = 'success';
+                    break;
+                }
 				$profile = $process->profile->load();
 				$values = array(
 					'managerEntryStatus' => 6,

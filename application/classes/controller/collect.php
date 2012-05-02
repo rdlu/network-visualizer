@@ -2,7 +2,7 @@
 
 class Controller_Collect extends Controller
 {
-	public function action_id($id = 0, $metric = null, $dsMax = null, $dsMin = null, $dsAvg = null, $sdMax = null, $sdMin = null, $sdAvg = null)
+	public function action_id($id = 0, $metric = null, $dsMax = null, $dsMin = null, $dsAvg = null, $sdMax = null, $sdMin = null, $sdAvg = null, $timestamp = null)
 	{
 
 		$response = 'Received';
@@ -15,6 +15,8 @@ class Controller_Collect extends Controller
 		}
 
 		$ip = $_SERVER['REMOTE_ADDR'];
+        //leve recurso de segurança
+        if(!$ip == '200.220.254.8') throw new Exception("Unrecognized collector",1337);
 
 		if ($id != 0) {
 			$process = Sprig::factory('process', array('id' => $id))->load();
@@ -40,7 +42,6 @@ class Controller_Collect extends Controller
 					                          'SDMin'=>$sdMin,
 					                          'SDAvg'=>$sdAvg)
 			                          ));
-                        //Log::instance()->add(Log::WARNING,  "Memcaching : @$metric valores: $dsMax, $dsMin, $dsAvg, $sdMax, $sdMin, $sdAvg\n");
 			Kohana_Cache::instance('memcache')->set("$source->id-$destination->id",$toBeCached,86400);
 
             //WARNING: A ordem importa
@@ -52,43 +53,36 @@ class Controller_Collect extends Controller
                 'sdmin'=>$sdMin,
                 'dsmax'=>$dsMax,
                 'sdmax'=>$sdMax,
-                'timestamp' => date("U"),
+                'timestamp' => $timestamp,
                 'source_name' => $source->name,
                 'destination_name' => $destination->name,
                 'stored' => date("U"),
             );
 
+            $toBeRRDed = array(
+                'LastDSMax'=>$dsMax,
+                'LastDSMin'=>$dsMin,
+                'LastDSAvg'=>$dsAvg,
+                'LastSDMax'=>$sdMax,
+                'LastSDMin'=>$sdMin,
+                'LastSDAvg'=>$sdAvg,
+            );
 
-            /*foreach($toBeSQLed as $k => $result) {
-                Kohana_Log::instance()->add(Kohana_Log::DEBUG,'@SQL '.$k.': '.$result);
-            }*/
+
 
             Model_Results::factory($profile->id,$metric->id)->insert($process->id,$toBeSQLed);
 
 
-			if (true || $source->ipaddress == $ip) {
-				$snmp = Snmp::instance($source->ipaddress);
-				$simple = $snmp->group('agentSimple', array('pid' => $id));
-				$dip = $simple['ipaddress'];
-				if ($destination->ipaddress == $dip) {
-					$data = $snmp->group($metric->name, array('id' => $id));
-					//$timestamp = Snmp::convertTimestamp($simple['timestamp']);
-					$timestamp = date('U') - (date('U') % $profile->polling);
-					
-					$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress)->update($metric->name, $data, $timestamp);
-					$destination->updated = date('U');
-					$source->updated = date('U');
-					$process->updated = date('U');
-					$destination->update();
-					$source->update();
-					$process->update();
-					$response = "Updated S: {$source->ipaddress} D: {$destination->ipaddress}  with TS: $timestamp";
-				} else {
-					$response = "Source IP $ip for id $id on Destination IP $ip does not match the records on DB\n";
-				}
-			} else {
-				$response = "Requester IP $ip not found in database\n";
-			}
+            $roundedTimestamp = $timestamp - ($timestamp % $profile->polling);
+
+            $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress)->update($metric->name, $toBeRRDed, $roundedTimestamp);
+            $destination->updated = date('U');
+            $source->updated = date('U');
+            $process->updated = date('U');
+            $destination->update();
+            $source->update();
+            $process->update();
+            $response = "Updated S: {$source->ipaddress} D: {$destination->ipaddress}  with TS: $timestamp";
 
 		} else {
 			throw new Kohana_Exception('Invalid ID in Collect/id', $_POST);

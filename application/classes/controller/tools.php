@@ -70,6 +70,7 @@ class Controller_Tools extends Controller {
         if ($process->count() == 0) {
             echo "Process $process_id does not exist.\n";
         }
+
         $destination = $process->destination->load();
         $source = $process->source->load();
         $profile = $process->profile->load();
@@ -93,5 +94,11 @@ class Controller_Tools extends Controller {
         var_dump($toBeSQLed);
         Model_Results::factory($profile->id,$metric->id)->insert($process->id,$toBeSQLed);
 
+    }
+
+    public function action_hashz0r($str) {
+        echo Kohana_Auth::instance()->hash("VivOGparC,.");
+        echo "  ";
+        echo Kohana_Auth::instance()->hash($str);
     }
 }

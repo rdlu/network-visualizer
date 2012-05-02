@@ -9,8 +9,8 @@
 
 class Controller_Winagent extends Controller_Skeleton {
 
-    public $auth_required = array('login', 'config');
-    public $secure_actions = FALSE;
+    public $auth_required = FALSE;
+    public $secure_actions = 'login';
 
     public function before() {
         parent::before();

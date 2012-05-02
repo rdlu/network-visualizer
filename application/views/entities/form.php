@@ -26,7 +26,8 @@
 <?= Form::open(Request::current()->controller() . '/' . Request::current()->action() . '/' . Request::current()->param('id', 0), array('id' => 'newEntity', 'class' => 'bForms')) ?>
 <fieldset title="Dados Obrigatórios">
 	<legend>Dados Obrigatórios</legend>
-	<?=$entity->label('ipaddress');?>
+    <?=$entity->input('isAndroid', array('id' => 'isAndroid'));?><br/>
+    <?=$entity->label('ipaddress');?>
 	<?=$entity->input('ipaddress', array('id' => 'ipaddress'));?>
 	<span id="ipCheck" class="input info">Endereços válidos: número IPv4 (123.123.123.123) ou hostname netmetric (5188888888.vivo.com.br)</span><br/>
 	<?=$entity->label('city');?>
@@ -34,7 +35,8 @@
 	<?=$entity->label('state');?>
 	<?=$entity->input('state', array('id' => 'state', $disabled => $disabled));?><br/>
 	<?=$entity->label('name');?>
-	<?=$entity->input('name', array('id' => 'name', $disabled => $disabled));?>
+	<?=$entity->input('name', array('id' => 'name', $disabled => $disabled));?><br/>
+
 </fieldset>
 <fieldset title="Dados Obrigatórios">
 	<legend>Dados Opcionais</legend>
@@ -57,7 +59,7 @@
 <?= Form::close() ?>
 <script type="text/javascript">
 	$(function() {
-		$('input#ipaddress').focus();
+		//$('input#ipaddress').focus();
 		function checkIp() {
 			$.ajax({
 				type: "POST",
@@ -92,8 +94,29 @@
 		}
 
 		$('input[name$="ipaddress"]').blur(function() {
-			checkIp();
+			if(!$('#isAndroid').is(':checked')) {
+                checkIp();
+            } else {
+                $('input#ipaddress').val($('input#ipaddress').val()+'.vivo.com.br');
+            }
+
 		});
+
+        $('#isAndroid').click(function (evt) {
+            if($('#isAndroid').is(':checked')) {
+                enableFields();
+                $('span#ipCheck').remove();
+                $('input[name$="ipaddress"]').after('<span id="ipCheck" class="input info">A verificação do agente Android não é automática, verifique se o nome está correto antes de prosseguir.</span>');
+                $("label[for='ipaddress']").text("Nome do agente");
+
+                $('input#ipaddress').focus();
+            } else {
+                $('span#ipCheck').remove();
+                disableFields();
+                $("label[for='ipaddress']").text("Endereço IP");
+                $('input#ipaddress').focus();
+            }
+        });
 
 		function enableFields() {
 			$('#newEntity input').each(function(index, obj) {
@@ -119,6 +142,7 @@
 
 			$('#newEntity textarea')[0].disabled = true;
 			$('#newEntity input#ipaddress')[0].disabled = false;
+            $('#isAndroid')[0].disabled = false;
 		}
 
 

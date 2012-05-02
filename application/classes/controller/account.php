@@ -16,7 +16,7 @@
 
 class Controller_Account extends Controller_Skeleton {
 
-    //public $auth_required = array('login', 'admin');
+    public $auth_required = FALSE;
     
     public $secure_actions = array(
         'register'  =>  'admin',        
@@ -130,6 +130,7 @@ class Controller_Account extends Controller_Skeleton {
 
         public function action_noaccess(){
             $view = View::factory('account/noaccess');
+            $this->template->content = $view;
         }
 
 	public function action_signout() {

@@ -3,12 +3,19 @@
 class Controller_Entities extends Controller_Skeleton
 {
 
-	public $auth_required = array('login', 'admin', 'config');
+	public $auth_required = 'login';
 
 	// Controls access for separate actions
 	// 'adminpanel' => 'admin' will only allow users with the role admin to access action_adminpanel
 	// 'moderatorpanel' => array('login', 'moderator') will only allow users with the roles login and moderator to access action_moderatorpanel
-	public $secure_actions = array('remove' => array('admin', 'config'), 'edit' => array('admin', 'config'), 'new' => array('admin', 'config'));
+	public $secure_actions = array('remove' => 'config',
+        'edit' => 'config',
+        'new' => 'config',
+        'list' => 'login',
+        'view' => 'login',
+        'byCity' => 'login',
+        'topTenManagers' => 'login',
+        'destinations' => 'login');
 
 	public function before()
 	{
@@ -113,8 +120,10 @@ class Controller_Entities extends Controller_Skeleton
 		$this->action_edit(0);
 	}
 
-	public function action_remove($id)
+	public function action_remove()
 	{
+        $this->auto_render = false;
+        $id = (int) $_POST['id'];
 		$entity = Sprig::factory('entity');
 		if ($id != 0) {
 			$entity->id = $id;
@@ -124,15 +133,14 @@ class Controller_Entities extends Controller_Skeleton
 		if ($entity->loaded()) {
 
 			if(($entity->processes_as_source->count() == 0) || ($entity->processes_as_destination->count() == 0)) {
-				$view = View::factory('entities/remove');
-				$view->set('name', $entity->name);
+				$name = $entity->name;
 				$entity->delete();
-				$this->template->content = $view;
+                $this->response->body("<div id=\"error\" class=\"success\">A entidade".$name."foi removida com sucesso.</div>");
 			} else {
-				$this->template->content = "Não foi possível remover a sonda $entity->name, ainda existem processos de medição agendados.";
+                $this->response->body = "Não foi possível remover a sonda $entity->name, ainda existem processos de medição agendados.";
 			}
 
-		} else $this->template->content = 'Entidade não existente no MoM';
+		} else $this->response->body = 'Entidade não existente no MoM';
 	}
 
 	public function action_view($id)

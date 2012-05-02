@@ -52,15 +52,16 @@ Route::set('reportsSpec', '(<controller>(/<action>/<source>/<destination>))')
 
 
 Route::set('collect',
-           'collect/id(/<destination>(/<metric>(/<dsMax>/<dsMin>/<dsAvg>/<sdMax>/<sdMin>/<sdAvg>)))',
+           'collect/id(/<destination>(/<metric>(/<dsMax>/<dsMin>/<dsAvg>/<sdMax>/<sdMin>/<sdAvg>/<timestamp>)))',
            array('destination'=>'[0-9]+',
 	             'metric'=>'[a-z_]+',
                 'dsMax'=> '.*',//'[0-9.]+', //'^[+-]?\d[.]?\d'
                 'dsMin'=>'.*',//'[0-9.]+',
                 'dsAvg'=>'.*',//'[0-9.]+',
                 'sdMax'=>'.*',
-                'sdMin'=>'.*',//'[0-9.]+', //'.*',
-                'sdAvg'=>'.*'//'[0-9.]+'
+                'sdMin'=>'.*',//'[0-9.]+', //'.*'
+                'sdAvg'=>'.*',//'[0-9.]+'
+                'timestamp'=>'.*'
            ))
 		->defaults(array(
                     'controller'=>'collect',
