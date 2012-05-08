@@ -88,6 +88,17 @@ class Rrd {
 		return $this->path() . "$metric$type.rrd";
 	}
 
+    public function isMissingFiles($metric) {
+        $path = $this->path();
+        foreach ($this->types[0] as $l1)
+            foreach ($this->types[1] as $l2) {
+                $filename = $this->filename($metric, $l1 . $l2);
+                if(!$this->info($metric,$l2)) return false;
+
+            }
+        return true;
+    }
+
 	/**
 	 * Funcao para a criacao dos arquivos RRD para um determinado perfil e metrica
 	 * @throws Kohana_Exception
@@ -329,6 +340,14 @@ class Rrd {
 		$filename = $this->filename($metric, "Last" . $m);
 		return (int) exec("rrdtool last $path$filename", $resp, $code);
 	}
+
+    public function info($metric,$m = 'Avg') {
+        $path = $this->path();
+        $filename = $this->filename($metric, "Last" . $m);
+        $rrdreponse = exec("rrdtool info $path$filename", $resp, $code);
+        if($code != 0) return false;
+        return parse_ini_string(implode("\n",$resp));
+    }
 
 	public static function sci2num($value) {
 		if($value === null) return $value;

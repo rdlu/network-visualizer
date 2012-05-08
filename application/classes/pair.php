@@ -212,6 +212,11 @@ class Pair {
 		return $this->rrd;
 	}
 
+    public function createMissingRRDFiles() {
+        foreach($this->getProcesses() as $process) {
+        }
+    }
+
 	public function getResult($metric, $start = false, $end = false)
 	{
 		$rrd = $this->getRrdInstance();
