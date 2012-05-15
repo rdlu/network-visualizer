@@ -58,10 +58,14 @@
                 <span class="iblock"><span class="label"><?= $k ?>: </span><strong><?=$v?></strong></span><?php //if($k == 'version')echo '&nbsp;&nbsp;<a href="'.'">HEY</a>'; ?>
                 <br />
 		<?php endforeach; ?><br /><br />
-		<?php if(Auth::instance()->logged_in('admin')): ?>
+		<?php if(Auth::instance()->logged_in('config')): ?>
 		<span class="button" id="remover"  onclick="deleter.removeSonda();">
 			<img src="<?=url::base()?>images/actions/cross.png" alt="Remover">
 			Remover
+		</span>
+        <span class="button" id="checkRRD" >
+			<a href="<?=url::site('entities/checkRRD').'/'.$entity->id?>"><img src="<?=url::base()?>images/actions/folder_wrench.png" alt="Checar RRD">
+			Checar RRD</a>
 		</span>
 		<?php endif; ?>
 	</fieldset>

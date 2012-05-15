@@ -15,7 +15,9 @@ class Controller_Entities extends Controller_Skeleton
         'view' => 'login',
         'byCity' => 'login',
         'topTenManagers' => 'login',
-        'destinations' => 'login');
+        'destinations' => 'login',
+        'checkRRD' => 'config'
+    );
 
 	public function before()
 	{
@@ -195,6 +197,27 @@ class Controller_Entities extends Controller_Skeleton
 		}
 	}
 
+    private function destinations(Model_Entity $entity) {
+        $asSource = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id', '=', $entity->id), null);
+        $assou = array();
+        foreach ($asSource as $process1) {
+            $ass1 = $process1->destination->load();
+            $assou[$ass1['id']] = $ass1;
+        }
+        return $assou;
+    }
+
+    private function sources(Model_Entity $entity) {
+        $asDestination = Sprig::factory('process')->load(Db::select()->group_by('source_id')->where('destination_id', '=', $entity->id), null);
+        $asdest = array();
+        foreach($asDestination as $process2) {
+            $asd1 = $process2->source->load();
+            $asdest[$asd1->id] = $asd1;
+        }
+
+        return $asdest;
+    }
+
 	public function action_byCity() {
 		$this->auto_render = false;
 		if (!isset($_POST['city'])) throw new Kohana_Exception('Compulsory data not set, must be called with post', $_POST);
@@ -226,5 +249,23 @@ class Controller_Entities extends Controller_Skeleton
 		}
 
 	}
+
+    public function action_checkRRD($id) {
+        $view = View::factory('entities/checkRRD');
+        /**
+         * @var Model_Entity
+         */
+        $entity = Sprig::factory('entity', array('id' => $id))->load();
+        $this->template->title .= "Checagem dos Arquivos RRD " . $entity->name;
+
+        $messages = array();
+        $sources = $this->sources($entity);
+        foreach($sources as $key => $source) {
+            $messages[$key] = Pair::instance($key,$id)->checkRRDFiles();
+        }
+
+        $view->bind('messages',$messages)->bind('sources',$sources);
+        $this->template->content = $view;
+    }
 
 } // End Welcome

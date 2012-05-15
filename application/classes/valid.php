@@ -50,7 +50,7 @@ class Valid extends Kohana_Valid {
 	}
 
 	public static function hostname($str) {
-		if(preg_match("/^(([a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/",$str))
+		if(preg_match("/^(([a-zA-Z0-9\-_]*[a-zA-Z0-9_])\.)*([A-Za-z]|[A-Za-z_][A-Za-z0-9\-]*[A-Za-z0-9_])$/",$str))
 			return true;
 		return false;
 	}

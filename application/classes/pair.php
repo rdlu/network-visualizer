@@ -212,9 +212,21 @@ class Pair {
 		return $this->rrd;
 	}
 
-    public function createMissingRRDFiles() {
-        foreach($this->getProcesses() as $process) {
+    public function checkRRDFiles() {
+        $rrd = $this->getRrdInstance();
+        $returnMessages = array();
+        foreach($this->getMetrics() as $metric) {
+            if($rrd->isMissingFiles($metric->name)) {
+                $rrd->create($metric->name,$metric->profile->load()->polling);
+                if($rrd->errors)
+                    $returnMessages[] = "Error creating $metric->name RRD Files";
+                else
+                    $returnMessages[] = "Arquivos RRD para a metrica $metric->name foram recriados.";
+
+            }
         }
+
+        return $returnMessages;
     }
 
 	public function getResult($metric, $start = false, $end = false)

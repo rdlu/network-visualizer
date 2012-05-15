@@ -90,13 +90,21 @@ class Rrd {
 
     public function isMissingFiles($metric) {
         $path = $this->path();
+        $fileinfo = array();
+        $fileerrors = array();
         foreach ($this->types[0] as $l1)
             foreach ($this->types[1] as $l2) {
                 $filename = $this->filename($metric, $l1 . $l2);
-                if(!$this->info($metric,$l2)) return false;
+                if(file_exists($path.$filename)) {
+                    $fileinfo[$filename] = $this->info($metric,$l2);
+                } else {
+                    $fileerrors[$filename] = true;
+                }
 
             }
-        return true;
+
+        if(count($fileerrors)) return $fileerrors;
+        return false;
     }
 
 	/**
@@ -338,15 +346,18 @@ class Rrd {
 	public function last($metric, $m = 'Avg') {
 		$path = $this->path();
 		$filename = $this->filename($metric, "Last" . $m);
-		return (int) exec("rrdtool last $path$filename", $resp, $code);
+        $exec = exec("rrdtool last $path$filename", $resp, $code);
+        if($code != 0) return false;
+		return (int) $exec;
 	}
 
     public function info($metric,$m = 'Avg') {
         $path = $this->path();
         $filename = $this->filename($metric, "Last" . $m);
         $rrdreponse = exec("rrdtool info $path$filename", $resp, $code);
+        $resp2 = array_chunk($resp,5,true);
         if($code != 0) return false;
-        return parse_ini_string(implode("\n",$resp));
+        return parse_ini_string(implode("\n",$resp2[0]));
     }
 
 	public static function sci2num($value) {
