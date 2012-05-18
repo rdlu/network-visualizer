@@ -1,4 +1,4 @@
-
+//faz a conversao de valores nos gráficos do flot e em outros lugares
 var conversion = {
   metrics: {
       rtt: { original: "s", target: "ms", system: "si", precision: 2 },
@@ -23,7 +23,8 @@ var conversion = {
       //console.log(metric,value);
       var metricProperties = this.metrics[metric];
 
-      var precision = (axis) ? 0 : metricProperties.precision;
+      //var precision = (axis) ? 0 : metricProperties.precision;
+      var precision = metricProperties.precision;
 
       if(metricProperties.system == "si") {
           return $u(value,metricProperties.original).as(metricProperties.target).toString(precision);
@@ -63,7 +64,6 @@ var conversion = {
         this.currentUnit = currentUnit;
         return this;
     };
-
     unitConverter.prototype.val = function (precision) {
         // first, convert from the current value to the base unit
         var target = table[this.targetUnit];

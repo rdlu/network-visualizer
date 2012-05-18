@@ -28,6 +28,7 @@ class Controller_Welcome extends Controller_Skeleton
 		if ($this->auto_render) {
 			$styles = array(
 				'css/map.css' => 'all',
+                'css/tablesorter/blue.css' => 'all'
 			);
 
 			$scripts = array(
@@ -61,7 +62,7 @@ class Controller_Welcome extends Controller_Skeleton
 	{
 		if (Request::current()->is_ajax()) {
 			$this->auto_render = false;
-			$query = DB::select()->order_by('status', 'DESC');
+			$query = DB::select()->where('isAndroid','=',0)->order_by('status', 'DESC');
 			$entities = Sprig::factory('entity')->load($query, FALSE);
 			$JSONresponse = array();
 			$before = 0;

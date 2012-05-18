@@ -268,4 +268,19 @@ class Controller_Entities extends Controller_Skeleton
         $this->template->content = $view;
     }
 
+    public function action_androidList()
+    {
+        $this->auto_render = false;
+        $entities = Sprig::factory('entity')->load(NULL, FALSE);
+        //Fire::group('Models Loaded')->info($entities)->groupEnd();
+        $view = View::factory('entities/androidList');
+
+        $view->bind('entities', $entities);
+        //$this->setTemplate("templates/empty");
+
+        //$this->template->content = $view;
+        $this->request->body($view->render());
+        $this->response->body($view->render());
+    }
+
 } // End Welcome

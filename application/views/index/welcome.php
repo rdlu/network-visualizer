@@ -1,6 +1,7 @@
 <!-- Index Template View -->
    <!-- Esse é o conteúdo da aba início do MoM -->
    <div id="rightBar">
+
        <div id="rightBarMenu" class="contentBar">
          <a href="#">Criar</a>
          <a href="#">Deletar</a>
@@ -9,6 +10,10 @@
        <div id="sondaDestaque"></div>
 
        <div id="entities"></div>
+       <div id="androidBanner" class="sondaDestaqueBox sondaDestaque" style="background-color: #ccc; padding: 5px; cursor: pointer;">
+           <img src="<?=url::site('images/android.png')?>" style="margin: 5px;vertical-align: middle;" />
+           Agentes Android
+       </div>
    </div>
    <div id="leftBar">
        <div id="leftBarMenu" class="contentBar">
@@ -30,4 +35,15 @@
        </div>
    </div>
 
-<!-- End Index -->        
+       <div id="androidResponse" style="display: none;"></div>
+
+<!-- End Index -->
+<script type="text/javascript">
+    jQuery("#androidBanner").click(function(evt) {
+        jQuery.get("<?=url::site('entities/androidList')?>", function(data) {
+            console.log([data]);
+            jQuery("#androidResponse").html(data);
+            jQuery("#androidResponse").dialog({minWidth:780,title:"Status dos Agentes Android"});
+        });
+    });
+</script>
