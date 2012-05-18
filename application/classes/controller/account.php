@@ -47,17 +47,7 @@ class Controller_Account extends Controller_Skeleton {
 		parent::after();
 	}
 
-	public function action_register() {
-		//If user already signed-in :: modificando logica @ 21/06
-            /*
-		if (Auth::instance()->logged_in() != 0) {
-			#redirect to the user account
-			Request::current()->redirect('account/myaccount');
-		}
-            */
-		
-                
-		#If there is a post and $_POST is not empty
+	public function action_register() {		
 		if ($_POST) {
 			$auth = Auth::instance();
 			#Instantiate a new user
@@ -94,10 +84,13 @@ class Controller_Account extends Controller_Skeleton {
                         catch (Exception $e) {
                                 #Load the view
                                 $this->template->content = View::factory('account/register')
-                                                            ->bind('error', $error);
-				
+                                                            ->bind('error', $error);				
 			}
 		}
+                else{
+                    $view = View::factory('account/register');
+                    $this->template->content = $view;
+                }
 	}
 
 
@@ -160,39 +153,133 @@ class Controller_Account extends Controller_Skeleton {
         }
 
         public function action_edit(){
+            $action = $this->request->post('action', null);
+            $id = $this->request->post('id', null);
+            //workaround
+            if($id == null){
+                $id = $this->request->query('id', null);
+            }
+            $current_user = Auth::instance()->get_user();
+            
+            if($id !== NULL){
+                if($action == 'save'){
+                    $username = $this->request->post('username', null);
+                    $email = $this->request->post('email', null);
+                    $password = $this->request->post('password', null);
+                    $password_confirm = $this->request->post('password_confirm', null);
+
+                    $has_priviledges = $current_user->has('roles', ORM::factory('role', array('name' => 'admin')));
+                    $current_user_is_root = ($current_user->username == 'admin')? true : false;
+                    
+                    try {
+                        $user_to_modify = ORM::factory('user', $id);
+                    }
+                    catch(Exception $e){
+                        die("no such user");
+                    }
+                    $user_to_modify_is_root = ($user_to_modify->username == 'admin')? true : false;
+                    $own_account = ($current_user->id == $user_to_modify->id)? true : false;
+
+                    if($current_user_is_root && $user_to_modify_is_root){
+                        //$user_to_modify->username = $username;
+                        $user_to_modify->email = $email;
+                        if($password == $password_confirm){
+                            $user_to_modify->password = $password;
+                        }
+                    }
+                    elseif($user_to_modify_is_root){
+                        die("only root account can modify root account");
+                    }
+                    elseif (($current_user_is_root) ||
+                            ($has_priviledges) ||
+                            ($own_account) ){
+                        $user_to_modify->username = $username;
+                        $user_to_modify->email = $email;                        
+                        if($password == $password_confirm){
+                            $user_to_modify->password = $password;
+                        }
+                        $privilege = $this->request->post('privilege', null);
+                        
+                        //privilégios são cumulativos. se a pessoa tem admin, ela ten config. e login.
+                        if($privilege == 'administrador'){
+                            $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
+                            $login_role = new Model_Role(array('name' => 'admin'));
+                            $user_to_modify->add('roles', $login_role);
+                            $login_role = new Model_Role(array('name' => 'config'));
+                            $user_to_modify->add('roles', $login_role);
+                            $login_role = new Model_Role(array('name' => 'login'));
+                            $user_to_modify->add('roles', $login_role);
+                        }
+                        elseif($privilege == 'configurador'){
+                            $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
+                            $login_role = new Model_Role(array('name' => 'config'));
+                            $user_to_modify->add('roles', $login_role);
+                            $login_role = new Model_Role(array('name' => 'login'));
+                            $user_to_modify->add('roles', $login_role);
+                        }
+                        elseif($privilege == 'visualizador'){
+                            $total_rows = DB::delete('roles_users')->where('user_id','=',$id)->execute(); //deleta todos os níveis de acesso do usuário
+                            $login_role = new Model_Role(array('name' => 'login'));
+                            $user_to_modify->add('roles', $login_role);
+                        }
+                    }
+                    $user_to_modify->save();
+                    $this->request->redirect('account/index');
+                }
+                else {
+                    $id = $this->request->query('id');
+                    if($id !== null){
+                        try {
+                            $user = ORM::factory('user', $id);
+                                $view = View::factory('account/edit')
+                                    ->bind('user', $user);
+                        }
+                        catch(ORM_Validation_Exception $e){
+                                //Fire::info($e);
+                            die("ERRO!");
+                                $errors[] = array('class'=>'error','message'=>'Usuário e/ou senha inválidos.');
+                                $view->bind('errors',$errors);
+                        }
+                        if(! $this->request->is_ajax()){
+                            $this->template->content = $view;
+                        }
+                    }
+                }
+            }
+        }
+/*
+        public function action_edit2(){
             $current_user = Auth::instance()->get_user();
             //teste recorrente e possível ponto de falha:
             $eh_admin = $current_user->has('roles', ORM::factory('role', array('name' => 'admin')));
             //Fire::info($id, 'id');
             $action = $this->request->post('action', null);
         //
-            /* processa os dados e salva as modificações feitas na conta do usuário */
+            
             if($action == 'save'){
                 $id = $this->request->post('id', null); //pega o id do usuario a ser atualizado
+                
+               
 
-                //nova lógica:
-                /* 
-                 * pega o user com o id, se não existe, aborta
-                 * 1) verifica se o user não é o admin; para o admin, só aceita troca de senha
-                 * 2) usuário admin trocando os dados: acesso irrestrito; apenas não pode alterar o nome da conta admin
-                 * 3) usuários demais: só podem mudar suas próprias contas
-                 */
-
-              
                 if($id !== null){
                     $username = $this->request->post('username', null);
-                    //a conta padrão admin só pode ser modificada por admin
-                    if( ($username != 'admin') || ($username == 'admin' && $current_user->username == 'admin') ){
+                    //a conta padrão admin s� pode ser modificada por admin
+                    if( ($username == 'admin') && ($current_user->username == 'admin') ){ //admin modificando a pr�pria conta
+                        $email = $this->request->post('email', null);
+                        $password = $this->request->post('password', null);
+                        $password_confirm = $this->request->post('password_confirm', null);
+                    }
+                    elseif (($current_user->username == 'admin') //admin modifica todas contas
+                             || ($eh_admin && $current_user->username != "admin")
+                             || ($current_user->id == $id) //usu�rio modificando a pr�pria conta
+                            ){
                         $email = $this->request->post('email', null);
                         $password = $this->request->post('password', null);
                         $password_confirm = $this->request->post('password_confirm', null);
 
                         //execução/save
                         try {
-                            //BUG: quando você modifica uma conta de um usuário logado (mesmo que indiretamente)
-                            //aquele usuário cai do sistema
-                            // ex: se eu pegar o usuário teste e tentar renomeá-lo para admin,
-                            // o controle vai tentar pegar o usuário pelo ORM na linha abaixo:
+                            
                             $user = ORM::factory('user', $id);
                             //o sistema não permite que ele altere o nome, mas isso vai regenerar a sessão de admin
                             // problema é que não deveria ser permitido alterar contas de usuários logados...
@@ -250,7 +337,7 @@ class Controller_Account extends Controller_Skeleton {
                     }
                 }
             } //end of action == save
-               /* gera a tela de edição dos dados do usuário */
+              
             else {
                 $id = $this->request->query('id');
                 if($id !== null){
@@ -270,7 +357,8 @@ class Controller_Account extends Controller_Skeleton {
                 }
             }
                         
-        }
+        } */
+        
         public function action_toogle(){ //torna o usuário ativo ou inativo, dependendo
             $current_user = Auth::instance()->get_user();
             $id = $this->request->query('id', null);
