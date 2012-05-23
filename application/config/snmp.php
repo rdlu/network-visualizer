@@ -611,6 +611,10 @@ return array(
 		    'type' => 'int',
 		    'oid' => NMMIB.'.0.0.8.pid',
 	    ),
+        'polling' => array(
+            'type' => 'int',
+            'oid'=>NMMIB.'.0.0.15l.id'
+        ),
 	    'timestamp' => array(
 		    'type' => 'fuckTS',
 		    'oid' => NMMIB.'.0.0.2.pid',
@@ -636,10 +640,6 @@ return array(
 	     'entryStatus' => array(
             'oid'=>NMMIB.'.1.0.14.id',
             'type'=>'int'
-        ),
-        'polling' => array(
-            'type' => 'int',
-            'oid'=>NMMIB.'.1.0.0.id'
         ),
         'timeout' => array(
             'type' => 'int',

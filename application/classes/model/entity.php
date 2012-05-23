@@ -38,6 +38,12 @@ class Model_Entity extends Sprig {
 	            'null' => true,
 	            'rules' => array('coordinate'=>array(''))
             )),
+            /**
+             *  Coluna que define o intervalo entre uma rajada e outra
+             * Unidade: segundos
+             */
+            'polling'=>new Sprig_Field_Integer(array('rules'=>array('polling'=>array('')),
+                'label'=>'Intervalo de Polling (segundos)')),
             'added' => new Sprig_Field_Timestamp(array('auto_now_create' => TRUE, 'editable'=>false,'format' => "d.m.Y H:i:s")),
             'updated' => new Sprig_Field_Timestamp(array('auto_now_create' => true, 'editable'=>false,'format' => "d.m.Y H:i:s")),
             /*

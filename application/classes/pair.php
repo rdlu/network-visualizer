@@ -217,7 +217,7 @@ class Pair {
         $returnMessages = array();
         foreach($this->getMetrics() as $metric) {
             if($rrd->isMissingFiles($metric->name)) {
-                $rrd->create($metric->name,$metric->profile->load()->polling);
+                $rrd->create($metric->name,$this->getDestination()->polling);
                 if($rrd->errors)
                     $returnMessages[] = "Error creating $metric->name RRD Files";
                 else

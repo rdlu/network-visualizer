@@ -301,7 +301,7 @@ class Controller_Processes extends Controller_Skeleton {
 						$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
 
 						foreach ($profile->metrics as $metric) {
-							$rrd->create($metric->name, $profile->polling);
+							$rrd->create($metric->name, $destination->polling);
 						}
 
 						if ($rrd->errors) {

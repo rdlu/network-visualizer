@@ -73,7 +73,7 @@ class Controller_Collect extends Controller
             Model_Results::factory($profile->id,$metric->id)->insert($process->id,$toBeSQLed);
 
 
-            $roundedTimestamp = $timestamp - ($timestamp % $profile->polling);
+            $roundedTimestamp = $timestamp - ($timestamp % $destination->polling);
 
             $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress)->update($metric->name, $toBeRRDed, $roundedTimestamp);
             $destination->updated = date('U');

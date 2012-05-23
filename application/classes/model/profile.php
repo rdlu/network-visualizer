@@ -8,12 +8,6 @@ class Model_Profile extends Sprig {
         $this->_fields += array(
             'id'=>new Sprig_Field_Auto(),
             'name'=>new Sprig_Field_Char(array('max_lenght'=>32,'label'=>'Nome do Perfil')),
-            /**
-             *  Coluna que define o intervalo entre uma rajada e outra
-             * Unidade: segundos
-             */
-            'polling'=>new Sprig_Field_Integer(array('rules'=>array('polling'=>array('')),
-                                                    'label'=>'Intervalo de Polling (segundos)')),
             /*
              *  Coluna que define a quantidade de trens na rajada
              */
