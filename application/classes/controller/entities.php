@@ -271,7 +271,8 @@ class Controller_Entities extends Controller_Skeleton
     public function action_androidList()
     {
         $this->auto_render = false;
-        $entities = Sprig::factory('entity')->load(NULL, FALSE);
+        $query = DB::select()->where('isAndroid','=',1)->order_by('updated', 'DESC');
+        $entities = Sprig::factory('entity')->load($query, FALSE);
         //Fire::group('Models Loaded')->info($entities)->groupEnd();
         $view = View::factory('entities/androidList');
 

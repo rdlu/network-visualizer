@@ -552,8 +552,13 @@ class Controller_Reports extends Controller_Skeleton {
             foreach($types as $type) {
                 $type2= strtolower($type);
                 $ts = Date::sqlTimestamp2Unix($line['timestamp'],true)*1000;
-                $return->$type->values->ds->$ts = $line['sd'.$type2];
-                $return->$type->values->sd->$ts = $line['ds'.$type2];
+                if($metric->plugin == 'rtt') {
+                    $return->$type->values->ds->$ts = $line['ds'.$type2];
+                    $return->$type->values->sd->$ts = $line['sd'.$type2];
+                } else {
+                    $return->$type->values->ds->$ts = $line['sd'.$type2];
+                    $return->$type->values->sd->$ts = $line['ds'.$type2];
+                }
             }
 
         }
