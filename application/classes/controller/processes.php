@@ -298,16 +298,19 @@ class Controller_Processes extends Controller_Skeleton {
 						$destination->status = 2; $destination->update();
 						$response['message'] = "Configurações salvas com sucesso no banco de dados do MoM";
 						$response['class'] = 'success';
-						$rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
 
-						foreach ($profile->metrics as $metric) {
-							$rrd->create($metric->name, $profile->polling);
-						}
+                        if(!$destination->isAndroid) {
+                            $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
 
-						if ($rrd->errors) {
-							$response['message'] .= ', mas houveram falhas na criação dos arquivos RRD, cheque o Registro de Eventos.';
-							$response['class'] = 'warn';
-						}
+                            foreach ($profile->metrics as $metric) {
+                                $rrd->create($metric->name, $profile->polling);
+                            }
+
+                            if ($rrd->errors) {
+                                $response['message'] .= ', mas houveram falhas na criação dos arquivos RRD, cheque o Registro de Eventos.';
+                                $response['class'] = 'warn';
+                            }
+                        }
 					} else {
 						$response['message'] = "A sonda de destino $destination->ipaddress não respondeu ao teste de verificação, abortando a configuração";
 						$response['class'] = 'error';

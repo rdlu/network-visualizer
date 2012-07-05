@@ -1,4 +1,5 @@
 <?php
+class CollectException extends Exception{}
 
 class Controller_Collect extends Controller
 {
@@ -15,8 +16,9 @@ class Controller_Collect extends Controller
 		}
 
 		$ip = $_SERVER['REMOTE_ADDR'];
+        $authorized_collectors = Kohana::config('network.collectors');
         //leve recurso de segurança
-        if(!$ip == '200.220.254.8') throw new Exception("Unrecognized collector",1337);
+        if(!in_array($ip,$authorized_collectors)) throw new CollectException("Unrecognized collector $ip ",1337);
 
 		if ($id != 0) {
 			$process = Sprig::factory('process', array('id' => $id))->load();
