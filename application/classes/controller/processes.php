@@ -293,7 +293,7 @@ class Controller_Processes extends Controller_Skeleton {
 
 				$profile = $process->profile->load();
 				if (Snmp::instance($source->ipaddress)->isReachable(NMMIB . '.0.0.0.' . $process->id)) {
-					if (Snmp::instance($destination->ipaddress)->isReachable(NMMIB . '.10.0.0.' . $process->id)) {
+					if ($destination->isAndroid || Snmp::instance($destination->ipaddress)->isReachable(NMMIB . '.10.0.0.' . $process->id)) {
 						$source->status = 1; $source->update();
 						$destination->status = 2; $destination->update();
 						$response['message'] = "Configurações salvas com sucesso no banco de dados do MoM";

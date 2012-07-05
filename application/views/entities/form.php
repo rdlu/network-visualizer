@@ -97,7 +97,8 @@
 			if(!$('#isAndroid').is(':checked')) {
                 checkIp();
             } else {
-                $('input#ipaddress').val($('input#ipaddress').val()+'.vivo.com.br');
+                if($('input#ipaddress').val().match(/vivo.com.br/) == null)
+                    $('input#ipaddress').val($('input#ipaddress').val()+'.vivo.com.br');
             }
 
 		});

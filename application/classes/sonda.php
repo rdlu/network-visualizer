@@ -45,7 +45,7 @@ class Sonda {
 			if(isset($sonda)) $newinstance->sonda = $sonda;
 			else $newinstance->sonda = Sprig::factory('entity',array('id'=>$id))->load();
 			//update
-			if($newinstance->sonda->status!=0) {
+			if($newinstance->sonda->status!=0 && !$newinstance->sonda->isAndroid) {
 				//Se a ultima atualizacao foi ate 5 minutos atras
 				$a = $newinstance->sonda->updated;
 				$a2 = date("U") - 300;
@@ -121,8 +121,13 @@ class Sonda {
 
 			}
 			else {
-				$newinstance->sonda->status = 0;
 				$newinstance->message = 'Entidade desativada ou sem processos de medição';
+                if($newinstance->sonda->isAndroid) {
+                    //TODO: timestamp
+                    $newinstance->message = "A última resposta enviada por esta sonda foi ".$newinstance->sonda->updated;
+                    $newinstance->class = 'info';
+                }
+
 			}
 			Sonda::$instances[$id] = $newinstance;
 		}
