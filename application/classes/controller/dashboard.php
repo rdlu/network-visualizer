@@ -58,6 +58,23 @@ class Controller_Dashboard extends Controller_Skeleton
                 //Resultados do MemCached
                 $pair = Pair::instance($source->id, $destination->id);
                 $system = Sonda::instance($destination->id)->getCachedVersion();
+                $expectedMetrics = array(
+                    'full-throughput_tcp' => array("DSAvg" => "Indisponivel"),
+                    'full-throughput' => array("DSAvg" => "Indisponivel"),
+                    'full-rtt' => array("DSAvg" => "Indisponivel"),
+                    'full-jitter' => array("DSAvg" => "Indisponivel"),
+                    'full-loss' => array("DSAvg" => "Indisponivel"),
+                    'full-mos' => array("DSAvg" => "Indisponivel"),
+                    'full-owd' => array("DSAvg" => "Indisponivel"),
+                    'full-pom' => array("DSAvg" => "Indisponivel")
+                );
+
+                $results = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id", $expectedMetrics);
+
+                if (is_array($results)) foreach ($expectedMetrics as $expectedMetric => $defaultValue) {
+                    if (!array_key_exists($expectedMetric, $results)) $results[$expectedMetric] = $defaultValue;
+                }
+
                 $resFromMemCache[] = array('source' => $source->id,
                     'destination' => array(
                         'id' => $destination->id,
@@ -72,7 +89,7 @@ class Controller_Dashboard extends Controller_Skeleton
                         'updated' => $destination->updated,
                         'system' => $system
                     ),
-                    'results' => Kohana_Cache::instance('memcache')->get("$source->id-$destination->id")
+                    'results' => $results
                 );
             }
 
