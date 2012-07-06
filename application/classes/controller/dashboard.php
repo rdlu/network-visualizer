@@ -59,14 +59,14 @@ class Controller_Dashboard extends Controller_Skeleton
                 $pair = Pair::instance($source->id, $destination->id);
                 $system = Sonda::instance($destination->id)->getCachedVersion();
                 $expectedMetrics = array(
-                    'full-throughput_tcp' => array("DSAvg" => "Indisponivel"),
-                    'full-throughput' => array("DSAvg" => "Indisponivel"),
-                    'full-rtt' => array("DSAvg" => "Indisponivel"),
-                    'full-jitter' => array("DSAvg" => "Indisponivel"),
-                    'full-loss' => array("DSAvg" => "Indisponivel"),
-                    'full-mos' => array("DSAvg" => "Indisponivel"),
-                    'full-owd' => array("DSAvg" => "Indisponivel"),
-                    'full-pom' => array("DSAvg" => "Indisponivel")
+                    'full-throughput_tcp' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel"),
+                    'full-throughput' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel"),
+                    'full-rtt' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel"),
+                    'full-jitter' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel"),
+                    'full-loss' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel"),
+                    'full-mos' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel"),
+                    'full-owd' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel"),
+                    'full-pom' => array("DSAvg" => "Indisponivel", "SDAvg" => "Indisponivel")
                 );
 
                 $results = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id", $expectedMetrics);
