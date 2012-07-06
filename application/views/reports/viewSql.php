@@ -1,32 +1,38 @@
+<span class="nice little info" style="padding: 2px 5px 2px 30px !important; display: inline-block;">Período selecionado para os gráficos: <?=$startDate . ' ' . $startHour?>
+    até <?=$endDate . ' ' . $endHour?></span><br/><br/>
 <div id="tabs">
     <div id="metricsAccordion" class="accordion">
         <?php foreach ($metrics as $order => $metric): ?>
         <h3><a href="#"><?=$metric->desc?> (<?=$metric->name?>)</a></h3>
-        <div id="<?=$metric->name?>-area" style="height: 370px;" >
+        <div id="<?=$metric->name?>-area" style="height: 370px;">
             <div id="sql-<?=$metric->name?>" style="height: 320px; width: 80%; margin-right: 5px; float: left"></div>
             <div id="selection-<?=$metric->name?>" style="height: 300px; padding: 10px">
-                <strong>> Filtros do gráfico</strong><br />
-                <em style="font-size: 12px;">> Remover valores:</em><br />
+                <strong>> Filtros do gráfico</strong><br/>
+                <em style="font-size: 12px;">> Remover valores:</em><br/>
 
                 <label for="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">Down: </label>
-                <select name="filterType[<?=$metric->name?>][ds]" id="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">
+                <select name="filterType[<?=$metric->name?>][ds]" id="filterType-<?=$metric->name?>-ds"
+                        style="line-height: 12px; font-size: 11px;">
                     <option value=">=">Acima de</option>
                     <option value="<=">Abaixo de</option>
                 </select>
                 <input type="text" id="filterValue-<?=$metric->name?>-ds" name="filterValue[<?=$metric->name?>][ds]"
                        maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
-                <em id="filterUnit-<?=$metric->name?>-ds" class="filterUnit-<?=$metric->name?>" style="font-size: 11px;"></em>
-                <br />
-                <?php if($metric->name != 'rtt'): ?>
+                <em id="filterUnit-<?=$metric->name?>-ds" class="filterUnit-<?=$metric->name?>"
+                    style="font-size: 11px;"></em>
+                <br/>
+                <?php if ($metric->name != 'rtt'): ?>
                 <label for="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">Up: </label>
-                <select name="filterType[<?=$metric->name?>][sd]" id="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">
+                <select name="filterType[<?=$metric->name?>][sd]" id="filterType-<?=$metric->name?>-sd"
+                        style="line-height: 12px; font-size: 11px;">
                     <option value=">=">Acima de</option>
                     <option value="<=">Abaixo de</option>
                 </select>
                 <input type="text" id="filterValue-<?=$metric->name?>-sd" name="filterValue[<?=$metric->name?>][sd]"
                        maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
-                <em id="filterUnit-<?=$metric->name?>-sd" class="filterUnit-<?=$metric->name?>" style="font-size: 11px;"></em>
-                <br />
+                <em id="filterUnit-<?=$metric->name?>-sd" class="filterUnit-<?=$metric->name?>"
+                    style="font-size: 11px;"></em>
+                <br/>
                 <?php endif; ?>
 
                 <em style="font-size: 12px;">> Seleção das séries de valores</em>
@@ -34,15 +40,15 @@
         </div>
         <?php endforeach; ?>
     </div>
-</div><br />
+</div><br/>
 <table class="filterMenu">
     <tr>
         <td>
-            <strong style="text-shadow: none">Exportação dos valores</strong><br />
+            <strong style="text-shadow: none">Exportação dos valores</strong><br/>
             <em style="font-size: 13px; text-shadow: none">
-                1. Após consultar, selecione o intervalo no gráfico com o mouse (clicar e arrastar)<br />
-                2. Aperte CTRL + C no seu teclado<br />
-                3. Cole no Excel (CTRL + V)<br />
+                1. Após consultar, selecione o intervalo no gráfico com o mouse (clicar e arrastar)<br/>
+                2. Aperte CTRL + C no seu teclado<br/>
+                3. Cole no Excel (CTRL + V)<br/>
             </em>
         </td>
     </tr>
@@ -52,23 +58,23 @@ var graphReport = {
     response: <?=$results?>,
     source: <?=Zend_Json::encode($source)?>,
     destination: <?=Zend_Json::encode($destination)?>,
-    range: { start: "<?=$startDate." ".$startHour?>", end: "<?=$endDate." ".$endHour?>"  },
-    objects: {},
-    draw: function(metric, metricObj) {
+    range:{ start:"<?=$startDate . " " . $startHour?>", end:"<?=$endDate . " " . $endHour?>"  },
+    objects:{},
+    draw:function (metric, metricObj) {
         var datasets = graphReport.datasetWithKeys(metric, metricObj);
 
         //desenha opcoes e seleciona somente o Avg
         var choiceContainer = jQuery("#selection-" + metric);
         var data = [], checked = '';
-        jQuery.each(datasets, function(idx, dataset) {
-            var type = idx.substr(0,3);
-            if(type=='Avg') {
+        jQuery.each(datasets, function (idx, dataset) {
+            var type = idx.substr(0, 3);
+            if (type == 'Avg') {
                 data.push(dataset);
                 var checked = 'checked';
             }
-            choiceContainer.append('<br/><input type="checkbox" name="'+ idx +
-                '" '+checked+' id="checkbox'+ metric + idx + '">' +
-                '<label for="checkbox'+ metric + idx + '" style="font-size:10px;">'
+            choiceContainer.append('<br/><input type="checkbox" name="' + idx +
+                '" ' + checked + ' id="checkbox' + metric + idx + '">' +
+                '<label for="checkbox' + metric + idx + '" style="font-size:10px;">'
                 + dataset.label2 + '</label>');
         });
 
@@ -77,19 +83,19 @@ var graphReport = {
             $("#sql-" + metric),
             data,
             {
-                xaxis: { mode: "time" },
-                yaxis: {
-                    tickFormatter: function(val, axis) {
+                xaxis:{ mode:"time" },
+                yaxis:{
+                    tickFormatter:function (val, axis) {
                         return conversion.stringFromMetric(metric, val, axis);
                     }
                 },
-                series: { lines: {show: true} },
-                crosshair: { mode: "x" },
-                grid: { hoverable:true, autoHighlight:false },
-                selection: { mode: "x" }
+                series:{ lines:{show:true} },
+                crosshair:{ mode:"x" },
+                grid:{ hoverable:true, autoHighlight:false },
+                selection:{ mode:"x" }
             }
         );
-        choiceContainer.find("input").bind('change keyup',function(evt) {
+        choiceContainer.find("input").bind('change keyup', function (evt) {
             //console.log(evt);
             graphReport.objects[metric].clearSelection();
             graphReport.redraw(metric, metricObj);
@@ -110,7 +116,7 @@ var graphReport = {
                     var x = item.datapoint[0].toFixed(2),
                         y = item.datapoint[1].toFixed(2);
 
-                    graphReport.showTooltip(pos.pageX+5, pos.pageY, xValueFormatted);
+                    graphReport.showTooltip(pos.pageX + 5, pos.pageY, xValueFormatted);
                 }
             } else {
                 $("#graphTooltip").remove();
@@ -118,18 +124,18 @@ var graphReport = {
             }
             graphReport.latestPosition = pos;
             if (!graphReport.updateLegendTimeout)
-                graphReport.updateLegendTimeout = setTimeout(function() {
+                graphReport.updateLegendTimeout = setTimeout(function () {
                     graphReport.updateLegend(graphReport.objects[metric], event.target, metric, xValueFormatted)
                 }, 50);
         });
 
         //controle de selecao
-        $("#sql-" + metric).bind("plotselected", function(event, ranges) {
-            graphReport.exportTable(metric,ranges.xaxis,graphReport.objects[metric].getData());
+        $("#sql-" + metric).bind("plotselected", function (event, ranges) {
+            graphReport.exportTable(metric, ranges.xaxis, graphReport.objects[metric].getData());
         });
 
     },
-    redraw: function(metric, metricObj) {
+    redraw:function (metric, metricObj) {
         var data = [];
         var choiceContainer = jQuery("#selection-" + metric);
         var datasets = graphReport.datasetWithKeys(metric, metricObj);
@@ -139,52 +145,52 @@ var graphReport = {
                 data.push(datasets[key]);
         });
 
-        var rawFilterValueDS = jQuery("#filterValue-"+metric+"-ds").val();
-        if(metric != 'rtt') {
-            var rawFilterValueSD = jQuery("#filterValue-"+metric+"-sd").val();
-            var filterValueSD = parseFloat($u(rawFilterValueSD,conversion.metrics[metric].target).as(conversion.metrics[metric].original).val());
+        var rawFilterValueDS = jQuery("#filterValue-" + metric + "-ds").val();
+        if (metric != 'rtt') {
+            var rawFilterValueSD = jQuery("#filterValue-" + metric + "-sd").val();
+            var filterValueSD = parseFloat($u(rawFilterValueSD, conversion.metrics[metric].target).as(conversion.metrics[metric].original).val());
         }
-        if(rawFilterValueSD || rawFilterValueDS) {
-            var filterValueDS = parseFloat($u(rawFilterValueDS,conversion.metrics[metric].target).as(conversion.metrics[metric].original).val());
+        if (rawFilterValueSD || rawFilterValueDS) {
+            var filterValueDS = parseFloat($u(rawFilterValueDS, conversion.metrics[metric].target).as(conversion.metrics[metric].original).val());
             //console.log("Valores do filtro SD,DS",rawFilterValueSD,filterValueSD,rawFilterValueDS,filterValueDS);
-            var isSDFilterHigherThan = jQuery("#filterType-"+metric+"-sd").val() == '>=';
-            var isDSFilterHigherThan = jQuery("#filterType-"+metric+"-ds").val() == '>=';
-            for(var seriesIdx in data) {
-                var newData=[];
+            var isSDFilterHigherThan = jQuery("#filterType-" + metric + "-sd").val() == '>=';
+            var isDSFilterHigherThan = jQuery("#filterType-" + metric + "-ds").val() == '>=';
+            for (var seriesIdx in data) {
+                var newData = [];
                 //console.log(data[seriesIdx]);
-                for(var dataIdx in data[seriesIdx].data) {
+                for (var dataIdx in data[seriesIdx].data) {
                     var testedValue = parseFloat(data[seriesIdx].data[dataIdx][1]);
-                    if(data[seriesIdx].path == 'sd')
-                        if(isSDFilterHigherThan) {
+                    if (data[seriesIdx].path == 'sd')
+                        if (isSDFilterHigherThan) {
                             //console.log("Incluir? (<=)", testedValue <= filterValue, testedValue);
-                            if(testedValue <= filterValueSD)
+                            if (testedValue <= filterValueSD)
                                 newData.push(data[seriesIdx].data[dataIdx]);
                             else
-                                newData.push([data[seriesIdx].data[dataIdx][0],null]);
+                                newData.push([data[seriesIdx].data[dataIdx][0], null]);
                         } else {
                             //console.log("Incluir? (>=)",testedValue >= filterValue,testedValue);
-                            if(testedValue >= filterValueSD)
+                            if (testedValue >= filterValueSD)
                                 newData.push(data[seriesIdx].data[dataIdx]);
                             else
-                                newData.push([data[seriesIdx].data[dataIdx][0],null]);
+                                newData.push([data[seriesIdx].data[dataIdx][0], null]);
                         }
                     else
-                    if(isDSFilterHigherThan) {
+                    if (isDSFilterHigherThan) {
                         //console.log("Incluir? (<=)", testedValue <= filterValue, testedValue);
-                        if(testedValue <= filterValueDS)
+                        if (testedValue <= filterValueDS)
                             newData.push(data[seriesIdx].data[dataIdx]);
                         else
-                            newData.push([data[seriesIdx].data[dataIdx][0],null]);
+                            newData.push([data[seriesIdx].data[dataIdx][0], null]);
                     } else {
                         //console.log("Incluir? (>=)",testedValue >= filterValue,testedValue);
-                        if(testedValue >= filterValueDS)
+                        if (testedValue >= filterValueDS)
                             newData.push(data[seriesIdx].data[dataIdx]);
                         else
-                            newData.push([data[seriesIdx].data[dataIdx][0],null]);
+                            newData.push([data[seriesIdx].data[dataIdx][0], null]);
                     }
                 }
                 //console.log("newData",newData.length);
-                if((rawFilterValueSD && data[seriesIdx].path == 'sd') || (rawFilterValueDS && data[seriesIdx].path == 'ds')) data[seriesIdx].data = jQuery(newData);
+                if ((rawFilterValueSD && data[seriesIdx].path == 'sd') || (rawFilterValueDS && data[seriesIdx].path == 'ds')) data[seriesIdx].data = jQuery(newData);
             }
 
         }
@@ -198,31 +204,31 @@ var graphReport = {
             plotObj.draw();
         }
     },
-    drawAll: function() {
+    drawAll:function () {
         //console.log(this.results);
         jQuery.each(this.response, this.draw);
     },
-    results: function(metric, metricObj, type, path) {
+    results:function (metric, metricObj, type, path) {
         var retorno = [];
         if (metric == 'rtt' && (path == 'sd')) return retorno;
-        jQuery.each(metricObj[type].values[path], function(idx, el) {
-            retorno.push([idx,el]);
+        jQuery.each(metricObj[type].values[path], function (idx, el) {
+            retorno.push([idx, el]);
         });
         return retorno;
     },
-    resultsWithLabels: function (metric, metricObj, type, path) {
+    resultsWithLabels:function (metric, metricObj, type, path) {
         var results = graphReport.results(metric, metricObj, type, path);
         var caminho = (path == "ds") ? "Down" : "Up";
         if (metric == 'rtt') caminho = "Roundtrip ";
         return {
-            data: results, label: titleCaps(metric) + " " + caminho + " (" + type + ") = 0.0",
-            label2: caminho + "stream (" + type + ")",
-            type: type,
-            path: path
+            data:results, label:titleCaps(metric) + " " + caminho + " (" + type + ") = 0.0",
+            label2:caminho + "stream (" + type + ")",
+            type:type,
+            path:path
         };
 
     },
-    datasetWithKeys: function(metric, metricObj) {
+    datasetWithKeys:function (metric, metricObj) {
         var retorno = {};
         var i = 0;
         for (var type in metricObj) {
@@ -234,7 +240,7 @@ var graphReport = {
         }
         return retorno;
     },
-    dataset: function(metric, metricObj) {
+    dataset:function (metric, metricObj) {
         var retorno = [];
         for (var type in metricObj) {
             for (var path in metricObj[type].values) {
@@ -243,9 +249,9 @@ var graphReport = {
         }
         return retorno;
     },
-    updateLegendTimeout: null,
-    latestPosition: null,
-    updateLegend: function(plotObj, target, metric, xValueFormatted) {
+    updateLegendTimeout:null,
+    latestPosition:null,
+    updateLegend:function (plotObj, target, metric, xValueFormatted) {
         this.updateLegendTimeout = null;
 
         var pos = this.latestPosition;
@@ -284,56 +290,56 @@ var graphReport = {
             legends.eq(i).text(series.label.replace(/=.*/, "= " + valueForLegend));
         }
     },
-    showTooltip: function(x, y, contents) {
+    showTooltip:function (x, y, contents) {
         $('<div id="graphTooltip">' + contents + '</div>').css({
-            position: 'absolute',
-            display: 'none',
-            top: y + 5,
-            left: x + 5,
-            border: '1px solid #fdd',
-            padding: '2px',
-            'background-color': '#fee',
-            opacity: 0.80
+            position:'absolute',
+            display:'none',
+            top:y + 5,
+            left:x + 5,
+            border:'1px solid #fdd',
+            padding:'2px',
+            'background-color':'#fee',
+            opacity:0.80
         }).appendTo("body").fadeIn(200);
     },
-    exportTable: function(metric, range, data) {
+    exportTable:function (metric, range, data) {
         //console.log(metric,range,data);
-        var source = graphReport.source.name+" ("+graphReport.source.ipaddress+")";
-        var destination = graphReport.destination.name+" ("+graphReport.destination.ipaddress+")";
-        var from = new Date(parseInt(range.from)+7200000).toLocaleString();
-        var to = new Date(parseInt(range.to)+7200000).toLocaleString();
+        var source = graphReport.source.name + " (" + graphReport.source.ipaddress + ")";
+        var destination = graphReport.destination.name + " (" + graphReport.destination.ipaddress + ")";
+        var from = new Date(parseInt(range.from) + 7200000).toLocaleString();
+        var to = new Date(parseInt(range.to) + 7200000).toLocaleString();
 
-        var table = "<table>\r\n\t<tr><th>Resultados de medições da métrica "+metric+" em "+conversion.metrics[metric].original+"</th></tr>";
-        table+= "\r\n\t<tr><th>Sonda Origem: "+source+"</th>\r\n\t<th>Sonda Destino "+destination+"</th></tr>";
-        table+= "\r\n\t<tr><th>Data Inicio: "+from+"</th>\r\n\t<th>Data Fim: "+to+"</th></tr>";
-        table+= "\r\n\t<tr><th>Timestamp</th> ";
-        var line,col;
-        for(col=0; col<data.length;++col) {
-            table+="<th>"+data[col].label2+"</th>";
+        var table = "<table>\r\n\t<tr><th>Resultados de medições da métrica " + metric + " em " + conversion.metrics[metric].original + "</th></tr>";
+        table += "\r\n\t<tr><th>Sonda Origem: " + source + "</th>\r\n\t<th>Sonda Destino " + destination + "</th></tr>";
+        table += "\r\n\t<tr><th>Data Inicio: " + from + "</th>\r\n\t<th>Data Fim: " + to + "</th></tr>";
+        table += "\r\n\t<tr><th>Timestamp</th> ";
+        var line, col;
+        for (col = 0; col < data.length; ++col) {
+            table += "<th>" + data[col].label2 + "</th>";
         }
-        table+="</tr>";
-        for(line = 0; line < data[0].data.length; ++line) {
+        table += "</tr>";
+        for (line = 0; line < data[0].data.length; ++line) {
             var timestamp = parseInt(data[0].data[line][0]);
-            if(range.from > timestamp || range.to < timestamp) continue;
-            var d = new Date(timestamp+7200000);
-            var formatedDate = d.getFullYear()+"-"+(d.getMonth()+1).padZero()+"-"+d.getDate().padZero()+" "+d.getHours().padZero()+":"+d.getMinutes().padZero()+":"+d.getSeconds().padZero();
-            table+="\r\n\t<tr><td>"+formatedDate+"</td>";
-            for(col=0; col<data.length;++col) {
-                var value = (data[col].data[line][1] == null)?"":conversion._value(metric,data[col].data[line][1]);
-                table+="<td>"+value+"</td>"
+            if (range.from > timestamp || range.to < timestamp) continue;
+            var d = new Date(timestamp + 7200000);
+            var formatedDate = d.getFullYear() + "-" + (d.getMonth() + 1).padZero() + "-" + d.getDate().padZero() + " " + d.getHours().padZero() + ":" + d.getMinutes().padZero() + ":" + d.getSeconds().padZero();
+            table += "\r\n\t<tr><td>" + formatedDate + "</td>";
+            for (col = 0; col < data.length; ++col) {
+                var value = (data[col].data[line][1] == null) ? "" : conversion._value(metric, data[col].data[line][1]);
+                table += "<td>" + value + "</td>"
             }
-            table+="</tr>";
+            table += "</tr>";
         }
-        table+= "\r\n</table>";
+        table += "\r\n</table>";
 
         jQuery("#tempArea").val(table);
         jQuery("#clipboardArea").dialog({
             modal:true,
             title:"Dados a serem copiados para o Excel",
             minWidth:550,
-            buttons: {
-                Ok: function() {
-                    $( this ).dialog( "close" );
+            buttons:{
+                Ok:function () {
+                    $(this).dialog("close");
                 }
             }
         });
@@ -341,21 +347,21 @@ var graphReport = {
     }
 };
 
-$(function() {
+$(function () {
 
     graphReport.drawAll();
 
-    jQuery.each(graphReport.response, function(idx,el) {
-        jQuery("#filterUnit-"+idx+"-sd").append(conversion.metrics[idx].target);
-        if(idx!='rtt') jQuery("#filterUnit-"+idx+"-ds").append(conversion.metrics[idx].target);
+    jQuery.each(graphReport.response, function (idx, el) {
+        jQuery("#filterUnit-" + idx + "-sd").append(conversion.metrics[idx].target);
+        if (idx != 'rtt') jQuery("#filterUnit-" + idx + "-ds").append(conversion.metrics[idx].target);
     });
 
 
     $("#metricsAccordion").accordion({
-        collapsible: true,
+        collapsible:true,
         active: <?=count($results) - 1 ?>,
-        autoHeight: false,
-        clearStyle: false
+        autoHeight:false,
+        clearStyle:false
     });
 });
 </script>

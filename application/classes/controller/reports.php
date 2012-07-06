@@ -348,6 +348,8 @@ class Controller_Reports extends Controller_Skeleton
                     ->bind('endDate', $end)
                     ->bind('startHour', $stime)
                     ->bind('endHour', $etime)
+                    ->bind('inicio', $inicio)
+                    ->bind('fim', $fim)
                     ->bind('metrics', $metrics)
                     ->bind('processes', $processes)
                     ->set('source', $source->as_array())
