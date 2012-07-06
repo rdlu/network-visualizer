@@ -7,64 +7,68 @@
 //                    'controller'=>'synthesizing',
 //                    'action'=>'popup'
 //               ));
+Route::set('log', 'log(/<date>)', array('date' => '\d{4}/\d{2}/\d{2}',))
+    ->defaults(array('controller' => 'log','action' => 'view'));
+
+
 Route::set('synthpopup', 'synthpopup(/<id>)')
-     ->defaults(array(
-           'controller'=>'synthesizing',
-           'action'=>'popup'
+    ->defaults(array(
+    'controller' => 'synthesizing',
+    'action' => 'popup'
 ));
 
 Route::set('default', '(<controller>(/<action>(/<id>)))')
-	->defaults(array(
-		'controller' => 'welcome',
-		'action'     => 'index',
-	));
+    ->defaults(array(
+    'controller' => 'welcome',
+    'action' => 'index',
+));
 
 
 Route::set('process', '(<controller>(/<action>(/<source>/<destination>)))')
-	->defaults(array(
-		'controller' => 'process',
-		'action'     => 'view',
-	));
-
-Route::set('processIndex', 'processes/list(/<source>)', array('source'=>'[a-z0-9.]+'))
     ->defaults(array(
-                    'controller'=>'processes',
-                    'action'=>'list'
-               ));
+    'controller' => 'process',
+    'action' => 'view',
+));
 
-Route::set('processNew', 'processes/new(/<source>)', array('source'=>'[0-9.]+'))
+Route::set('processIndex', 'processes/list(/<source>)', array('source' => '[a-z0-9.]+'))
     ->defaults(array(
-                    'controller'=>'processes',
-                    'action'=>'new'
-               ));
+    'controller' => 'processes',
+    'action' => 'list'
+));
+
+Route::set('processNew', 'processes/new(/<source>)', array('source' => '[0-9.]+'))
+    ->defaults(array(
+    'controller' => 'processes',
+    'action' => 'new'
+));
 
 Route::set('processSetup', '(<controller>(/<action>/<first>/<second>/<profile>))')
-	->defaults(array(
-		'controller' => 'process',
-		'action'     => 'setup',
-	));
+    ->defaults(array(
+    'controller' => 'process',
+    'action' => 'setup',
+));
 
 Route::set('reportsSpec', '(<controller>(/<action>/<source>/<destination>))')
-	->defaults(array(
-		'controller' => 'reports',
-		'action'     => 'json',
-	));
+    ->defaults(array(
+    'controller' => 'reports',
+    'action' => 'json',
+));
 
 
 Route::set('collect',
-           'collect/id(/<destination>(/<metric>(/<dsMax>/<dsMin>/<dsAvg>/<sdMax>/<sdMin>/<sdAvg>/<timestamp>)))',
-           array('destination'=>'[0-9]+',
-	             'metric'=>'[a-z_]+',
-                'dsMax'=> '.*',//'[0-9.]+', //'^[+-]?\d[.]?\d'
-                'dsMin'=>'.*',//'[0-9.]+',
-                'dsAvg'=>'.*',//'[0-9.]+',
-                'sdMax'=>'.*',
-                'sdMin'=>'.*',//'[0-9.]+', //'.*'
-                'sdAvg'=>'.*',//'[0-9.]+'
-                'timestamp'=>'.*'
-           ))
-		->defaults(array(
-                    'controller'=>'collect',
-                    'action'=>'id'
-               ));
+    'collect/id(/<destination>(/<metric>(/<dsMax>/<dsMin>/<dsAvg>/<sdMax>/<sdMin>/<sdAvg>/<timestamp>)))',
+    array('destination' => '[0-9]+',
+        'metric' => '[a-z_]+',
+        'dsMax' => '.*', //'[0-9.]+', //'^[+-]?\d[.]?\d'
+        'dsMin' => '.*', //'[0-9.]+',
+        'dsAvg' => '.*', //'[0-9.]+',
+        'sdMax' => '.*',
+        'sdMin' => '.*', //'[0-9.]+', //'.*'
+        'sdAvg' => '.*', //'[0-9.]+'
+        'timestamp' => '.*'
+    ))
+    ->defaults(array(
+    'controller' => 'collect',
+    'action' => 'id'
+));
 

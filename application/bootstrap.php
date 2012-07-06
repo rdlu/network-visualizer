@@ -103,7 +103,6 @@ Kohana::modules(array(
 	'userguide' => MODPATH . 'userguide', // User guide and API documentation
 	'sprig' => MODPATH . 'sprig', // User guide and API documentation
 	//'firephp' => MODPATH . 'firephp', // User guide and API documentation
-	'log' => MODPATH . 'log',
 	'zend' => MODPATH . 'zend',
 	'pheanstalk' => MODPATH . 'pheanstalk',
 	//'firelogger'  => MODPATH.'firelogger',
