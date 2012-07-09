@@ -107,17 +107,19 @@ class Controller_Welcome extends Controller_Skeleton
                     );
                 }
                 //$this->response->headers('Content-Type', 'text/json');
-                $cache = $JSONresponse;
+                $cache = serialize($JSONresponse);
                 Cache::instance('memcache')->set('infoMapaJ', $cache);
             } else {
                 $query = DB::select()->where('isAndroid', '=', 0)->order_by('status', 'DESC');
                 $entities = Sprig::factory('entity')->load($query, FALSE);
+                $response = unserialize($cache);
                 foreach ($entities as $id => $entity) {
-                    $cache[$id]['status'] = $entity->status;
+                    $response[$id]['status'] = $entity->status;
                 }
+                $cache = serialize($response);
                 Cache::instance('memcache')->set('infoMapaJ', $cache);
             }
-            $this->response->body(json_encode($cache));
+            $this->response->body(json_encode(unserialize($cache)));
         }
     }
 
