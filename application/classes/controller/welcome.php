@@ -107,20 +107,27 @@ class Controller_Welcome extends Controller_Skeleton
                     );
                 }
                 //$this->response->headers('Content-Type', 'text/json');
-                $cache = serialize($JSONresponse);
-                Cache::instance('memcache')->set('infoMapaJ', $cache);
+                $cache = $JSONresponse;
+                $cacheResponse = Cache::instance('memcache')->set('infoMapaJ', $cache, 2592000);
+                $cache = Cache::instance('memcache')->get('infoMapaJ');
             } else {
-                $query = DB::select()->where('isAndroid', '=', 0)->order_by('status', 'DESC');
-                $entities = Sprig::factory('entity')->load($query, FALSE);
-                $response = unserialize($cache);
-                foreach ($entities as $id => $entity) {
-                    $response[$id]['status'] = $entity->status;
+                foreach ($cache as $key => $entity) {
+                    //$cache[$key]['status'] = $entities[$entity['id']]->status;
+                    $cache[$key]['status'] = Sonda::instance($entity['id'])->getCode();
                 }
-                $cache = serialize($response);
-                Cache::instance('memcache')->set('infoMapaJ', $cache);
+                usort($cache, array($this, "compareCacheStatus"));
+                Cache::instance('memcache')->set('infoMapaJ', $cache, 1209600);
             }
-            $this->response->body(json_encode(unserialize($cache)));
+            $this->response->body(json_encode($cache));
         }
+    }
+
+    private function compareCacheStatus($a, $b)
+    {
+        if ($a['status'] == $b['status']) {
+            return strcmp($a["nome"], $b["nome"]);
+        }
+        return ($a['status'] > $b['status']) ? -1 : 1;
     }
 
     public function action_infoBar($id)

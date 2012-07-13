@@ -6,10 +6,6 @@
         Purpose of the stylesheet follows.
 */
 
-/* 
-   TODO customize this sample style
-   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
-*/
 .odd {
     background-color: #bdbdbd;
 }
@@ -29,7 +25,7 @@ a, a:visited {
 }
 
 span.button2 {
-    -moz-border-radius:10px;
+    -moz-border-radius: 10px;
     border-radius: 10px;
     border: solid thin #999;
     padding: 5px 10px;
@@ -43,6 +39,7 @@ span.button2 {
     box-shadow: 2px 2px 3px #888;
 
 }
+
 .button2:active {
     -moz-box-shadow: 1px 1px 2px #888;
     -webkit-box-shadow: 1px 1px 2px #888;
@@ -54,7 +51,7 @@ span.button2 {
 }
 
 div#opt {
-   text-align: right;
-   margin: 10px 10px 15px 10px;
+    text-align: right;
+    margin: 10px 10px 15px 10px;
 }
 
