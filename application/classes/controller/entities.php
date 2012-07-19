@@ -63,11 +63,20 @@ class Controller_Entities extends Controller_Skeleton
                 $id = $_POST['id'];
             }
 
+            if (isset($_POST['isAndroid']))
+                $arr = array('id' => $id, 'isAndroid' => (int)$_POST['isAndroid']);
+            else
+                $arr = array('id' => $id);
+
             $source = Sprig::factory('entity', array('id' => $id))->load();
             $processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id', '=', $source->id), null);
             $resp = array();
             foreach ($processes as $process) {
-                $resp[] = $process->destination->load()->as_array();
+                $ent = $process->destination->load()->as_array();
+                if (isset($_POST['isAndroid'])) {
+                    if ($_POST['isAndroid'] == $ent['isAndroid'])
+                        $resp[] = $ent;
+                } else $resp[] = $ent;
             }
 
             $this->response->headers('Content-Type', 'application/json');

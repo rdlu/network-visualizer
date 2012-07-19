@@ -6,7 +6,7 @@
         Arquivo destinado aos estilos de mídia screen (monitores, TVs) e projection (projetores)
 */
 
-root { 
+root {
     display: block;
 }
 
@@ -18,38 +18,38 @@ body {
 }
 
 div#header {
-    border-radius:10px;
-    -moz-border-radius-bottomleft:10px;
-    -moz-border-radius-bottomright:10px;
+    border-radius: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    -moz-border-radius-bottomright: 10px;
     -pie-background: linear-gradient(#6A8BAB, #375D81);
     background: #6a8bab; /* Old browsers */
     sbackground: -moz-linear-gradient(top, #6a8bab 0%, #375d81 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6a8bab), color-stop(100%,#375d81)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #6a8bab 0%,#375d81 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #6a8bab 0%,#375d81 100%); /* Opera11.10+ */
-    background: -ms-linear-gradient(top, #6a8bab 0%,#375d81 100%); /* IE10+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6a8bab', endColorstr='#375d81',GradientType=0 ); /* IE6-9 */
-    background: linear-gradient(top, #6a8bab 0%,#375d81 100%); /* W3C */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #6a8bab), color-stop(100%, #375d81)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #6a8bab 0%, #375d81 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #6a8bab 0%, #375d81 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, #6a8bab 0%, #375d81 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#6a8bab', endColorstr = '#375d81', GradientType = 0); /* IE6-9 */
+    background: linear-gradient(top, #6a8bab 0%, #375d81 100%); /* W3C */
     padding: 5px;
     color: white;
-    text-shadow:4px 4px 3px #000000;
+    text-shadow: 4px 4px 3px #000000;
     behavior: url('/mom/pie/PIE.php');
     margin-top: -10px;
 }
 
 ul li, ol li {
-    text-indent:0;
+    text-indent: 0;
 }
 
 ul, ol {
-    list-style-position:outside;
+    list-style-position: outside;
 }
 
 ul#mainMenu {
-    clear:both;
-    list-style:none outside none;
+    clear: both;
+    list-style: none outside none;
     padding: 0;
-    font-family: Ubuntu,"Segoe UI", "Droid Sans";
+    font-family: Ubuntu, "Segoe UI", "Droid Sans";
     position: relative;
 }
 
@@ -63,14 +63,14 @@ ul#mainMenu li a {
     text-transform: uppercase;
     font-weight: bold;
     color: #DDD;
-    text-shadow:3px 3px 2px #000000;
+    text-shadow: 3px 3px 2px #000000;
     display: inline-block;
     padding: 20px 5px 15px 8px;
 }
 
 ul#mainMenu li a:hover {
     color: #FFF;
-    text-shadow:3px 3px 2px #000000;
+    text-shadow: 3px 3px 2px #000000;
 }
 
 ul#mainMenu li#titleMainMenu {
@@ -92,16 +92,16 @@ div#container {
 }
 
 div#content {
-    border-radius:10px;
-    -moz-border-radius:10px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
     background: #dddddd; /* Old browsers */
     background: -moz-linear-gradient(top, #dddddd 0%, #eeeeee 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dddddd), color-stop(100%,#eeeeee)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #dddddd 0%,#eeeeee 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #dddddd 0%,#eeeeee 100%); /* Opera11.10+ */
-    background: -ms-linear-gradient(top, #dddddd 0%,#eeeeee 100%); /* IE10+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddddd', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
-    background: linear-gradient(top, #dddddd 0%,#eeeeee 100%); /* W3C */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #eeeeee)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #dddddd 0%, #eeeeee 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #dddddd 0%, #eeeeee 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, #dddddd 0%, #eeeeee 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#dddddd', endColorstr = '#eeeeee', GradientType = 0); /* IE6-9 */
+    background: linear-gradient(top, #dddddd 0%, #eeeeee 100%); /* W3C */
     -pie-background: linear-gradient(#DDD, #EEE);
     padding: 10px;
     margin-top: 5px;
@@ -110,16 +110,16 @@ div#content {
 }
 
 div#footer {
-    border-radius:10px;
-    -moz-border-radius:10px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
     background: #375d81; /* Old browsers */
     background: -moz-linear-gradient(top, #375d81 0%, #6a8bab 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#375d81), color-stop(100%,#6a8bab)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #375d81 0%,#6a8bab 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #375d81 0%,#6a8bab 100%); /* Opera11.10+ */
-    background: -ms-linear-gradient(top, #375d81 0%,#6a8bab 100%); /* IE10+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#375d81', endColorstr='#6a8bab',GradientType=0 ); /* IE6-9 */
-    background: linear-gradient(top, #375d81 0%,#6a8bab 100%); /* W3C */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #375d81), color-stop(100%, #6a8bab)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #375d81 0%, #6a8bab 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #375d81 0%, #6a8bab 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, #375d81 0%, #6a8bab 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#375d81', endColorstr = '#6a8bab', GradientType = 0); /* IE6-9 */
+    background: linear-gradient(top, #375d81 0%, #6a8bab 100%); /* W3C */
     -pie-background: linear-gradient(#375D81, #6A8BAB);
     padding: 5px 15px;
     margin: 7px 0 10px;
@@ -140,15 +140,15 @@ div#footer img {
 a.boardMenu {
     display: block;
     width: 98%;
-    -moz-border-radius:5px;
-    border-radius:5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
     border: thin solid #999;
     padding: 5px;
     margin-bottom: 5px;
     text-decoration: none;
     font-size: 1.3em;
     color: #222;
-    text-shadow:1px 1px 1px #AAA;
+    text-shadow: 1px 1px 1px #AAA;
 }
 
 a.boardMenu img {
@@ -157,19 +157,19 @@ a.boardMenu img {
 }
 
 table#filterMenu, table.filterMenu {
-    background-color:#CDCDCD;
+    background-color: #CDCDCD;
     font-family: Ubuntu, Corbel, "Segoe UI", Tahoma, Arial;
-    font-size:14px;
-    margin:0px;
-    text-align:center;
-    width:100%;
-    -moz-border-radius:7px;
+    font-size: 14px;
+    margin: 0px;
+    text-align: center;
+    width: 100%;
+    -moz-border-radius: 7px;
     border-radius: 7px;
 }
 
 table#filterMenu td, table.filterMenu td {
     padding: 5px 10px 8px;
-    text-shadow:3px 3px 2px #666;
+    text-shadow: 3px 3px 2px #666;
 }
 
 a.filterMenu {
@@ -179,7 +179,7 @@ a.filterMenu {
 }
 
 form.bForms fieldset {
-    -moz-border-radius:10px;
+    -moz-border-radius: 10px;
     border-radius: 10px;
     border: solid thin #999;
     padding: 10px;
@@ -219,7 +219,7 @@ form.bForms select {
 }
 
 span.input {
-    -moz-border-radius:3px;
+    -moz-border-radius: 3px;
     padding: 0 5px 0 30px;
     font-size: 12px;
     font-family: Ubuntu, Arial, sans-serif;
@@ -270,7 +270,7 @@ ul.errors, ul.error, ul.info, ul.success, ul.warn {
     padding: 5px;
     display: inline-block;
     font-family: Ubuntu, Arial, sans-serif;
-    -moz-border-radius:7px;
+    -moz-border-radius: 7px;
 }
 
 ul.errors, ul.error {
@@ -329,11 +329,11 @@ fieldset.left label {
 }
 
 fieldset.group label {
-    
+
 }
 
 span.button {
-    -moz-border-radius:10px;
+    -moz-border-radius: 10px;
     border-radius: 10px;
     border: solid thin #999;
     padding: 5px 10px;
@@ -385,17 +385,17 @@ ul.tasks li.viewDestination {
 /* Sintetização */
 .synth_index, synth_secao {
     padding: 10px 20px 10px 20px;
-    background-color:#CDCDCD;
+    background-color: #CDCDCD;
     font-family: Ubuntu, Corbel, "Segoe UI", Tahoma, Arial;
-    font-size:14px;       
-    -moz-border-radius:8px;
+    font-size: 14px;
+    -moz-border-radius: 8px;
     border-radius: 8px;
 }
 
 .synth_secao {
-    margin: 10px;    
+    margin: 10px;
     border: thin solid #999;
-    -moz-border-radius:8px;
+    -moz-border-radius: 8px;
     border-radius: 8px;
     -webkit-border-radius: 8px;
     background-color: #ddd;
@@ -408,10 +408,10 @@ ul.tasks li.viewDestination {
 .synth_title {
     margin-top: 2px;
     height: 22px;
-    vertical-align: center;    
+    vertical-align: center;
 }
 
-.synth_box {    
+.synth_box {
     width: 143px;
     height: 55px;
     margin: 10px;
@@ -424,11 +424,11 @@ ul.tasks li.viewDestination {
 }
 
 #synth_select {
-     border: 1px solid #999999;
-     padding: 10px 20px 10px 20px;
-     margin: 10px;
-     background-color: #cdcdcd;
-     border-radius: 8px;
+    border: 1px solid #999999;
+    padding: 10px 20px 10px 20px;
+    margin: 10px;
+    background-color: #cdcdcd;
+    border-radius: 8px;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
 }
@@ -457,7 +457,8 @@ ul.tasks li.viewDestination {
     float: right;
 }
 
-.synth_bar_bg { /*fundo da barra de medição*/
+.synth_bar_bg {
+    /*fundo da barra de medição*/
     margin-top: 20px;
     width: 58px;
     background: white;
@@ -471,9 +472,10 @@ ul.tasks li.viewDestination {
     cursor: default;
 }
 
-.synth_bar_bg span { /*aqui vai o nome da métrica*/
+.synth_bar_bg span {
+    /*aqui vai o nome da métrica*/
     margin-left: 2px;
-    white-space:nowrap;
+    white-space: nowrap;
     /* disables selection: */
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -502,14 +504,14 @@ synth_form h2 {
     display: none;
 }
 
-.tooltip{
-    display:none;
-	background: black;
-	height:600px;
-	padding:40px 30px 10px 30px;
-	width:310px;
-	font-size:11px;
-	color:#fff;
+.tooltip {
+    display: none;
+    background: black;
+    height: 600px;
+    padding: 40px 30px 10px 30px;
+    width: 310px;
+    font-size: 11px;
+    color: #fff;
 }
 
 /* synth_index -> synth_box -> synth_bar_bg -> synth_bar_inner */
@@ -523,7 +525,7 @@ div.loadingBig {
 
 span.iblock.status {
     padding: 5px 10px 5px 25px;
-    -moz-border-radius:5px;
+    -moz-border-radius: 5px;
     border-radius: 5px;
 }
 
@@ -595,11 +597,28 @@ label.error {
     margin-left: 5px;
     color: red;
 }
+
 /* Sintetização */
 div#entityList {
     text-align: center;
 }
 
-table#entityList.tablesorter tbody tr td,table#entityList thead tr th {
+table#entityList.tablesorter tbody tr td, table#entityList thead tr th {
     vertical-align: middle;
+}
+
+table#reportsMenu {
+    background-color: #CDCDCD;
+    font-family: Ubuntu, Corbel, "Segoe UI", Tahoma, Arial;
+    box-shadow: 2px 2px 5px #888;
+    font-size: 14px;
+    margin: 0px;
+    text-align: left;
+    width: 100%;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+}
+
+table#reportsMenu td {
+    padding: 4px;
 }
