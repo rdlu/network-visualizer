@@ -7,35 +7,56 @@
         <div id="<?=$metric->name?>-area" style="height: 370px;">
             <div id="sql-<?=$metric->name?>" style="height: 320px; width: 80%; margin-right: 5px; float: left"></div>
             <div id="selection-<?=$metric->name?>" style="height: 300px; padding: 10px">
-                <strong>> Filtros do gráfico</strong><br/>
-                <em style="font-size: 12px;">> Remover valores:</em><br/>
+                <strong>> Exportar para CSV</strong><br/>
+                <span style="margin-left: 15px">
+                   <a href="#" class="xportButton" rel="<?=$metric->name?>" id="button-<?=$metric->name?>"><img
+                       src="<?=url::base()?>/images/actions/table_save.png"
+                       alt="Salvar"> Salvar</a>
+                </span>
 
-                <label for="filterType-<?=$metric->name?>-ds" style="line-height: 12px; font-size: 11px;">Down: </label>
-                <select name="filterType[<?=$metric->name?>][ds]" id="filterType-<?=$metric->name?>-ds"
-                        style="line-height: 12px; font-size: 11px;">
-                    <option value=">=">Acima de</option>
-                    <option value="<=">Abaixo de</option>
-                </select>
-                <input type="text" id="filterValue-<?=$metric->name?>-ds" name="filterValue[<?=$metric->name?>][ds]"
-                       maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
-                <em id="filterUnit-<?=$metric->name?>-ds" class="filterUnit-<?=$metric->name?>"
-                    style="font-size: 11px;"></em>
-                <br/>
-                <?php if ($metric->name != 'rtt'): ?>
-                <label for="filterType-<?=$metric->name?>-sd" style="line-height: 12px; font-size: 11px;">Up: </label>
-                <select name="filterType[<?=$metric->name?>][sd]" id="filterType-<?=$metric->name?>-sd"
-                        style="line-height: 12px; font-size: 11px;">
-                    <option value=">=">Acima de</option>
-                    <option value="<=">Abaixo de</option>
-                </select>
-                <input type="text" id="filterValue-<?=$metric->name?>-sd" name="filterValue[<?=$metric->name?>][sd]"
-                       maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
-                <em id="filterUnit-<?=$metric->name?>-sd" class="filterUnit-<?=$metric->name?>"
-                    style="font-size: 11px;"></em>
-                <br/>
-                <?php endif; ?>
+                <form action="<?=url::site('reports/xport')?>/" method="post" id="form-<?=$metric->name?>"
+                      class="xportForm">
+                    <input type="hidden" name="source" value="<?=$source['id']?>"/>
+                    <input type="hidden" name="destination" value="<?=$destination['id']?>"/>
+                    <input type="hidden" name="metric" value="<?=$metric->id?>"/>
+                    <input type="hidden" name="startDate" value=""/>
+                    <input type="hidden" name="startHour" value=""/>
+                    <input type="hidden" name="endDate" value=""/>
+                    <input type="hidden" name="endHour" value=""/>
+                    <input type="submit" style="display: none;"/>
 
-                <em style="font-size: 12px;">> Seleção das séries de valores</em>
+                    <strong>> Filtros do gráfico</strong><br/>
+                    <em style="font-size: 12px;">> Remover valores:</em><br/>
+
+                    <label for="filterType-<?=$metric->name?>-ds"
+                           style="line-height: 12px; font-size: 11px;">Down: </label>
+                    <select name="filterType[<?=$metric->name?>][ds]" id="filterType-<?=$metric->name?>-ds"
+                            style="line-height: 12px; font-size: 11px;">
+                        <option value=">=">Acima de</option>
+                        <option value="<=">Abaixo de</option>
+                    </select>
+                    <input type="text" id="filterValue-<?=$metric->name?>-ds" name="filterValue[<?=$metric->name?>][ds]"
+                           maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
+                    <em id="filterUnit-<?=$metric->name?>-ds" class="filterUnit-<?=$metric->name?>"
+                        style="font-size: 11px;"></em>
+                    <br/>
+                    <?php if ($metric->name != 'rtt'): ?>
+                    <label for="filterType-<?=$metric->name?>-sd"
+                           style="line-height: 12px; font-size: 11px;">Up: </label>
+                    <select name="filterType[<?=$metric->name?>][sd]" id="filterType-<?=$metric->name?>-sd"
+                            style="line-height: 12px; font-size: 11px;">
+                        <option value=">=">Acima de</option>
+                        <option value="<=">Abaixo de</option>
+                    </select>
+                    <input type="text" id="filterValue-<?=$metric->name?>-sd" name="filterValue[<?=$metric->name?>][sd]"
+                           maxlength="4" size="4" style="line-height: 12px; font-size: 11px;"/>
+                    <em id="filterUnit-<?=$metric->name?>-sd" class="filterUnit-<?=$metric->name?>"
+                        style="font-size: 11px;"></em>
+                    <br/>
+                    <?php endif; ?>
+
+                    <em style="font-size: 12px;">> Seleção das séries de valores</em>
+                </form>
             </div>
         </div>
         <?php endforeach; ?>
@@ -174,8 +195,7 @@ var graphReport = {
                             else
                                 newData.push([data[seriesIdx].data[dataIdx][0], null]);
                         }
-                    else
-                    if (isDSFilterHigherThan) {
+                    else if (isDSFilterHigherThan) {
                         //console.log("Incluir? (<=)", testedValue <= filterValue, testedValue);
                         if (testedValue <= filterValueDS)
                             newData.push(data[seriesIdx].data[dataIdx]);
@@ -362,6 +382,17 @@ $(function () {
         active: <?=count($results) - 1 ?>,
         autoHeight:false,
         clearStyle:false
+    });
+
+    $(".xportButton").click(function (event) {
+        event.preventDefault();
+        var metric = jQuery(event.target).attr("rel");
+        $("#form-" + metric).children('[name="startDate"]').val($("#inicio").val());
+        $("#form-" + metric).children('[name="startHour"]').val($("#horaini").val());
+        $("#form-" + metric).children('[name="endDate"]').val($("#fim").val());
+        $("#form-" + metric).children('[name="endHour"]').val($("#horafim").val());
+
+        $("#form-" + metric).submit();
     });
 });
 </script>
