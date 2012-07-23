@@ -18,7 +18,7 @@ class Controller_Collect extends Controller
         }
 
         $ip = $_SERVER['REMOTE_ADDR'];
-        $authorized_collectors = Kohana::config('network.collectors');
+        $authorized_collectors = Kohana::$config->load('network.collectors');
         //leve recurso de segurança
         if (!in_array($ip, $authorized_collectors)) throw new CollectException("Unrecognized collector $ip ", 1337);
 
@@ -76,7 +76,7 @@ class Controller_Collect extends Controller
             Model_Results::factory($profile->id, $metric->id)->insert($process->id, $toBeSQLed);
 
 
-            $roundedTimestamp = $timestamp - ($timestamp % $profile->polling);
+            $roundedTimestamp = $timestamp - ($timestamp % $destination->polling);
 
             if (!$destination->isAndroid)
                 $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress)->update($metric->name, $toBeRRDed, $roundedTimestamp);

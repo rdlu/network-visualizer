@@ -53,7 +53,7 @@ class Controller_Skeleton extends Controller_Template
             $this->template->title = 'NetmetricMoM :: ';
             $this->template->content = '';
             $this->template->header = View::factory('templates/mainmenu');
-            $this->template->header->menus = Kohana::config('menus.main');
+            $this->template->header->menus = Kohana::$config->load('menus.main');
             if (Auth::instance()->logged_in()) {
                 $this->template->header->menus['logoff'] = array('title' => __('Logout'), 'href' => 'account/signout');
             }

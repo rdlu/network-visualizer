@@ -251,7 +251,7 @@ class Rrd
             //Fire::info('Creating Directory ' . $path);
             mkdir($path, 0774, true);
         }
-        $measures = Kohana::config("measure.$metric");
+        $measures = Kohana::$config->load("measure.$metric");
 
         //if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
         //if(!$end) $end = date('d.m.Y H:i');
@@ -332,7 +332,7 @@ class Rrd
         $path = $this->path();
 
         //Fire::group("Creating RRD $metric xml from $this->source to $this->destination, metric $metric", array('Collapsed' => "true"));
-        $measures = Kohana::config("measure.$metric");
+        $measures = Kohana::$config->load("measure.$metric");
 
         //if(!$start) $start = date('d.m.Y H:i',mktime(date('H'), date('i'), date('s'), date("m") , date("d") - 1, date("Y")));
         //if(!$end) $end = date('d.m.Y H:i');

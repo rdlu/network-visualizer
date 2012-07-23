@@ -49,6 +49,7 @@ CREATE TABLE `entities` (
   `description` longtext,
   `added` int(11) NOT NULL DEFAULT '0',
   `updated` int(11) NOT NULL DEFAULT '0',
+  `polling` int(11) NOT NULL DEFAULT '300',
   `status` smallint(6) NOT NULL,
   `type` smallint(6) NOT NULL,
   `zip` varchar(9) DEFAULT NULL,
@@ -121,7 +122,6 @@ CREATE TABLE `processes` (
 CREATE TABLE `profiles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
-  `polling` int(11) NOT NULL,
   `count` int(11) NOT NULL,
   `probeCount` int(11) NOT NULL,
   `probeSize` int(11) NOT NULL,

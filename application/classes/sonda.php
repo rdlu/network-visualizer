@@ -126,8 +126,7 @@ class Sonda
                     //Fire::info($e->array->errors());
                 }
 
-            }
-            else {
+            } else {
                 $newinstance->message = 'Entidade desativada ou sem processos de medição';
                 if ($newinstance->sonda->isAndroid) {
                     //TODO: timestamp
@@ -186,7 +185,7 @@ class Sonda
                 } else
                     $this->version = Snmp::instance($realip)->group('linuxManager');
             } catch (Exception $err) {
-                foreach (Kohana::config('snmp.linuxManager') as $k => $v) {
+                foreach (Kohana::$config->load('snmp.linuxManager') as $k => $v) {
                     $this->version[$k] = null;
                 }
             }
