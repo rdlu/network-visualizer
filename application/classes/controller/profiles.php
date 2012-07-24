@@ -79,7 +79,7 @@ class Controller_Profiles extends Controller_Skeleton
         else throw new Kohana_Exception('This controller only accepts AJAX requests', $_POST);
     }
 
-    public function action_view($id)
+    public function action_view()
     {
         $id = (int)$this->request->param('id');
         $view = View::factory('profiles/view');
