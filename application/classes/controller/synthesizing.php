@@ -49,8 +49,10 @@ class Controller_Synthesizing extends Controller_Skeleton
     * Recebe o id de uma sonda e
     * Retorna as informações JSON sobre as sondas de destino
     */
-    public function action_destsondas($source)
+    public function action_destsondas()
     {
+        $source = (int)$this->request->param('source');
+
         $this->auto_render = false;
 
         $source = Sprig::factory('entity', array('id' => $source))->load();
@@ -73,8 +75,9 @@ class Controller_Synthesizing extends Controller_Skeleton
     }
 
 //recebe o id da sonda de origem e retorna informações sobre a sonda de origem
-    public function action_origsondas($idorigem)
+    public function action_origsondas()
     {
+        $idorigem = (int)$this->request->param('source');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
             $sonda_origem = Sprig::factory('entity', array("id" => $idorigem))->load();
@@ -90,17 +93,19 @@ class Controller_Synthesizing extends Controller_Skeleton
         }
     }
 
-    public function action_popup($sondaOrigemId)
+    public function action_popup()
     {
+        $sondaOrigemId = (int)$this->request->param('source');
         $view = View::factory('synthesizing/popup');
         $view->bind('sondaOrigemId', $sondaOrigemId);
         $this->template->content = $view;
     }
 
-    public function action_Modal($sId = 0, $dId = 0, $relative = 0)
+    public function action_Modal()
     {
-        $sId = (int)$sId;
-        $dId = (int)$dId;
+        $sId = (int)$this->request->param('source', 0);
+        $dId = (int)$this->request->param('destination', 0);
+        $relative = $this->request->param('relative', false);
         $view = View::factory('synthesizing/modal');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;

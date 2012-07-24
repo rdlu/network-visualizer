@@ -42,10 +42,15 @@ class Controller_Reports extends Controller_Skeleton
         $this->template->content = $view;
     }
 
-    public function action_View($sId = 0, $dId = 0, $start = 0, $end = 0, $stime = 0, $etime = 0)
+    public function action_View()
     {
-        $sId = (int)$sId;
-        $dId = (int)$dId;
+        $sId = (int)$this->request->param('source_id', 0);
+        $dId = (int)$this->request->param('destination_id', 0);
+        $start = $this->request->param('start', 0);
+        $end = $this->request->param('end', 0);
+        $stime = $this->request->param('stime', 0);
+        $etime = $this->request->param('etime', 0);
+
         $view = View::factory('reports/view');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
@@ -120,10 +125,15 @@ class Controller_Reports extends Controller_Skeleton
         }
     }
 
-    public function action_ViewFlot($sId = 0, $dId = 0, $start = 0, $end = 0, $stime = 0, $etime = 0)
+    public function action_ViewFlot()
     {
-        $sId = (int)$sId;
-        $dId = (int)$dId;
+        $sId = (int)$this->request->param('source_id', 0);
+        $dId = (int)$this->request->param('destination_id', 0);
+        $start = $this->request->param('start', 0);
+        $end = $this->request->param('end', 0);
+        $stime = $this->request->param('stime', 0);
+        $etime = $this->request->param('etime', 0);
+
         $view = View::factory('reports/viewFlot');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
@@ -194,10 +204,11 @@ class Controller_Reports extends Controller_Skeleton
         }
     }
 
-    public function action_viewXport($sId = 0, $dId = 0)
+    public function action_viewXport()
     {
-        $sId = (int)$sId;
-        $dId = (int)$dId;
+        $sId = (int)$this->request->param('source_id', 0);
+        $dId = (int)$this->request->param('destination_id', 0);
+
         $view = View::factory('reports/viewXport');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
@@ -298,10 +309,11 @@ class Controller_Reports extends Controller_Skeleton
         $this->response->body($header . "\r\n" . $body);
     }
 
-    public function action_viewSql($sId = 0, $dId = 0)
+    public function action_viewSql()
     {
-        $sId = (int)$sId;
-        $dId = (int)$dId;
+        $sId = (int)$this->request->param('source_id', 0);
+        $dId = (int)$this->request->param('destination_id', 0);
+
         $view = View::factory('reports/viewSql');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
@@ -366,9 +378,18 @@ class Controller_Reports extends Controller_Skeleton
         }
     }
 
-    public function action_xml($pId = 0, $metric, $start = '25/01/2011', $end = '25/01/2011', $stime = '13:00', $etime = '14:00')
+    public function action_xml()
     {
-        if (true || Request::current()->is_ajax()) {
+        $pId = (int)$this->request->param('source_id', 0);
+        $metric = $this->request->param('metric');
+        //ex 25/01/2011
+        $start = $this->request->param('start', 0);
+        $end = $this->request->param('end', 0);
+        //ex 13:00
+        $stime = $this->request->param('stime', 0);
+        $etime = $this->request->param('etime', 0);
+
+        if (Request::current()->is_ajax()) {
             $this->auto_render = false;
             /*$pId = (int) $_POST['processId'];
                $start = $_POST['startDate'];
@@ -402,10 +423,15 @@ class Controller_Reports extends Controller_Skeleton
         } else throw new Kohana_Exception("Essa ação somente responde requisições AJAX");
     }
 
-    public function action_View2($sId = 0, $dId = 0, $start = 0, $end = 0, $stime = 0, $etime = 0)
+    public function action_View2()
     {
-        $sId = (int)$sId;
-        $dId = (int)$dId;
+        $sId = (int)$this->request->param('source_id', 0);
+        $dId = (int)$this->request->param('destination_id', 0);
+        $start = $this->request->param('start', 0);
+        $end = $this->request->param('end', 0);
+        $stime = $this->request->param('stime', 0);
+        $etime = $this->request->param('etime', 0);
+
         $view = View::factory('reports/view');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
@@ -597,6 +623,16 @@ class Controller_Reports extends Controller_Skeleton
         return $results;
     }
 
+    /**
+     * @param int $source
+     * @param int $destination
+     * @param $metric
+     * @param bool $start
+     * @param bool $end
+     * @param int $multiplier
+     * @param bool $timeOffset
+     * @return stdClass
+     */
     protected function singleFlot($source, $destination, $metric, $start = false, $end = false, $multiplier = 1, $timeOffset = false)
     {
         $start = ($start) ? $start : date("U", time() - 3600);
@@ -673,8 +709,12 @@ class Controller_Reports extends Controller_Skeleton
         return $results;
     }
 
-    public function action_flot($source, $destination = false, $metric = false)
+    public function action_flot()
     {
+        $source = (int)$this->request->param('source');
+        $destination = (int)$this->request->param('destination', false);
+        $metric = $this->request->param('metric', false);
+
         $this->auto_render = false;
 
         if ($metric) {
@@ -687,8 +727,11 @@ class Controller_Reports extends Controller_Skeleton
         $this->response->body(Zend_Json::encode($results));
     }
 
-    public function action_lastResultsFromPair($source, $destination)
+    public function action_lastResultsFromPair()
     {
+        $source = (int)$this->request->param('source');
+        $destination = (int)$this->request->param('destination');
+
         $this->auto_render = false;
 
         $pair = Pair::instance($source, $destination);
@@ -698,8 +741,10 @@ class Controller_Reports extends Controller_Skeleton
     }
 
     //Rodrigo, se possível, altera essa função sempre em synthesizing - action_destsondas. Vlw
-    public function action_lastResultsFromSource($source)
+    public function action_lastResultsFromSource()
     {
+        $source = (int)$this->request->param('source');
+
         $this->auto_render = false;
 
         //$source = $_POST['source'];

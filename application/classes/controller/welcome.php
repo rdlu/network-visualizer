@@ -130,19 +130,18 @@ class Controller_Welcome extends Controller_Skeleton
         return ($a['status'] > $b['status']) ? -1 : 1;
     }
 
-    public function action_infoBar($id)
+    public function action_infoBar()
     {
+        $id = (int)$this->request->param('id');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
 
-            $id = (int)$id;
             $dados = Sprig::factory('entity', array("id" => $id))->load();
             $this->response->headers('Content-Type', 'application/json');
 
             if (!empty($dados->address)) {
                 $endereco = "$dados->address, $dados->addressnum";
-            }
-            else {
+            } else {
                 $endereco = "(endereço não cadastrado)";
             }
 

@@ -54,8 +54,9 @@ class Controller_Entities extends Controller_Skeleton
         else throw new Kohana_Exception('This controller only accepts AJAX requests', $response);
     }
 
-    public function action_destinations($id = 0)
+    public function action_destinations()
     {
+        $id = $this->request->param('id', 0);
         $this->auto_render = false;
 
         if (Request::current()->is_ajax()) {
@@ -89,8 +90,9 @@ class Controller_Entities extends Controller_Skeleton
 
     }
 
-    public function action_edit($id)
+    public function action_edit()
     {
+        $id = (int)$this->request->param('id', 0);
         $entity = Sprig::factory('entity');
 
         $disabled = 'disabled';
@@ -155,9 +157,9 @@ class Controller_Entities extends Controller_Skeleton
         } else $this->response->body = 'Entidade não existente no MoM';
     }
 
-    public function action_view($id)
+    public function action_view()
     {
-        $id = (int)$id;
+        $id = (int)$this->request->param('id', 0);
         $view = View::factory('entities/view');
 
         $entity = Sprig::factory('entity', array('id' => $id))->load();
@@ -264,8 +266,9 @@ class Controller_Entities extends Controller_Skeleton
 
     }
 
-    public function action_checkRRD($id)
+    public function action_checkRRD()
     {
+        $id = $this->request->param('id');
         $view = View::factory('entities/checkRRD');
         /**
          * @var Model_Entity

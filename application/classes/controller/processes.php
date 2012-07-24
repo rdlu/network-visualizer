@@ -27,8 +27,9 @@ class Controller_Processes extends Controller_Skeleton
         $this->template->content = $view;
     }
 
-    public function action_list($sourceAddr = 0)
+    public function action_list()
     {
+        $sourceAddr = $this->request->param('source', 0);
         $this->auto_render = false;
         $view = View::factory('processes/list');
         $this->template->title .= 'Escolha da Entidade de Destino do Teste';
@@ -72,8 +73,9 @@ class Controller_Processes extends Controller_Skeleton
      * @param int $source
      * @return void
      */
-    public function action_new($source = 0)
+    public function action_new()
     {
+        $source = $this->request->param('source', 0);
         $this->template->title .= 'Criando novo processo de medição';
         $process = Sprig::factory('process');
         $profiles = Sprig::factory('profile')->load(NULL, FALSE);
@@ -145,8 +147,9 @@ class Controller_Processes extends Controller_Skeleton
      * @param  $id
      * @return void
      */
-    public function action_setup($source)
+    public function action_setup()
     {
+        $source = $this->request->param('source');
         $this->template->title .= 'Configurando o novo processo de medição';
         //validando dados
         $validado = false;
@@ -369,9 +372,10 @@ class Controller_Processes extends Controller_Skeleton
         }
     }
 
-    public function action_view($id)
+    public function action_view()
     {
-        $id = (int)$id;
+        $id = (int)$this->request->param('id');
+        ;
         $view = View::factory('process/view');
 
         $entity = Sprig::factory('entity', array('id' => $id))->load();

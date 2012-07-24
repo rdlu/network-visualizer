@@ -5,8 +5,18 @@ class CollectException extends Exception
 
 class Controller_Collect extends Controller
 {
-    public function action_id($id = 0, $metric = null, $dsMax = null, $dsMin = null, $dsAvg = null, $sdMax = null, $sdMin = null, $sdAvg = null, $timestamp = null)
+    public function action_id()
     {
+        $id = $this->request->param('id', 0);
+        $metric = $this->request->param('metric', false);
+        $dsMax = $this->request->param('dsMax', null);
+        $dsMin = $this->request->param('dsMin', null);
+        $dsAvg = $this->request->param('dsAvg', null);
+        $sdMax = $this->request->param('sdMax', null);
+        $sdMin = $this->request->param('sdMin', null);
+        $sdAvg = $this->request->param('sdAvg', null);
+        $timestamp = $this->request->param('timestamp', null);
+
 
         $response = 'Received';
         if ($id === 0) {
