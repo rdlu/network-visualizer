@@ -29,6 +29,12 @@ class Model_Profile extends Sprig
              *  Unidade: s (segundos)
              */
             'timeout' => new Sprig_Field_Integer(array('label' => 'Tempo de expiração (segundos)')),
+            /**
+             *  Coluna que define o intervalo entre uma rajada e outra
+             * Unidade: segundos
+             */
+            'polling' => new Sprig_Field_Integer(array('rules' => array('polling' => array('')),
+                'label' => 'Intervalo de Polling (segundos)')),
             'protocol' => new Sprig_Field_Integer(array('choices' => array(0 => 'UDP', 1 => 'TCP'), 'label' => 'Protocolo')),
             'description' => new Sprig_Field_Text(array('label' => 'Descrição')),
             /*
