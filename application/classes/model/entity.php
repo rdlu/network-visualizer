@@ -11,9 +11,6 @@ class Model_Entity extends Sprig
     {
         $this->_fields += array(
             'id' => new Sprig_Field_Auto,
-            /**
-             *  Endereco IPv4
-             */
             'isAndroid' => new Sprig_Field_Boolean(array('label' => 'É um Agente Android')),
             'ipaddress' => new Sprig_Field_Char(array('label' => 'Endereço IP',
                 'min_length' => 7,

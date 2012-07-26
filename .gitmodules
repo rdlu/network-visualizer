@@ -43,3 +43,6 @@
 [submodule "modules/pheanstalk"]
     path = modules/pheanstalk
     url = git://github.com/rodrigodk/kohana-pheanstalk.git
+[submodule "modules/leap"]
+	path = modules/leap
+	url = https://github.com/spadefoot/kohana-orm-leap.git
