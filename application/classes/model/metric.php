@@ -1,24 +1,48 @@
 <?php
- /**
+/**
  * Model Metric: Mapeia os tipos de metricas do netmetric
  * @author Rodrigo Dlugokenski
  */
-class Model_Metric extends Sprig {
-	protected function _init() {
-		$this->_fields += array(
-			'id' => new Sprig_Field_Auto(),
-			'name' => new Sprig_Field_Char(array('max_lenght' => 20)),
-			'plugin' => new Sprig_Field_Char(array('max_lenght' => 20)),
-			'desc' => new Sprig_Field_Char(array('max_lenght' => 50)),
-			'profile' => new Sprig_Field_BelongsTo(array('model' => 'Profile', 'label' => __('Perfis'))),
-			'processes' => new Sprig_Field_ManyToMany(array('model' => 'Process', 'through'=>'metrics_processes')),
-			'order' => new Sprig_Field_Integer(),
-			'reverse' => new Sprig_Field_Boolean(),
-			'thresholdProfiles' => new Sprig_Field_ManyToMany(array('model' => 'thresholdProfile', 'through' => 'thresholdvalues')),
-			'thresholdValues' => new Sprig_Field_HasMany(
-				array(
-				     'model' => 'ThresholdValue',
-				     'null' => false)),
-		);
-	}
+class Model_Metric extends ORM
+{
+
+    protected $_has_many = array(
+        'thresholdProfiles' => array('model' => 'thresholdProfile', 'through' => 'thresholdvalues'),
+        'thresholdValues' => array('model' => 'ThresholdValue', 'null' => false),
+        'processes' => array('model' => 'process', 'through' => 'metrics_processes'),
+    );
+
+    protected $_belongs_to = array(
+        'profile' => array()
+    );
+
+    public function rules()
+    {
+        return array(
+            'name' => array(
+                array('not_empty'),
+                array('min_length', array(':value', 3)),
+                array('max_length', array(':value', 20)),
+                array(array($this, 'metric_available')),
+            ),
+            'plugin' => array(
+                array('not_empty'),
+                array('min_length', array(':value', 3)),
+                array('max_length', array(':value', 20)),
+                array(array($this, 'plugin_available')),
+            ),
+        );
+    }
+
+    public function name_available($name)
+    {
+        // There are simpler ways to do this, but I will use ORM for a while
+        return ORM::factory('metric', array('name' => $name))->loaded();
+    }
+
+    public function plugin_available($name)
+    {
+        // There are simpler ways to do this, but I will use ORM for a while
+        return ORM::factory('metric', array('plugin' => $name))->loaded();
+    }
 }
