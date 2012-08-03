@@ -47,7 +47,7 @@ class Controller_Welcome extends Controller_Skeleton
     {
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
-            $entidades = Sprig::factory('entity')->load(null, FALSE);
+            $entidades = ORM::factory('entity')->find_all();
 
             $view = View::factory('xml/infoMapa');
 
@@ -65,11 +65,9 @@ class Controller_Welcome extends Controller_Skeleton
             $this->auto_render = false;
             $cache = Cache::instance('memcache')->get('infoMapaJ', false);
             if (!$cache) {
-                $query = DB::select()->where('isAndroid', '=', 0)->order_by('status', 'DESC');
-                $entities = Sprig::factory('entity')->load($query, FALSE);
+                $entities = ORM::factory('entity')->where('isAndroid', '=', 0)->order_by('status', 'DESC')->find_all();
                 $JSONresponse = array();
                 $before = 0;
-                $test = $entities->as_array();
                 foreach ($entities as $k => $entity) { //coloca as medições em um array
                     $agentes = array();
                     $gerentes = array();
@@ -136,7 +134,7 @@ class Controller_Welcome extends Controller_Skeleton
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
 
-            $dados = Sprig::factory('entity', array("id" => $id))->load();
+            $dados = ORM::factory('entity', $id);
             $this->response->headers('Content-Type', 'application/json');
 
             if (!empty($dados->address)) {

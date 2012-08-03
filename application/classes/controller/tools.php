@@ -120,6 +120,7 @@ class Controller_Tools extends Controller
         $srcs = $ent->sources->find_all();
         $procs = $ent->processes_as_source->find_all();
         $procd = $ent->processes_as_destination->find_all();
+        $test = $procs->current()->source;
         echo "Test";
 
     }

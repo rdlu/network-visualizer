@@ -21,7 +21,7 @@ class Valid extends Kohana_Valid
       $minWait = $count*$gap*2.2;*/
         $minWait = 300000; //300 secs
         //Fire::info("Tempo mínimo de polling: $minWait");
-        return $value * 1000 > $minWait;
+        return $value * 1000 >= $minWait;
     }
 
     public static function isId($value)
