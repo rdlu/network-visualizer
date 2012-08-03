@@ -106,10 +106,21 @@ class Controller_Tools extends Controller
 
     public function action_hashz0r()
     {
-        $str = (int)$this->request->param('string');
+        $str = $this->request->param('id');
 
         echo Kohana_Auth::instance()->hash("VivOGparC,.");
-        echo "  ";
+        echo "<br />  ";
         echo Kohana_Auth::instance()->hash($str);
+    }
+
+    public function action_test()
+    {
+        $ent = ORM::factory('entity', $this->request->param('id', null));
+        $dests = $ent->destinations->find_all();
+        $srcs = $ent->sources->find_all();
+        $procs = $ent->processes_as_source->find_all();
+        $procd = $ent->processes_as_destination->find_all();
+        echo "Test";
+
     }
 }

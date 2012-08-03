@@ -12,11 +12,11 @@ class Model_Entity extends ORM
         'destinations' => array(
             'model' => 'entity',
             'through' => 'processes',
-            'foreign_key' => 'destination_id'),
+            'foreign_key' => 'source_id'),
         'sources' => array(
             'model' => 'entity',
             'through' => 'processes',
-            'foreign_key' => 'source_id'),
+            'foreign_key' => 'destination_id'),
     );
 
     public function filters()
