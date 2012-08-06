@@ -2,7 +2,7 @@
 /**
  * @author Rodrigo Dlugokenski
  * @copyright PRAV - Inf UFRGS
- * @depends RRD, SNMP, Kohana_Sprig, Kohana_Database
+ * @depends RRD, SNMP, Kohana_ORM, Kohana_Database
  */
 
 class Pair
@@ -34,9 +34,12 @@ class Pair
 
         if (!isset(Pair::$instances[$sourceId][$destinationId])) {
             $newinstance = new Pair();
-            $newinstance->source = Sprig::factory('entity', array('id' => $sourceId))->load();
-            $newinstance->destination = Sprig::factory('entity', array('id' => $destinationId))->load();
-            $newinstance->processes = Sprig::factory('process')->load(DB::select()->where('destination_id', '=', $destinationId)->where('source_id', '=', $sourceId), false);
+            $newinstance->source = ORM::factory('entity', $sourceId);
+            $newinstance->destination = ORM::factory('entity', $destinationId);
+            $newinstance->processes = ORM::factory('process')
+                ->where('destination_id', '=', $destinationId)
+                ->where('source_id', '=', $sourceId)
+                ->find_all();
 
             foreach ($options as $option) {
                 $newinstance->$option = $option;
@@ -49,8 +52,7 @@ class Pair
 
     public static function instanceFromProcess($processId)
     {
-        $process = Sprig::factory('process', array('id' => $processId))->load();
-        $id = $process->source->id;
+        $process = ORM::factory('process', $processId);
         return self::instance($process->source->id, $process->destination->id);
     }
 
@@ -69,7 +71,7 @@ class Pair
         if (count($this->metrics) == 0) {
             $processes = $this->getProcesses();
             foreach ($processes as $process) {
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 $metrics = $profile->metrics->as_array();
                 foreach ($metrics as $metric) {
                     $order[] = $metric->order;
@@ -89,7 +91,8 @@ class Pair
         $results = $this->processes;
         //$results must be a Model_results object
         if (is_array($results)) {
-            $results = $this->processes = Sprig::factory('process')->load(DB::select()->where('destination_id', '=', $this->destination->id)->where('source_id', '=', $this->source->id), false);
+            $results = $this->processes = ORM::factory('process')->where('destination_id', '=', $this->destination->id)
+                ->where('source_id', '=', $this->source->id)->find_all();
         }
 
         if ($asArray) {
@@ -105,8 +108,8 @@ class Pair
     public function removeProcess(Model_Process $process, $force = false)
     {
         if ($process->loaded()) {
-            $source = $process->source->load();
-            $destination = $process->destination->load();
+            $source = $process->source;
+            $destination = $process->destination;
             $values = array();
 
             $sourceSnmp = Snmp::instance($source->ipaddress, 'suppublic');
@@ -186,7 +189,7 @@ class Pair
     {
         if (count($this->thresholds) == 0) {
             foreach ($this->processes as $process) {
-                $pthreshold = $process->thresholdProfile->load();
+                $pthreshold = $process->thresholdProfile;
                 $pthresholds[$pthreshold->id] = $pthreshold;
             }
 
@@ -245,7 +248,7 @@ class Pair
         $start = $start ? $start : $last - 600;
         $end = $end ? $end : $last - 300;
 
-        $metricModel = Sprig::factory('metric', array('name' => $metric))->load();
+        //$metricModel = ORM::factory('metric')->where('name','=',$metric)->find();
 
 
         $json = $rrd->json($metric, $start, $end);
@@ -371,8 +374,8 @@ class Pair
      */
     public function setProfile($processId)
     {
-        $process = Sprig::factory('process', array('id' => $processId))->load();
-        $profile = $process->profile->load();
+        $process = ORM::factory('process', $processId);
+        $profile = $process->profile;
         $snmp = Snmp::instance($this->source->ipaddress, 'suppublic');
 
         if ($snmp->isProfileNotLoaded($profile->id)) {
@@ -388,8 +391,8 @@ class Pair
 
     public function setAgent($processId)
     {
-        $process = Sprig::factory('process', array('id' => $processId))->load();
-        $profile = $process->profile->load();
+        $process = ORM::factory('process', $processId);
+        $profile = $process->profile;
         $snmp = Snmp::instance($this->source->ipaddress, 'suppublic');
 
         if ($snmp->isAgentNotLoaded($this->destination->id)) {

@@ -42,13 +42,13 @@ class Model_Entity extends ORM
                 array('min_length', array(':value', 7)),
                 array('max_length', array(':value', 255)),
                 array('ipOrHostname'),
-                array(array($this, 'ipaddress_available')),
+                array(array($this, 'unique'), array('ipaddress', ':value')),
             ),
             'name' => array(
                 array('not_empty'),
                 array('min_length', array(':value', 3)),
                 array('max_length', array(':value', 255)),
-                array(array($this, 'name_available')),
+                array(array($this, 'unique'), array('name', ':value')),
             ),
             'state' => array(
                 array('not_empty'),

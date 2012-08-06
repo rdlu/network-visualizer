@@ -36,7 +36,7 @@ class Controller_Reports extends Controller_Skeleton
     {
         $view = View::factory('reports/index');
 
-        $entities = Sprig::factory('entity')->load(NULL, FALSE);
+        $entities = ORM::factory('entity')->find_all();
         $view->bind('entities', $entities)
             ->set('defaultManager', Sonda::getDefaultManager());
         $this->template->content = $view;
@@ -79,9 +79,10 @@ class Controller_Reports extends Controller_Skeleton
         if (!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid", array($stime));
         if (!Valid::hora($etime)) throw new Kohana_Exception("End time not valid", array($etime));
 
-        $processes = Sprig::factory('process')->load(DB::select()->where('destination_id', '=', $dId)->where('source_id', '=', $sId), false);
-        $source = Sprig::factory('entity', array('id' => $sId))->load();
-        $destination = Sprig::factory('entity', array('id' => $dId))->load();
+        $processes = ORM::factory('process')->where('destination_id', '=', $dId)
+            ->where('source_id', '=', $sId)->find_all();
+        $source = ORM::factory('entity', $sId);
+        $destination = ORM::factory('entity', $dId);
 
         if ($destination->isAndroid) die('<span class="nice big error" style="padding-left: 30px !important;">Agentes android não possuem gráficos RRD</span>');
 
@@ -98,7 +99,7 @@ class Controller_Reports extends Controller_Skeleton
 
             foreach ($processes as $process) {
                 //Fire::info($process->as_array(),"Process 1, ID: $process->id");
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 $metrics = $process->metrics->as_array('order');
                 ksort($metrics);
                 //Fire::error($metrics);
@@ -162,9 +163,10 @@ class Controller_Reports extends Controller_Skeleton
         if (!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid", array($stime));
         if (!Valid::hora($etime)) throw new Kohana_Exception("End time not valid", array($etime));
 
-        $processes = Sprig::factory('process')->load(DB::select()->where('destination_id', '=', $dId)->where('source_id', '=', $sId), false);
-        $source = Sprig::factory('entity', array('id' => $sId))->load();
-        $destination = Sprig::factory('entity', array('id' => $dId))->load();
+        $processes = ORM::factory('process')->where('destination_id', '=', $dId)
+            ->where('source_id', '=', $sId)->find_all();
+        $source = ORM::factory('entity', $sId);
+        $destination = ORM::factory('entity', $dId);
 
         if ($destination->isAndroid) die('<span class="nice big error" style="padding-left: 30px !important;">Agentes android não possuem gráficos RRD</span>');
 
@@ -173,7 +175,7 @@ class Controller_Reports extends Controller_Skeleton
         if ($count) {
 
             foreach ($processes as $process) {
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 $metrics = $process->metrics->as_array('order');
                 ksort($metrics);
                 //Fire::error($metrics);
@@ -216,16 +218,17 @@ class Controller_Reports extends Controller_Skeleton
             $dId = (int)$_POST['destination'];
         }
 
-        $processes = Sprig::factory('process')->load(DB::select()->where('destination_id', '=', $dId)->where('source_id', '=', $sId), false);
-        $source = Sprig::factory('entity', array('id' => $sId))->load();
-        $destination = Sprig::factory('entity', array('id' => $dId))->load();
+        $processes = ORM::factory('process')->where('destination_id', '=', $dId)
+            ->where('source_id', '=', $sId)->find_all();
+        $source = ORM::factory('entity', $sId);
+        $destination = ORM::factory('entity', $dId);
 
         $count = $processes->count();
 
         if ($count) {
 
             foreach ($processes as $process) {
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 $metrics = $process->metrics->as_array('order');
                 ksort($metrics);
             }
@@ -258,15 +261,14 @@ class Controller_Reports extends Controller_Skeleton
         $sourceId = (int)$_POST['source'];
         $destinationId = (int)$_POST['destination'];
 
-        $source = Sprig::factory('entity', array('id' => $sourceId))->load();
-        $destination = Sprig::factory('entity', array('id' => $destinationId))->load();
-        $metric = Sprig::factory('metric', array('id' => $metricId))->load();
-        $profile = $metric->profile->load();
-        $process = Sprig::factory('process')->load(
-            DB::select()->where('destination_id', '=', $destinationId)
-                ->where('source_id', '=', $sourceId)
-                ->where('profile_id', '=', $profile->id)
-        );
+        $source = ORM::factory('entity', $sourceId);
+        $destination = ORM::factory('entity', $destinationId);
+        $metric = ORM::factory('metric', $metricId);
+        $profile = $metric->profile;
+        $process = ORM::factory('process')
+            ->where('destination_id', '=', $destinationId)
+            ->where('source_id', '=', $sourceId)
+            ->where('profile_id', '=', $profile->id)->find();
 
         $filename = "momreport-" . $destination->name . "-" . $metric->name . "-" . $startDate . $startHour . "-" . $endDate . $endHour;
 
@@ -336,16 +338,17 @@ class Controller_Reports extends Controller_Skeleton
 
         }
 
-        $processes = Sprig::factory('process')->load(DB::select()->where('destination_id', '=', $dId)->where('source_id', '=', $sId), false);
-        $source = Sprig::factory('entity', array('id' => $sId))->load();
-        $destination = Sprig::factory('entity', array('id' => $dId))->load();
+        $processes = ORM::factory('process')->where('destination_id', '=', $dId)
+            ->where('source_id', '=', $sId)->find_all();
+        $source = ORM::factory('entity', $sId);
+        $destination = ORM::factory('entity', $dId);
 
         $count = $processes->count();
 
         if ($count) {
 
             foreach ($processes as $process) {
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 $metrics = $process->metrics->as_array('order');
                 ksort($metrics);
                 //Fire::error($metrics);
@@ -404,12 +407,12 @@ class Controller_Reports extends Controller_Skeleton
             if (!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid", array($stime));
             if (!Valid::hora($etime)) throw new Kohana_Exception("End time not valid", array($etime));
 
-            $process = Sprig::factory('process', array('id' => $pId))->load();
+            $process = ORM::factory('process', $pId);
 
-            if ($process->count()) {
-                $source = $process->source->load();
-                $destination = $process->destination->load();
-                $profile = $process->profile->load();
+            if ($process->loaded()) {
+                $source = $process->source;
+                $destination = $process->destination;
+                $profile = $process->profile;
                 $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
                 $inicio = Rrd::converteData($start) . " " . $stime;
                 $fim = Rrd::converteData($end) . " " . $etime;
@@ -449,10 +452,10 @@ class Controller_Reports extends Controller_Skeleton
         if (!Valid::hora($stime)) throw new Kohana_Exception("Start time not valid", array($stime));
         if (!Valid::hora($etime)) throw new Kohana_Exception("End time not valid", array($etime));
 
-        $processes = Sprig::factory('process')->load(DB::select()->where('destination_id', '=', $dId)->where('source_id', '=', $sId), false);
-        //array('destination_id'=>$dId,'source_id'=>$sId)
-        $source = Sprig::factory('entity', array('id' => $sId))->load();
-        $destination = Sprig::factory('entity', array('id' => $dId))->load();
+        $processes = ORM::factory('process')->where('destination_id', '=', $dId)
+            ->where('source_id', '=', $sId)->find_all();
+        $source = ORM::factory('entity', $sId);
+        $destination = ORM::factory('entity', $dId);
 
         //Gerando os graficos
         $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress);
@@ -467,7 +470,7 @@ class Controller_Reports extends Controller_Skeleton
 
             foreach ($processes as $process) {
                 //Fire::info($process->as_array(),"Process 1, ID: $process->id");
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 $metrics = $profile->metrics;
                 foreach ($metrics as $metric) {
                     $img[$profile->id][$metric->name] = $rrd->graph($profile->id, $metric->name, $inicio, $fim);
@@ -569,13 +572,13 @@ class Controller_Reports extends Controller_Skeleton
 
         $resultTypes = new stdClass();
 
-        $metric = Sprig::factory('metric', array('id' => $metricId))->load();
-        $profile = $metric->profile->load();
-        $process = Sprig::factory('process')->load(
-            DB::select()->where('destination_id', '=', $pair->getDestination()->id)
-                ->where('source_id', '=', $pair->getSource()->id)
-                ->where('profile_id', '=', $profile->id)
-        );
+        $metric = ORM::factory('metric', $metricId);
+        $profile = $metric->profile;
+        $process = ORM::factory('process')
+            ->where('destination_id', '=', $pair->getDestination()->id)
+            ->where('source_id', '=', $pair->getSource()->id)
+            ->where('profile_id', '=', $profile->id)
+            ->find();
 
         $startSQLTimestamp = date("Y-m-d H:i:s", $start);
         $endSQLTimestamp = date("Y-m-d H:i:s", $end);
@@ -749,11 +752,11 @@ class Controller_Reports extends Controller_Skeleton
 
         //$source = $_POST['source'];
 
-        $source = Sprig::factory('entity', array('id' => $source))->load();
-        $processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id', '=', $source->id), null);
+        $source = ORM::factory('entity', $source);
+        $processes = ORM::factory('process')->group_by('destination_id')->where('source_id', '=', $source->id)->find_all();
         $resp = array();
         foreach ($processes as $process) {
-            $resp[] = $process->destination->load();
+            $resp[] = $process->destination;
         }
 
         foreach ($resp as $destination) {

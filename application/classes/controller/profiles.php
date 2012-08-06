@@ -15,8 +15,8 @@ class Controller_Profiles extends Controller_Skeleton
 
     public function action_index()
     {
-        $profiles = Sprig::factory('profile')->load(NULL, FALSE);
-        $metrics = Sprig::factory('metric')->load(NULL, FALSE);
+        $profiles = ORM::factory('profile')->find_all();
+        $metrics = ORM::factory('metric')->find_all();
         //Fire::group('Models Loaded')->info($profiles)->groupEnd();
         $view = View::factory('profiles/list');
 
@@ -28,11 +28,11 @@ class Controller_Profiles extends Controller_Skeleton
     public function action_edit()
     {
         $id = $this->request->param('id', 0);
-        $profile = Sprig::factory('profile');
+        $profile = ORM::factory('profile');
 
         if ($id != 0) {
             $profile->id = $id;
-            $profile->load();
+            $profile->find();
         }
 
         if ($_POST) {
@@ -47,7 +47,7 @@ class Controller_Profiles extends Controller_Skeleton
         $view = View::factory('profiles/form');
         $view->bind('profile', $profile)->bind('errors', $errors);
         if ($id == 0 || $profile->loaded()) $this->template->content = $view;
-        else $this->template->content = 'Perfill não existente no MoM';
+        else $this->template->content = 'Perfil não existente no MoM';
     }
 
     public function action_new()
@@ -62,7 +62,7 @@ class Controller_Profiles extends Controller_Skeleton
         else {
             $post = (int)$_POST['profile'];
         }
-        $profile = Sprig::factory('profile', array('id' => $post))->load();
+        $profile = ORM::factory('profile', $post);
 
         $q = array(
             'id' => $profile->id,
@@ -83,7 +83,7 @@ class Controller_Profiles extends Controller_Skeleton
     {
         $id = (int)$this->request->param('id');
         $view = View::factory('profiles/view');
-        $profile = Sprig::factory('profile', array('id' => $id))->load();
+        $profile = ORM::factory('profile', $id);
 
         $view->bind('profile', $profile);
         $this->template->content = $view;

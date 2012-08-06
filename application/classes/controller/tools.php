@@ -46,7 +46,7 @@ class Controller_Tools extends Controller
         $id = (int)$this->request->param('id');
         if (Request::current()->is_ajax()) {
             $this->auto_render = false;
-            $dados = Sprig::factory('entity', array("id" => $id))->load();
+            $dados = ORM::factory('entity', $id);
             $this->response->headers('Content-Type', 'application/json');
 
         }
@@ -56,8 +56,8 @@ class Controller_Tools extends Controller
     {
         $this->auto_render = false;
         $this->response->headers('Content-Type', 'text/plain');
-        $profiles = Sprig::factory('profile')->load(NULL, FALSE);
-        $metrics = Sprig::factory('metric')->load(NULL, FALSE);
+        $profiles = ORM::factory('profile')->find_all();
+        $metrics = ORM::factory('metric')->find_all();
 
         foreach ($profiles as $profile) {
             foreach ($metrics as $metric) {
@@ -73,16 +73,16 @@ class Controller_Tools extends Controller
         $metricPlugin = (int)$this->request->param('plugin_name');
 
         $this->response->headers('Content-Type', 'text/plain');
-        $process = Sprig::factory('process', array('id' => $process_id))->load();
+        $process = ORM::factory('process', $process_id);
 
-        if ($process->count() == 0) {
+        if (!$process->loaded()) {
             echo "Process $process_id does not exist.\n";
         }
 
-        $destination = $process->destination->load();
-        $source = $process->source->load();
-        $profile = $process->profile->load();
-        $metric = Sprig::factory('metric')->load(Db::select()->where('plugin', '=', $metricPlugin));
+        $destination = $process->destination;
+        $source = $process->source;
+        $profile = $process->profile;
+        $metric = ORM::factory('metric')->where('plugin', '=', $metricPlugin)->find();
 
         $toBeSQLed = array(
             'dsmax' => lcg_value() + rand(0, 10),

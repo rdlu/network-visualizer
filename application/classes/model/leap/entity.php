@@ -78,7 +78,7 @@ class Model_Leap_Entity extends DB_ORM_Model
                      'default'=>0,
                      'label'=>'Tipo de Entidade'
                 )),*/
-            /*
+            /*l
              *  Define o estado dessa entidade, valores:
              * 1, ativo normal, aceitando novos cadastros de processos
              * 2, ativo bloqueado, processos rodando, mas nao pode cadastrar novos
@@ -97,9 +97,7 @@ class Model_Leap_Entity extends DB_ORM_Model
                     -1 => 'Bloqueado',
                 ),
                 'default' => 1
-            )),
-            'processes_as_source' => new Sprig_Field_HasMany(array('model' => 'Process', 'foreign_key' => 'source_id')),
-            'processes_as_destination' => new Sprig_Field_HasMany(array('model' => 'Process', 'foreign_key' => 'destination_id'))
+            ))
         );
 
         $this->adaptors = array(

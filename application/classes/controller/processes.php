@@ -21,8 +21,8 @@ class Controller_Processes extends Controller_Skeleton
         $view = View::factory('processes/index');
         $this->template->title .= 'Escolha da Entidade de Origem do Teste';
 
-        $entities = Sprig::factory('entity')->load(NULL, FALSE);
-        $estados = Sprig::factory('uf')->load(NULL, FALSE);
+        $entities = ORM::factory('entity')->find_all();
+
         $view->bind('entities', $entities)->set('defaultManager', Sonda::getDefaultManager());
         $this->template->content = $view;
     }
@@ -40,11 +40,11 @@ class Controller_Processes extends Controller_Skeleton
         }
 
         if (Valid::ipOrHostname($sourceAddr)) {
-            $sourceEntity = Sprig::factory('entity', array('ipaddress' => $sourceAddr))->load();
-            $processes = Sprig::factory('process', array('source' => $sourceEntity->id))->load(NULL, FALSE);
+            $sourceEntity = ORM::factory('entity')->where('ipaddress', '=', $sourceAddr)->find();
+            $processes = ORM::factory('process')->where('source_id', '=', $sourceEntity->id)->find_all();
 
             foreach ($processes as $process) {
-                $destination = $process->destination->load();
+                $destination = $process->destination;
                 $destinations[$destination->id] = $destination;
                 $pair = Pair::instance($sourceEntity->id, $destination->id);
                 $metrics[$destination->id] = $pair->getMetrics();
@@ -77,28 +77,23 @@ class Controller_Processes extends Controller_Skeleton
     {
         $source = $this->request->param('source', 0);
         $this->template->title .= 'Criando novo processo de medição';
-        $process = Sprig::factory('process');
-        $profiles = Sprig::factory('profile')->load(NULL, FALSE);
-        $thresholds = Sprig::factory('thresholdProfile')->load(NULL, FALSE);
+        $process = ORM::factory('process');
+        $profiles = ORM::factory('profile')->find_all();
+        $thresholds = ORM::factory('thresholdProfile')->find_all();
 
         if ($source != 0) {
-            $sourceEnt = Sprig::factory('entity', array('id' => $source))->load();
-            $process->source = $sourceEnt->id;
-            $sourceEntity = $process->source->load();
-            //Fire::group('Models Loaded', array('Collapsed' => 'true'))->info($process)->info($sourceEntity)->groupEnd();
+            $sourceEntity = ORM::factory('entity', $source);
+            $process->source = $sourceEntity;
         }
 
-        $db = DB::select()->where('profile_id', 'IS NOT', null)->order_by('order');
-
-        $metrics = Sprig::factory('metric')->load($db, false);
+        $metrics = ORM::factory('metric')->where('profile_id', 'IS NOT', null)->order_by('order')->find_all();
 
         if ($_POST) {
             try {
                 $process->check($_POST);
-                $this->request->redirect($this->request->controller . '/setup/' . $process->source->id);
+                $this->request->redirect($this->request->controller() . '/setup/' . $process->source->id);
             } catch (Validation_Exception $e) {
                 $errors = $e->array->errors('processes/edit');
-                //Fire::group('Form Validation Results')->warn($errors)->groupEnd();
             }
         }
 
@@ -109,7 +104,7 @@ class Controller_Processes extends Controller_Skeleton
             $tvalues = $threshold->thresholdValues;
             $tarr = array();
             foreach ($tvalues as $tvalue) {
-                $tmet = $tvalue->metric->load();
+                $tmet = $tvalue->metric;
                 $order[] = $tmet->order;
                 $tarr[$tmet->name] = $tvalue->as_array();
                 $tarr[$tmet->name]['reverse'] = (int)$tmet->reverse;
@@ -169,14 +164,14 @@ class Controller_Processes extends Controller_Skeleton
                 $profiles[] = $row['profile_id'];
             }
 
-            $sourceModel = Sprig::factory('entity', array('id' => $source))->load();
-            $destinationModel = Sprig::factory('entity', array('id' => $destination))->load();
-            $thresholdModel = Sprig::factory('thresholdProfile', array('id' => $thresholdProfile))->load();
+            $sourceModel = ORM::factory('entity', $source);
+            $destinationModel = ORM::factory('entity', $destination);
+            $thresholdModel = ORM::factory('thresholdProfile', $thresholdProfile);
 
             $errors = false;
 
             foreach ($profiles as $k => $profile) {
-                $process = Sprig::factory('process');
+                $process = ORM::factory('process');
                 $process->source = $sourceModel;
                 $process->destination = $destinationModel;
                 $process->profile = $profile;
@@ -184,8 +179,8 @@ class Controller_Processes extends Controller_Skeleton
                 $process->thresholdProfile = $thresholdModel;
 
                 try {
-                    $process->create();
-                    $resultModels[$k] = $process->load();
+                    $process->save();
+                    $resultModels[$k] = $process->find();
                     $resultIds[$k] = $resultModels[$k]->id;
                 } catch (Exception $e) {
                     $msg = $e->getMessage();
@@ -212,10 +207,10 @@ class Controller_Processes extends Controller_Skeleton
             $procs = (array)$_POST['processes'];
 
             foreach ($procs as $i => $proc) {
-                $process = Sprig::factory('process', array('id' => $proc))->load();
+                $process = ORM::factory('process', $proc);
                 //Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
-                $source = $process->source->load();
-                $destination = $process->destination->load();
+                $source = $process->source;
+                $destination = $process->destination;
 
                 if ($destination->isAndroid) {
                     $e['errors'] = null;
@@ -223,7 +218,7 @@ class Controller_Processes extends Controller_Skeleton
                     $e['class'] = 'success';
                     break;
                 }
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 $values = array(
                     'managerEntryStatus' => 6,
                     'managerAddress' => $source->ipaddress,
@@ -297,12 +292,17 @@ class Controller_Processes extends Controller_Skeleton
             $procs = (array)$_POST['processes'];
 
             foreach ($procs as $i => $proc) {
-                $process = Sprig::factory('process', array('id' => $proc))->load();
-                //Fire::info($process->as_array(),"Process $i to be configured. ID: $proc");
-                $source = $process->source->load();
-                $destination = $process->destination->load();
+                $process = ORM::factory('process', $proc);
+                /**
+                 * @var Model_Entity
+                 */
+                $source = $process->source;
+                /**
+                 * @var Model_Entity
+                 */
+                $destination = $process->destination;
 
-                $profile = $process->profile->load();
+                $profile = $process->profile;
                 if (Snmp::instance($source->ipaddress)->isReachable(NMMIB . '.0.0.0.' . $process->id)) {
                     if ($destination->isAndroid || Snmp::instance($destination->ipaddress)->isReachable(NMMIB . '.10.0.0.' . $process->id)) {
                         $source->status = 1;
@@ -362,7 +362,7 @@ class Controller_Processes extends Controller_Skeleton
             $db = Db::select()->from('processes')->or_where('source_id', '=', $destination)->or_where('destination_id', '=', $destination)->execute();
 
             if ($db->count() == 0) {
-                $sou = Sprig::factory('entity', array('id' => $destination))->load();
+                $sou = ORM::factory('entity', $destination);
                 $sou->status = 0;
                 $sou->update();
             }
@@ -378,7 +378,7 @@ class Controller_Processes extends Controller_Skeleton
         ;
         $view = View::factory('process/view');
 
-        $entity = Sprig::factory('entity', array('id' => $id))->load();
+        $entity = ORM::factory('entity', $id);
 
         if ($entity->loaded()) {
             $view->bind('entity', $entity);

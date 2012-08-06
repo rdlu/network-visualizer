@@ -33,15 +33,15 @@ class Controller_Collect extends Controller
         if (!in_array($ip, $authorized_collectors)) throw new CollectException("Unrecognized collector $ip ", 1337);
 
         if ($id != 0) {
-            $process = Sprig::factory('process', array('id' => $id))->load();
+            $process = ORM::factory('process', $id);
 
-            if ($process->count() == 0) {
+            if (!$process->loaded()) {
                 $response = "Process $id does not exist.";
             }
-            $destination = $process->destination->load();
-            $source = $process->source->load();
-            $profile = $process->profile->load();
-            $metric = Sprig::factory('metric')->load(Db::select()->where('plugin', '=', $metric));
+            $destination = $process->destination;
+            $source = $process->source;
+            $profile = $process->profile;
+            $metric = ORM::factory('metric')->where('plugin', '=', $metric)->find();
 
             $cache = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id", array());
 

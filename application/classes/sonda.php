@@ -36,7 +36,7 @@ class Sonda
     public static function getDefaultManager()
     {
         $id = self::getDefaultManagerId();
-        return Sprig::factory('entity', array('id' => $id))->load()->as_array();
+        return ORM::factory('entity', $id)->as_array();
     }
 
     /**
