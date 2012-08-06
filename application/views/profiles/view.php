@@ -32,7 +32,7 @@
     </fieldset>
     <fieldset>
         <legend>Métricas Cobertas</legend>
-        <?php foreach ($profile->metrics as $metric): ?>
+        <?php foreach ($metrics as $metric): ?>
         <span class="iblock"><span class="label"><?=$metric->name?></span> <i>(<?=$metric->desc?>)</i></span><br/>
         <?php endforeach; ?>
     </fieldset>

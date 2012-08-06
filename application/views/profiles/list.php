@@ -17,7 +17,7 @@
         <?php foreach ($profiles as $profile): ?>
         <tr>
             <td><a href="<?=Url::site('profiles/view') . '/' . $profile->id?>"><?=$profile->name?></a></td>
-            <td><?php foreach ($profile->metrics as $metric): ?>
+            <td><?php foreach ($profile->metrics->find_all() as $metric): ?>
                 <?= $metric->name ?>
                 <?php endforeach; ?>
                 <?php if (count($profile->metrics) == 0): ?>

@@ -84,8 +84,9 @@ class Controller_Profiles extends Controller_Skeleton
         $id = (int)$this->request->param('id');
         $view = View::factory('profiles/view');
         $profile = ORM::factory('profile', $id);
+        $metrics = $profile->metrics->find_all();
 
-        $view->bind('profile', $profile);
+        $view->bind('profile', $profile)->bind('metrics', $metrics);
         $this->template->content = $view;
     }
 
