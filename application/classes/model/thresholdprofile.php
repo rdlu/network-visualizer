@@ -10,7 +10,7 @@ class Model_ThresholdProfile extends ORM
             'through' => 'thresholdValues',
             'foreign_key' => 'metric_id'),
         'thresholdValues' => array(
-            'foreign_key' => 'thresholdValues_id'),
+            'model' => 'thresholdValue'),
     );
 
     protected function Sprig()

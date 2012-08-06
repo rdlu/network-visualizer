@@ -349,7 +349,7 @@ class Controller_Reports extends Controller_Skeleton
 
             foreach ($processes as $process) {
                 $profile = $process->profile;
-                $metrics = $process->metrics->as_array('order');
+                $metrics = $process->metrics->find_all()->as_array('order');
                 ksort($metrics);
                 //Fire::error($metrics);
                 foreach ($metrics as $metric) {

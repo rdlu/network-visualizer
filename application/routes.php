@@ -3,14 +3,20 @@
  * Arquivo com as rotas do aplicativo
  */
 
+
 Route::set('log', 'log(/<date>)', array('date' => '\d{4}/\d{2}/\d{2}',))
     ->defaults(array('controller' => 'log', 'action' => 'view'));
 
-
-Route::set('synthpopup', 'synthpopup(/<id>)')
+Route::set('processNew', 'processes/new(/<source>)', array('source' => '[0-9]+'))
     ->defaults(array(
-    'controller' => 'synthesizing',
-    'action' => 'popup'
+    'controller' => 'processes',
+    'action' => 'new'
+));
+
+Route::set('processSetup', 'processes/setup(/<source>)', array('source' => '[0-9]+'))
+    ->defaults(array(
+    'controller' => 'processes',
+    'action' => 'setup'
 ));
 
 Route::set('default', '(<controller>(/<action>(/<id>)))')
@@ -26,19 +32,15 @@ Route::set('process', '(<controller>(/<action>(/<source>/<destination>)))')
     'action' => 'view',
 ));
 
+
 Route::set('processIndex', 'processes/list(/<source>)', array('source' => '[a-z0-9.]+'))
     ->defaults(array(
     'controller' => 'processes',
     'action' => 'list'
 ));
 
-Route::set('processNew', 'processes/new(/<source>)', array('source' => '[0-9.]+'))
-    ->defaults(array(
-    'controller' => 'processes',
-    'action' => 'new'
-));
 
-Route::set('processSetup', '(<controller>(/<action>/<first>/<second>/<profile>))')
+Route::set('processSetupQuick', '(<controller>(/<action>/<first>/<second>/<profile>))')
     ->defaults(array(
     'controller' => 'process',
     'action' => 'setup',
@@ -67,4 +69,5 @@ Route::set('collect',
     'controller' => 'collect',
     'action' => 'id'
 ));
+
 

@@ -1,5 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+class Controller_Processes_Exception extends Exception
+{
+}
+
 class Controller_Processes extends Controller_Skeleton
 {
 
@@ -75,16 +79,17 @@ class Controller_Processes extends Controller_Skeleton
      */
     public function action_new()
     {
-        $source = $this->request->param('source', 0);
+        $source = $this->request->param('source');
+        $test = $this->request;
         $this->template->title .= 'Criando novo processo de medição';
         $process = ORM::factory('process');
         $profiles = ORM::factory('profile')->find_all();
         $thresholds = ORM::factory('thresholdProfile')->find_all();
 
-        if ($source != 0) {
+        if ($source) {
             $sourceEntity = ORM::factory('entity', $source);
             $process->source = $sourceEntity;
-        }
+        } else throw new Controller_Processes_Exception("Falta um parametro obrigatório, a sonda de origem", 5);
 
         $metrics = ORM::factory('metric')->where('profile_id', 'IS NOT', null)->order_by('order')->find_all();
 
@@ -101,7 +106,7 @@ class Controller_Processes extends Controller_Skeleton
         $conversion = new conversion();
 
         foreach ($thresholds as $threshold) {
-            $tvalues = $threshold->thresholdValues;
+            $tvalues = $threshold->thresholdValues->find_all();
             $tarr = array();
             foreach ($tvalues as $tvalue) {
                 $tmet = $tvalue->metric;
@@ -161,7 +166,7 @@ class Controller_Processes extends Controller_Skeleton
 
             $profiles = array();
             foreach ($rows as $row) {
-                $profiles[] = $row['profile_id'];
+                $profiles[] = ORM::factory('profile', $row['profile_id']);
             }
 
             $sourceModel = ORM::factory('entity', $source);
@@ -175,12 +180,13 @@ class Controller_Processes extends Controller_Skeleton
                 $process->source = $sourceModel;
                 $process->destination = $destinationModel;
                 $process->profile = $profile;
-                $process->metrics = $metrics;
                 $process->thresholdProfile = $thresholdModel;
 
                 try {
                     $process->save();
-                    $resultModels[$k] = $process->find();
+                    //se salvo com sucesso, relaciona
+                    $process->add('metrics', $metrics);
+                    $resultModels[$k] = $process->reload();
                     $resultIds[$k] = $resultModels[$k]->id;
                 } catch (Exception $e) {
                     $msg = $e->getMessage();

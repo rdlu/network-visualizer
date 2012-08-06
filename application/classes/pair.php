@@ -72,7 +72,7 @@ class Pair
             $processes = $this->getProcesses();
             foreach ($processes as $process) {
                 $profile = $process->profile;
-                $metrics = $profile->metrics->as_array();
+                $metrics = $profile->metrics->find_all()->as_array();
                 foreach ($metrics as $metric) {
                     $order[] = $metric->order;
                     $this->metrics[] = $metric;
@@ -122,6 +122,7 @@ class Pair
             if (!$destination->isAndroid)
                 $destinationSnmp = Snmp::instance($destination->ipaddress, 'suppublic')
                     ->setGroup('removeManager', $values, array('id' => $process->id));
+            else $destinationSnmp = array();
 
             $c = 0;
             $return = 0;
