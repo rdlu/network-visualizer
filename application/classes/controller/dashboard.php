@@ -47,9 +47,9 @@ class Controller_Dashboard extends Controller_Skeleton
         $sources = null;
         foreach ($processes as $process) {
             if ($sources === null) {
-                $sources[] = $process->source->load(Db::select()->limit(1));
+                $sources[] = $process->source;
             }
-            $destinations[] = $process->destination->load(Db::select()->group_by('state'));
+            $destinations[] = $process->destination;
         }
 
         foreach ($sources as $source) {

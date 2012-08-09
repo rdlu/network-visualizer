@@ -74,6 +74,81 @@ class Model_Entity extends ORM
         );
     }
 
+    protected $_inputs = array(
+        'isAndroid' => array(
+            'id' => 'isAndroid',
+            'type' => 'radio',
+            'choices' => array('Android', 'Linux'),
+            'label' => true,
+            'label_position' => 'right'
+        ),
+        'description' => array(
+            'type' => 'textarea'
+        )
+    );
+
+    public function input($name, $extraOptions = array())
+    {
+        $default_values = array(
+            'id' => $name,
+            'type' => 'input',
+            'label' => false,
+            'label_position' => 'left',
+            'label_attributes' => array(),
+            'label_text' => $this->title($name),
+            'value' => ''
+        );
+
+        $options = isset($this->_inputs[$name]) ? array_merge($default_values, $this->_inputs[$name]) : $default_values;
+        $html_options = isset($this->_inputs[$name]) ? array_merge($default_values, $this->_inputs[$name]) : $default_values;
+        foreach (array('value', 'type', 'choices', 'label', 'label_position', 'label_attributes', 'label_text') as $opts) {
+            unset($html_options[$opts]);
+        }
+
+        $html_options = array_merge($html_options, $extraOptions);
+        $type = $options['type'];
+        try {
+            $value = (isset($extraOptions['value'])) ? $options['value'] : $this->$name;
+        } catch (Exception $e) {
+            $value = '';
+        }
+
+        $output = '';
+        switch ($type) {
+            case 'radio':
+                foreach ($options['choices'] as $k => $choice) {
+                    $html_options['id'] .= "_$k";
+                    $input = Form::radio($name, $k, ($value == $k), $html_options);
+                    if ($options['label']) {
+                        $label = Form::label($html_options['id'], $choice, $options['label_attributes']);
+                        $output .= ($options['label_position'] == 'left') ? $label . $input : $input . $label;
+                    } else $output .= $input;
+                }
+                break;
+            case 'input':
+                $output = Form::input($name, $value, $html_options);
+                if ($options['label']) {
+                    $label = Form::label($html_options['id'], $this->title($name), $options['label_attributes']);
+                    $output = ($options['label_position'] == 'left') ? $label . $output : $output . $label;
+                }
+                break;
+            case 'checkbox':
+                $output = Form::checkbox($name, (bool)$value, $html_options);
+                if ($options['label']) {
+                    $label = Form::label($html_options['id'], $this->title($name), $options['label_attributes']);
+                    $output = ($options['label_position'] == 'left') ? $label . $output : $output . $label;
+                }
+                break;
+            case 'select':
+                break;
+            case 'textarea':
+                $output = Form::textarea($name, $value, $html_options);
+                break;
+        }
+
+        return $output;
+    }
+
     public function save(Validation $validation = NULL)
     {
         if ($this->id == null && !$this->loaded()) {
@@ -112,5 +187,16 @@ class Model_Entity extends ORM
             default:
                 throw new Exception("Codigo de erro não reconhecido no Model_Entity");
         }
+    }
+
+    public function title($field)
+    {
+        return __($field);
+    }
+
+    public function label($field, $extraAttributes = array())
+    {
+        $title = (isset($this->_inputs[$field]['label_text'])) ? $this->_inputs[$field]['label_text'] : $this->title($field);
+        return Form::label($field, $title, $extraAttributes);
     }
 }

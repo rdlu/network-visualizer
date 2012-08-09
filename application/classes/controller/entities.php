@@ -149,6 +149,7 @@ class Controller_Entities extends Controller_Skeleton
             if (($entity->processes_as_source->count() == 0) || ($entity->processes_as_destination->count() == 0)) {
                 $name = $entity->name;
                 $entity->delete();
+                Cache::instance('memcache')->delete('infoMapaJ');
                 $this->response->body("<div id=\"error\" class=\"success\">A entidade" . $name . "foi removida com sucesso.</div>");
             } else {
                 $this->response->body = "Não foi possível remover a sonda $entity->name, ainda existem processos de medição agendados.";
