@@ -35,6 +35,11 @@ class Model_Uf extends ORM
         );
     }
 
+    /**
+     * @static
+     * @return array
+     */
+
     public static function toArray()
     {
         $return = array();

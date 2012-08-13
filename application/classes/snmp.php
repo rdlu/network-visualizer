@@ -63,6 +63,26 @@ class Snmp
      */
     public function getValue($oid)
     {
+        $response = $this->getRawValue($oid);
+        $pos = strpos($response, ':');
+        $type = substr($response, 0, $pos);
+        $value = substr($response, $pos + 1, strlen($response));
+        $typedValue = null;
+
+        switch ($type) {
+            case 'INTEGER':
+                $typedValue = (int)$value;
+                break;
+            default:
+                $typedValue = (string)$value;
+                break;
+        }
+        finfo("SNMP GET para " . $this->address, "OID " . $oid, $response, $typedValue, $pos, $type, $value);
+        return $typedValue;
+    }
+
+    public function getRawValue($oid)
+    {
         try {
             $response = snmp2_get($this->address, $this->community, $oid, $this->timeout, $this->retries);
         } catch (Exception $err) {
@@ -73,11 +93,9 @@ class Snmp
             } else {
                 $userError = "O host teve um erro no SNMP: $msg";
             }
-
             $this->setError($userError, $msg, 'error');
             return null;
         }
-
         return $response;
     }
 
@@ -96,7 +114,7 @@ class Snmp
      */
     public function isNotLoaded($response)
     {
-        if ($this->isNotSet($response) || $response != '1') {
+        if ($this->isNotSet($response) || $response != '1' || $response != 1) {
             return true;
         }
         return false;
@@ -110,6 +128,7 @@ class Snmp
     public function isProfileNotLoaded($profileId)
     {
         $response = $this->getValue(NMMIB . ".1.0.14.$profileId");
+        finfo("Profile $profileId exists?", $response, !$this->isNotLoaded($response));
         return $this->isNotLoaded($response);
     }
 
@@ -201,12 +220,15 @@ class Snmp
                 default:
                     $type = 's';
                     $value = (string)utf8::transliterate_to_ascii($value);
+                    break;
             }
 
             //Fire::info("$key: $value");
 
             try {
                 $result = snmp2_set($this->address, $this->community, $oid['oid'], $type, $value, $this->timeout, $this->retries);
+                //fwarn("SNMP set para $name ".$this->address,"OID ".$oid['oid']." $value",$result);
+
             } catch (Exception $err) {
                 $code = $err->getCode();
                 $msg = $err->getMessage();
@@ -215,7 +237,7 @@ class Snmp
                 if ($key == 'entryStatus' || $key == 'managerEntryStatus') {
 
                 } else {
-                    Kohana::$log->add(Log::ERROR, "Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg");
+                    $this->setError("Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg", "Erro no snmpset para o ip $this->address, oid $key, valor $value, $msg", 'error');
                     $data[$key] = $msg;
                     break;
                 }

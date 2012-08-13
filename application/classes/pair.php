@@ -126,7 +126,7 @@ class Pair
 
             $c = 0;
             $return = 0;
-            $c += count($sourceSnmp);
+            $c += count($sourceSnmp->getErrors());
             if ($c > 0) {
                 $return = 1;
                 //$errors[0] = "A sonda de origem \"$source->name\" ($source->ipaddress) não pode ser contactada para reconfiguração.";

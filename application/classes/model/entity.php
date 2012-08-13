@@ -74,18 +74,51 @@ class Model_Entity extends ORM
         );
     }
 
-    protected $_inputs = array(
-        'isAndroid' => array(
-            'id' => 'isAndroid',
-            'type' => 'radio',
-            'choices' => array('Android', 'Linux'),
-            'label' => true,
-            'label_position' => 'right'
-        ),
-        'description' => array(
-            'type' => 'textarea'
-        )
-    );
+    protected function inputs()
+    {
+        return array(
+            'isAndroid' => array(
+                'id' => 'isAndroid',
+                'type' => 'radio',
+                'choices' => array('Android', 'Linux'),
+                'label' => true,
+                'label_position' => 'right'
+            ),
+            'ipaddress' => array(
+                'label_text' => 'Endereço IP: '
+            ),
+            'description' => array(
+                'type' => 'textarea',
+                'label_text' => 'Descrição: '
+            ),
+            'state' => array(
+                'type' => 'select',
+                'choices' => Model_Uf::toArray(),
+                'label_text' => "UF: "
+            ),
+            'city' => array(
+                'label_text' => "Cidade: "
+            ),
+            'name' => array(
+                'label_text' => "Nome da entidade: "
+            ),
+            'district' => array(
+                'label_text' => "Bairro: "
+            ),
+            'longitude' => array(
+                'label_text' => "Longitude: "
+            ),
+            'latitude' => array(
+                'label_text' => "Latitude: "
+            ),
+            'address' => array(
+                'label_text' => "Endereço: "
+            ),
+            'addressnum' => array(
+                'label_text' => "Núm.: "
+            ),
+        );
+    }
 
     public function input($name, $extraOptions = array())
     {
@@ -99,8 +132,10 @@ class Model_Entity extends ORM
             'value' => ''
         );
 
-        $options = isset($this->_inputs[$name]) ? array_merge($default_values, $this->_inputs[$name]) : $default_values;
-        $html_options = isset($this->_inputs[$name]) ? array_merge($default_values, $this->_inputs[$name]) : $default_values;
+        $allInputs = $this->inputs();
+        $inputs = isset($allInputs[$name]) ? $allInputs[$name] : false;
+        $options = ($inputs) ? array_merge($default_values, $inputs) : $default_values;
+        $html_options = isset($inputs[$name]) ? array_merge($default_values, $inputs[$name]) : $default_values;
         foreach (array('value', 'type', 'choices', 'label', 'label_position', 'label_attributes', 'label_text') as $opts) {
             unset($html_options[$opts]);
         }
@@ -140,6 +175,11 @@ class Model_Entity extends ORM
                 }
                 break;
             case 'select':
+                $output = Form::select($name, $options['choices'], $value, $html_options);
+                if ($options['label']) {
+                    $label = Form::label($html_options['id'], $this->title($name), $options['label_attributes']);
+                    $output = ($options['label_position'] == 'left') ? $label . $output : $output . $label;
+                }
                 break;
             case 'textarea':
                 $output = Form::textarea($name, $value, $html_options);
@@ -196,7 +236,9 @@ class Model_Entity extends ORM
 
     public function label($field, $extraAttributes = array())
     {
-        $title = (isset($this->_inputs[$field]['label_text'])) ? $this->_inputs[$field]['label_text'] : $this->title($field);
+        $allInputs = $this->inputs();
+        $inputs = isset($allInputs[$field]) ? $allInputs[$field] : false;
+        $title = (isset($inputs['label_text'])) ? $inputs['label_text'] : $this->title($field);
         return Form::label($field, $title, $extraAttributes);
     }
 }

@@ -611,10 +611,10 @@ return array(
             'type' => 'int',
             'oid' => NMMIB . '.0.0.8.pid',
         ),
-        'polling' => array(
+        /*'polling' => array(
             'type' => 'int',
-            'oid' => NMMIB . '.0.0.15l.id'
-        ),
+            'oid' => NMMIB . '.0.0..pid'
+        ),*/
         'timestamp' => array(
             'type' => 'fuckTS',
             'oid' => NMMIB . '.0.0.2.pid',

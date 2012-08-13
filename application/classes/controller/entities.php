@@ -111,9 +111,8 @@ class Controller_Entities extends Controller_Skeleton
                 Cache::instance('memcache')->delete('infoMapaJ');
                 Request::current()->redirect(Request::current()->controller() . '/view/' . $entity->id);
                 $sucess = true;
-            } catch (Validation_Exception $e) {
-                $errors = $e->array->errors('entities/new');
-                //Fire::group('Form Validation Results')->warn($errors)->groupEnd();
+            } catch (ORM_Validation_Exception $e) {
+                $errors = $e->errors('models');
                 if (!isset($errors['ipaddress'])) {
                     $disabled = 'enabled';
                 }
