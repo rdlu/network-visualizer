@@ -5,11 +5,11 @@
 require SYSPATH . 'classes/kohana/core' . EXT;
 
 if (is_file(APPPATH . 'classes/kohana' . EXT)) {
-	// Application extends the core
-	require APPPATH . 'classes/kohana' . EXT;
+    // Application extends the core
+    require APPPATH . 'classes/kohana' . EXT;
 } else {
-	// Load empty core extension
-	require SYSPATH . 'classes/kohana' . EXT;
+    // Load empty core extension
+    require SYSPATH . 'classes/kohana' . EXT;
 }
 /**
  * Set the default time zone.
@@ -56,7 +56,7 @@ I18n::lang('pt-br'); //me brazelero compreendes?
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
 if (isset($_SERVER['KOHANA_ENV'])) {
-	Kohana::$environment = constant('Kohana::' . strtoupper($_SERVER['KOHANA_ENV']));
+    Kohana::$environment = constant('Kohana::' . strtoupper($_SERVER['KOHANA_ENV']));
 }
 
 /**
@@ -73,8 +73,8 @@ if (isset($_SERVER['KOHANA_ENV'])) {
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url' => getenv('BASE_URL'),
-	'index_file' => ''
+    'base_url' => getenv('BASE_URL'),
+    'index_file' => ''
 ));
 
 /**
@@ -91,22 +91,19 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-	'auth'       => MODPATH.'auth',       // Basic authentication
-	'cache' => MODPATH . 'cache', // Caching with multiple backends
-	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
-	'database' => MODPATH . 'database', // Database access
-	'image' => MODPATH . 'image', // Image manipulation
-	'orm'        => MODPATH.'orm',        // Object Relationship Mapping
-	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
-	'pagination' => MODPATH . 'pagination', // Paging of results
-	// 'unittest'   => MODPATH.'unittest',   // Unit testing
-	'userguide' => MODPATH . 'userguide', // User guide and API documentation
-	'sprig' => MODPATH . 'sprig', // User guide and API documentation
-	//'firephp' => MODPATH . 'firephp', // User guide and API documentation
-	'zend' => MODPATH . 'zend',
-	'pheanstalk' => MODPATH . 'pheanstalk',
-	//'firelogger'  => MODPATH.'firelogger',
-
+    'auth' => MODPATH . 'auth', // Basic authentication
+    'cache' => MODPATH . 'cache', // Caching with multiple backends
+    'database' => MODPATH . 'database', // Database access
+    'image' => MODPATH . 'image', // Image manipulation
+    'orm' => MODPATH . 'orm', // Object Relationship Mapping
+    'leap' => MODPATH . 'leap',
+    'pagination' => MODPATH . 'pagination', // Paging of results
+    // 'unittest'   => MODPATH.'unittest',   // Unit testing
+    'userguide' => MODPATH . 'userguide', // User guide and API documentation
+    'sprig' => MODPATH . 'sprig', // User guide and API documentation
+    'zend' => MODPATH . 'zend',
+    'pheanstalk' => MODPATH . 'pheanstalk',
+    'firelogger' => MODPATH . 'firelogger',
 ));
 
 /**

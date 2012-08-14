@@ -36,7 +36,7 @@ class Sonda
     public static function getDefaultManager()
     {
         $id = self::getDefaultManagerId();
-        return Sprig::factory('entity', array('id' => $id))->load()->as_array();
+        return ORM::factory('entity', $id)->as_array();
     }
 
     /**
@@ -50,7 +50,7 @@ class Sonda
         if (!isset(Sonda::$instances[$id])) {
             $newinstance = new Sonda();
             if (isset($sonda)) $newinstance->sonda = $sonda;
-            else $newinstance->sonda = Sprig::factory('entity', array('id' => $id))->load();
+            else $newinstance->sonda = ORM::factory('entity', $id);
             //update
             if ($newinstance->sonda->status != 0 && !$newinstance->sonda->isAndroid) {
                 //Se a ultima atualizacao foi ate 5 minutos atras
@@ -121,13 +121,13 @@ class Sonda
 
                 try {
                     $newinstance->sonda->update();
-                } catch (Validation_Exception $e) {
-                    Kohana::$log->add('ERROR', "O status da sonda $id não pode ser atualizado com sucesso. (Validate_Exception on Sonda::instance)");
+                } catch (ORM_Validation_Exception $e) {
+                    $err = $e->errors();
+                    Kohana::$log->add('ERROR', "O status da sonda $id não pode ser atualizado com sucesso. (ORM_lidate_Exception on Sonda::instance)");
                     //Fire::info($e->array->errors());
                 }
 
-            }
-            else {
+            } else {
                 $newinstance->message = 'Entidade desativada ou sem processos de medição';
                 if ($newinstance->sonda->isAndroid) {
                     //TODO: timestamp
@@ -186,7 +186,7 @@ class Sonda
                 } else
                     $this->version = Snmp::instance($realip)->group('linuxManager');
             } catch (Exception $err) {
-                foreach (Kohana::config('snmp.linuxManager') as $k => $v) {
+                foreach (Kohana::$config->load('snmp.linuxManager') as $k => $v) {
                     $this->version[$k] = null;
                 }
             }

@@ -28,7 +28,7 @@ class Controller_Entities extends Controller_Skeleton
     public function action_index()
     {
         $this->template->title .= 'Listagem';
-        $entities = Sprig::factory('entity')->load(NULL, FALSE);
+        $entities = ORM::factory('entity')->find_all();
         //Fire::group('Models Loaded')->info($entities)->groupEnd();
         $view = View::factory('entities/list');
 
@@ -54,8 +54,9 @@ class Controller_Entities extends Controller_Skeleton
         else throw new Kohana_Exception('This controller only accepts AJAX requests', $response);
     }
 
-    public function action_destinations($id = 0)
+    public function action_destinations()
     {
+        $id = $this->request->param('id', 0);
         $this->auto_render = false;
 
         if (Request::current()->is_ajax()) {
@@ -68,11 +69,11 @@ class Controller_Entities extends Controller_Skeleton
             else
                 $arr = array('id' => $id);
 
-            $source = Sprig::factory('entity', array('id' => $id))->load();
-            $processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id', '=', $source->id), null);
+            $source = ORM::factory('entity', $id);
+            $processes = ORM::factory('process')->group_by('destination_id')->where('source_id', '=', $source->id)->find_all();
             $resp = array();
             foreach ($processes as $process) {
-                $ent = $process->destination->load()->as_array();
+                $ent = $process->destination->as_array();
                 if (isset($_POST['isAndroid'])) {
                     if ($_POST['isAndroid'] == $ent['isAndroid'])
                         $resp[] = $ent;
@@ -89,16 +90,17 @@ class Controller_Entities extends Controller_Skeleton
 
     }
 
-    public function action_edit($id)
+    public function action_edit()
     {
-        $entity = Sprig::factory('entity');
+        $id = (int)$this->request->param('id', 0);
+        $entity = ORM::factory('entity');
 
         $disabled = 'disabled';
         $sucess = false;
 
         if ($id != 0) {
             $entity->id = $id;
-            $entity->load();
+            $entity->find();
             $this->template->title .= "Editando a entidade $entity->ipaddress";
             $disabled = 'enabled';
         }
@@ -109,9 +111,8 @@ class Controller_Entities extends Controller_Skeleton
                 Cache::instance('memcache')->delete('infoMapaJ');
                 Request::current()->redirect(Request::current()->controller() . '/view/' . $entity->id);
                 $sucess = true;
-            } catch (Validation_Exception $e) {
-                $errors = $e->array->errors('entities/new');
-                //Fire::group('Form Validation Results')->warn($errors)->groupEnd();
+            } catch (ORM_Validation_Exception $e) {
+                $errors = $e->errors('models');
                 if (!isset($errors['ipaddress'])) {
                     $disabled = 'enabled';
                 }
@@ -136,10 +137,10 @@ class Controller_Entities extends Controller_Skeleton
     {
         $this->auto_render = false;
         $id = (int)$_POST['id'];
-        $entity = Sprig::factory('entity');
+        $entity = ORM::factory('entity');
         if ($id != 0) {
             $entity->id = $id;
-            $entity->load();
+            $entity->find();
         }
 
         if ($entity->loaded()) {
@@ -147,6 +148,7 @@ class Controller_Entities extends Controller_Skeleton
             if (($entity->processes_as_source->count() == 0) || ($entity->processes_as_destination->count() == 0)) {
                 $name = $entity->name;
                 $entity->delete();
+                Cache::instance('memcache')->delete('infoMapaJ');
                 $this->response->body("<div id=\"error\" class=\"success\">A entidade" . $name . "foi removida com sucesso.</div>");
             } else {
                 $this->response->body = "Não foi possível remover a sonda $entity->name, ainda existem processos de medição agendados.";
@@ -155,36 +157,36 @@ class Controller_Entities extends Controller_Skeleton
         } else $this->response->body = 'Entidade não existente no MoM';
     }
 
-    public function action_view($id)
+    public function action_view()
     {
-        $id = (int)$id;
+        $id = (int)$this->request->param('id', 0);
         $view = View::factory('entities/view');
 
-        $entity = Sprig::factory('entity', array('id' => $id))->load();
+        $entity = ORM::factory('entity', $id);
         $status = Sonda::instance($entity->id, true);
         $this->template->title .= "Informações da sonda " . $entity->name;
 
         if ($entity->loaded()) {
-            $asSource = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id', '=', $entity->id), null);
+            $asSource = ORM::factory('process')->where('source_id', '=', $entity->id)->group_by('destination_id')->find_all();
             $assou = array();
             $assouprocs = array();
             foreach ($asSource as $process1) {
-                $ass1 = $process1->destination->load()->as_array();
+                $ass1 = $process1->destination->as_array();
                 $assou['i' . $ass1['id']] = $ass1;
                 Pair::instance($entity->id, $ass1['id'])->getProcesses();
                 $assouprocs['p' . $ass1['id']] = Pair::instance($entity->id, $ass1['id'])->getProcesses(true);
             }
 
-            $asDestination = Sprig::factory('process')->load(Db::select()->group_by('source_id')->where('destination_id', '=', $entity->id), null);
+            $asDestination = ORM::factory('process')->where('destination_id', '=', $entity->id)->group_by('source_id')->find_all();
             $asdest = array();
             $asdestprocs = array();
             foreach ($asDestination as $process2) {
-                $asd1 = $process2->source->load()->as_array();
+                $asd1 = $process2->source->as_array();
                 $asdest['i' . $asd1['id']] = $asd1;
                 $asdestprocs['p' . $asd1['id']] = Pair::instance($asd1['id'], $entity->id)->getProcesses(true);
             }
 
-            $processes = Sprig::factory('process')->load(Db::select()->or_where('source_id', '=', $entity->id)->or_where('destination_id', '=', $entity->id), null);
+            $processes = ORM::factory('process')->or_where('source_id', '=', $entity->id)->or_where('destination_id', '=', $entity->id)->find_all();
 
             $proca = array();
             foreach ($processes as $process) {
@@ -209,10 +211,11 @@ class Controller_Entities extends Controller_Skeleton
 
     private function destinations(Model_Entity $entity)
     {
-        $asSource = Sprig::factory('process')->load(Db::select()->group_by('destination_id')->where('source_id', '=', $entity->id), null);
+        $asSource = ORM::factory('process')->where('source_id', '=', $entity->id)->group_by('destination_id')->find_all();
+
         $assou = array();
         foreach ($asSource as $process1) {
-            $ass1 = $process1->destination->load();
+            $ass1 = $process1->destination;
             $assou[$ass1['id']] = $ass1;
         }
         return $assou;
@@ -220,10 +223,10 @@ class Controller_Entities extends Controller_Skeleton
 
     private function sources(Model_Entity $entity)
     {
-        $asDestination = Sprig::factory('process')->load(Db::select()->group_by('source_id')->where('destination_id', '=', $entity->id), null);
+        $asDestination = ORM::factory('process')->where('destination_id', '=', $entity->id)->group_by('source_id')->find_all();
         $asdest = array();
         foreach ($asDestination as $process2) {
-            $asd1 = $process2->source->load();
+            $asd1 = $process2->source;
             $asdest[$asd1->id] = $asd1;
         }
 
@@ -250,7 +253,7 @@ class Controller_Entities extends Controller_Skeleton
             $processes = Database::instance()->query(Database::SELECT, "SELECT source_id,count(*) FROM processes GROUP BY source_id ORDER BY count(*)");
             $result = array();
             foreach ($processes as $process) {
-                $result['entities'][] = Sprig::factory('entity', array('id' => $process["source_id"]))->load()->as_array();
+                $result['entities'][] = ORM::factory('entity', $process["source_id"])->as_array();
             }
 
             $this->response->headers('Content-Type', 'application/json');
@@ -264,13 +267,14 @@ class Controller_Entities extends Controller_Skeleton
 
     }
 
-    public function action_checkRRD($id)
+    public function action_checkRRD()
     {
+        $id = $this->request->param('id');
         $view = View::factory('entities/checkRRD');
         /**
          * @var Model_Entity
          */
-        $entity = Sprig::factory('entity', array('id' => $id))->load();
+        $entity = ORM::factory('entity', $id);
         $this->template->title .= "Checagem dos Arquivos RRD " . $entity->name;
 
         $messages = array();
@@ -286,8 +290,7 @@ class Controller_Entities extends Controller_Skeleton
     public function action_androidList()
     {
         $this->auto_render = false;
-        $query = DB::select()->where('isAndroid', '=', 1)->order_by('updated', 'DESC');
-        $entities = Sprig::factory('entity')->load($query, FALSE);
+        $entities = ORM::factory('entity')->where('isAndroid', '=', 1)->order_by('updated', 'DESC')->find_all();
         //Fire::group('Models Loaded')->info($entities)->groupEnd();
         $view = View::factory('entities/androidList');
 

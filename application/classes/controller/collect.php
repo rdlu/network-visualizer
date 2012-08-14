@@ -5,8 +5,18 @@ class CollectException extends Exception
 
 class Controller_Collect extends Controller
 {
-    public function action_id($id = 0, $metric = null, $dsMax = null, $dsMin = null, $dsAvg = null, $sdMax = null, $sdMin = null, $sdAvg = null, $timestamp = null)
+    public function action_id()
     {
+        $id = $this->request->param('id', 0);
+        $metric = $this->request->param('metric', false);
+        $dsMax = $this->request->param('dsMax', null);
+        $dsMin = $this->request->param('dsMin', null);
+        $dsAvg = $this->request->param('dsAvg', null);
+        $sdMax = $this->request->param('sdMax', null);
+        $sdMin = $this->request->param('sdMin', null);
+        $sdAvg = $this->request->param('sdAvg', null);
+        $timestamp = $this->request->param('timestamp', null);
+
 
         $response = 'Received';
         if ($id === 0) {
@@ -18,20 +28,20 @@ class Controller_Collect extends Controller
         }
 
         $ip = $_SERVER['REMOTE_ADDR'];
-        $authorized_collectors = Kohana::config('network.collectors');
+        $authorized_collectors = Kohana::$config->load('network.collectors');
         //leve recurso de segurança
         if (!in_array($ip, $authorized_collectors)) throw new CollectException("Unrecognized collector $ip ", 1337);
 
         if ($id != 0) {
-            $process = Sprig::factory('process', array('id' => $id))->load();
+            $process = ORM::factory('process', $id);
 
-            if ($process->count() == 0) {
+            if (!$process->loaded()) {
                 $response = "Process $id does not exist.";
             }
-            $destination = $process->destination->load();
-            $source = $process->source->load();
-            $profile = $process->profile->load();
-            $metric = Sprig::factory('metric')->load(Db::select()->where('plugin', '=', $metric));
+            $destination = $process->destination;
+            $source = $process->source;
+            $profile = $process->profile;
+            $metric = ORM::factory('metric')->where('plugin', '=', $metric)->find();
 
             $cache = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id", array());
 
@@ -76,7 +86,7 @@ class Controller_Collect extends Controller
             Model_Results::factory($profile->id, $metric->id)->insert($process->id, $toBeSQLed);
 
 
-            $roundedTimestamp = $timestamp - ($timestamp % $profile->polling);
+            $roundedTimestamp = $timestamp - ($timestamp % $destination->polling);
 
             if (!$destination->isAndroid)
                 $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress)->update($metric->name, $toBeRRDed, $roundedTimestamp);

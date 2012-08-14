@@ -256,7 +256,7 @@ $(function () {
                     $('#destino')[0].disabled = false;
                     $('#destino')[0].focus();
                 } else {
-                    $("<option value='0'> :: Esta sonda não realiza medições :: </option>").appendTo("#destino");
+                    $("<option value='0'> :: Esta sonda não realiza medições deste tipo :: </option>").appendTo("#destino");
                 }
 
             },

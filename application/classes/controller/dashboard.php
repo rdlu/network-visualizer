@@ -43,14 +43,13 @@ class Controller_Dashboard extends Controller_Skeleton
     public function action_index()
     {
 
-        $processes = Sprig::factory('process')->load(Db::select()->group_by('destination_id'), FALSE);
-        $resp = array();
+        $processes = ORM::factory('process')->group_by('destination_id')->find_all();
         $sources = null;
         foreach ($processes as $process) {
             if ($sources === null) {
-                $sources[] = $process->source->load(Db::select()->limit(1));
+                $sources[] = $process->source;
             }
-            $destinations[] = $process->destination->load(Db::select()->group_by('state'));
+            $destinations[] = $process->destination;
         }
 
         foreach ($sources as $source) {
@@ -97,8 +96,7 @@ class Controller_Dashboard extends Controller_Skeleton
             if (!$this->request->is_ajax()) {
                 $view = View::factory('dashboard/index')->bind('medicoes', $resFromMemCache);
                 $this->template->content = $view;
-            }
-            else {
+            } else {
                 $this->response->body(json_encode($resFromMemCache));
             }
         }
