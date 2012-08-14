@@ -34,9 +34,6 @@
 [submodule "modules/unittest"]
 	path = modules/unittest
 	url = git://github.com/kohana/unittest.git
-[submodule "modules/firephp"]
-	path = modules/firephp
-	url = git://github.com/rodrigodk/KO3_FirePHP.git
 [submodule "modules/firelogger"]
 	path = modules/firelogger
 	url = git://github.com/rodrigodk/kohana-firelogger.git
