@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "########################  Setup Netmetric MoM  ########################"
+echo "########################   Setup Netmetric MoM  ########################"
 
 #grupo no gentoo,archlinux,outras distros
 #group=httpd
