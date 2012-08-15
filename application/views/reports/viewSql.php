@@ -110,7 +110,7 @@ var graphReport = {
                         return conversion.stringFromMetric(metric, val, axis);
                     }
                 },
-                series:{ lines:{show:true} },
+                series:{ points:{show:true} },
                 crosshair:{ mode:"x" },
                 grid:{ hoverable:true, autoHighlight:false },
                 selection:{ mode:"x" }
