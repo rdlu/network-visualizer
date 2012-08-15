@@ -1,5 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
+//timeout
+ini_set('max_execution_time', '60');
 //-- Environment setup --------------------------------------------------------
 // Load the core Kohana class
 require SYSPATH . 'classes/kohana/core' . EXT;
