@@ -194,7 +194,6 @@ class Rrd
         } else {
             $ts = date("d.m.Y H:i:s T", $timestamp);
         }
-
         //Fire::group("Updating RRD Files - S:$this->source D:$this->destination TS:$ts");
         $path = $this->path();
         foreach ($this->types[0] as $l1)
@@ -213,13 +212,13 @@ class Rrd
                     ////Fire::info("$filename TIME $timestamp : DS $downstream : SD $upstream");
                     $numbers = "SD $downstream : DS $upstream";
                     //echo date("d.m.Y H:i:s T");
-                    //Log::instance()->add(Log::WARNING,  "Guardando @$path/$filename os valores: $timestamp:$downstream:$upstream\n");
-                    $ret = rrd_update($path . $filename, array("$timestamp:$downstream:$upstream"));
+                    Log::instance()->add(Log::WARNING, "Guardando @$path $filename os valores: \n" . print_r($timestamp, true) . "\n" . print_r($downstream, true) . "\n" . print_r($upstream, true));
+                    $ret = rrd_update($path . $filename, "$timestamp:$downstream:$upstream");
                 } else {
                     //echo date("d.m.Y H:i:s T");
                     //echo "Guardando @$path $filename os valores: $upstream\n";
                     //Log::instance()->add(Log::WARNING,  "Guardando @$path/$filename os valores: $timestamp:$upstream\n");
-                    $ret = rrd_update($path . $filename, array("$timestamp:$upstream"));
+                    $ret = rrd_update($path . $filename, "$timestamp:$upstream");
                     $numbers = "RTT $upstream";
                 }
 

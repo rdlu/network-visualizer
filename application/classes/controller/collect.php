@@ -7,7 +7,7 @@ class Controller_Collect extends Controller
 {
     public function action_id()
     {
-        $id = $this->request->param('id', 0);
+        $id = $this->request->param('destination', 0);
         $metric = $this->request->param('metric', false);
         $dsMax = $this->request->param('dsMax', null);
         $dsMin = $this->request->param('dsMin', null);
@@ -86,7 +86,7 @@ class Controller_Collect extends Controller
             Model_Results::factory($profile->id, $metric->id)->insert($process->id, $toBeSQLed);
 
 
-            $roundedTimestamp = $timestamp - ($timestamp % $destination->polling);
+            $roundedTimestamp = $timestamp - ($timestamp % $profile->polling);
 
             if (!$destination->isAndroid)
                 $rrd = Rrd::instance($source->ipaddress, $destination->ipaddress)->update($metric->name, $toBeRRDed, $roundedTimestamp);
