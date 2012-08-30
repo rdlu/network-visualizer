@@ -131,7 +131,7 @@ class Sonda
                 $newinstance->message = 'Entidade desativada ou sem processos de medição';
                 if ($newinstance->sonda->isAndroid) {
                     //TODO: timestamp
-                    $newinstance->message = "A última resposta enviada por esta sonda foi " . $newinstance->sonda->updated;
+                    $newinstance->message = "A última resposta enviada por esta sonda foi " . date('d/m/Y H:i:s', $newinstance->sonda->updated);
                     $newinstance->class = 'info';
                 }
 

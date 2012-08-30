@@ -613,7 +613,7 @@ return array(
         ),
         /*'polling' => array(
             'type' => 'int',
-            'oid' => NMMIB . '.0.0..pid'
+            'oid' => NMMIB . '.0.0.15.pid'
         ),*/
         'timestamp' => array(
             'type' => 'fuckTS',
@@ -736,5 +736,17 @@ return array(
             'type' => 'int',
             'default' => 5
         ),
+    ),
+    'agentPolling' => array(
+        'polling' => array(
+            'type' => 'int',
+            'oid' => NMMIB . '.0.0.15.pid',
+            'default' => 300
+        ),
+        'finalEntryStatus' => array(
+            'type' => 'int',
+            'oid' => NMMIB . '.0.0.9.pid',
+            'default' => 2
+        )
     )
 );

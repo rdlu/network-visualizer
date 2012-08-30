@@ -409,6 +409,23 @@ class Pair
         return true;
     }
 
+    public function setPolling($seconds)
+    {
+        $snmp = Snmp::instance($this->source->ipaddress, 'suppublic');
+
+        if ($this->destination->isAndroid) {
+            foreach ($this->getProcesses() as $process) {
+                $avalues = $this->destination->as_array();
+                $avalues['polling'] = $seconds;
+                $atable = $snmp->setGroup('agentPolling', $avalues, array('pid' => $process->id));
+                if (count($atable)) return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     protected function setManagerTable()
     {
 
