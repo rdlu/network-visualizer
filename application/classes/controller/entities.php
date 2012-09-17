@@ -302,4 +302,17 @@ class Controller_Entities extends Controller_Skeleton
         $this->response->body($view->render());
     }
 
+    public function action_setPolling()
+    {
+        $seconds = (int)$_POST['polling'];
+        $entity_id = (int)$this->request->param('id', 0);
+
+        if ($entity_id <= 0) throw new Exception("Sonda nao existente: id = " . $entity_id);
+        $entity = ORM::factory('entity', $entity_id);
+
+        $source = $entity->sources->find();
+
+        $pair = Pair::instanceFromModel($source, $entity);
+    }
+
 } // End Welcome

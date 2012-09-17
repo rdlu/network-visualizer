@@ -104,7 +104,7 @@ Kohana::modules(array(
     'sprig' => MODPATH . 'sprig', // User guide and API documentation
     'zend' => MODPATH . 'zend',
     'pheanstalk' => MODPATH . 'pheanstalk',
-    'firelogger' => MODPATH . 'firelogger',
+    //'firelogger' => MODPATH . 'firelogger',
 ));
 
 /**

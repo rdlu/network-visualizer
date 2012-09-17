@@ -1,7 +1,7 @@
 <table id="filterMenu">
     <tr>
         <td style="text-align:left"><a href="<?=url::base()?>entities/" class="filterMenu"><img
-            src="<?=url::site('images/actions/arrow_left.png')?>" alt="Adicionar nova entidade"/>&nbsp;&nbsp;&nbsp;Voltar
+                src="<?=url::site('images/actions/arrow_left.png')?>" alt="Adicionar nova entidade"/>&nbsp;&nbsp;&nbsp;Voltar
             à listagem</a></td>
     </tr>
 </table>
@@ -19,7 +19,7 @@
         <span class="iblock status <?=$status->getClass()?>"><?=$status->getMessage()?></span>
         <?php if ($entity->isAndroid): ?>
         <br/><br/><span
-            class="iblock status info">Este agente android está programado para medições a cada <b><?=$entity->polling / 60?>
+                class="iblock status info">Este agente android está programado para medições a cada <b><?=$entity->polling / 60?>
             minutos</b></span>
         <?php endif; ?>
     </fieldset>
@@ -71,11 +71,11 @@
 		</span>&nbsp;
         <span class="button" id="checkRRD">
 			<a href="<?=url::site('entities/checkRRD') . '/' . $entity->id?>"><img
-                src="<?=url::base()?>images/actions/folder_wrench.png" alt="Checar RRD">
+                    src="<?=url::base()?>images/actions/folder_wrench.png" alt="Checar RRD">
                 Checar RRD</a>
 		</span>&nbsp;
         <?php if ($entity->isAndroid): ?>
-            <span class="button" id="changePolling" onclick="polling.modal();">
+            <span class="button" id="changePolling" onclick="polling.dialogOpen();">
                 <img src="<?=url::base()?>images/actions/clock_edit.png" alt="Checar RRD">
                 Trocar intervalo de medição
             </span>
@@ -83,14 +83,7 @@
         <?php endif; ?>
     </fieldset>
 </form>
-<div id="dialog-polling" title="Troca de intervalo de medição">
-    <form>
-        <fieldset>
-            <label for="polling">Novo intervalo em MINUTOS: </label>
-            <input type="text" name="polling" id="polling" class="text ui-widget-content ui-corner-all"/>
-        </fieldset>
-    </form>
-</div>
+
 <script type="text/javascript">
 var processes = <?=$procJSON?>;
 var sources = <?=Zend_Json::encode($sources)?>;
@@ -257,39 +250,41 @@ var deleter = {
 <?php if ($entity->isAndroid): ?>
 var polling = {
     field:$("#polling"),
-    modal:function () {
-        $("#dialog-polling").dialog({
-            autoOpen:false,
-            height:300,
-            width:350,
-            modal:true,
-            buttons:{
-                OK:function () {
-                    var bValid = true;
-                    allFields.removeClass("ui-state-error");
+    dialog:$('<div id="dialog-polling" title="Troca de intervalo de medição"><p class="validateTips"></p><br /><form><fieldset><label for="polling">Novo intervalo em MINUTOS: </label><input type="text" name="polling" id="polling" class="text ui-widget-content ui-corner-all"/></fieldset></form></div>').dialog({
+        autoOpen:false,
+        height:170,
+        width:400,
+        modal:true,
+        buttons:{
+            OK:function () {
+                var bValid = true;
+                polling.field.removeClass("ui-state-error");
 
-                    bValid = bValid && checkLength(self.field, "polling", 1, 16);
-                    bValid = bValid && checkRegexp(self.field, /^([0-9])+$/, "Somente números no campo de intervalo");
+                bValid = bValid && polling.checkLength(polling.field, "polling", 1, 16);
+                bValid = bValid && polling.checkRegexp(polling.field, /^([0-9])+$/, "Somente números no campo de intervalo");
 
-                    if (bValid) {
-                        var changed = self.change(self.field.val());
-                        //$( this ).dialog( "close" );
-                    }
-                },
-                Cancelar:function () {
-                    $(this).dialog("close");
+                if (bValid) {
+                    var changed = polling.change(polling.field.val() * 60);
+                    //$( this ).dialog( "close" );
                 }
             },
-            close:function () {
-                self.field.val("").removeClass("ui-state-error");
+            Cancelar:function () {
+                $(this).dialog("close");
             }
-        });
+        },
+        close:function () {
+            polling.field.val("").removeClass("ui-state-error");
+        }
+    }),
+    dialogOpen:function () {
+        polling.dialog.dialog("open");
+        polling.field = $("#polling");
     },
     change:function (seconds) {
         var dialog = $("#dialog-polling");
         //funcoes ajax
         jQuery.ajax({
-            url:"<?=url::site('entities/setPolling')?>",
+            url:"<?=url::site('entities/setPolling')?>/<?=$entity->id?>",
             type:'post',
             data:{'polling':seconds},
             beforeSend:function () {
@@ -303,47 +298,14 @@ var polling = {
                         console.log(message + idx);
                         if (idx != 0) msg += message + '<br />';
                     });
-                    dialog.html("<b>Não foi possível remover o processo:</b><br />" + msg + "Você pode forçar a remoção, em caso das sondas já terem sido desativadas.");
+                    dialog.html("<b>Não foi possível alterar o intervalo de medição:</b><br />" + msg + "Verifique se o gerente desta sonda está online.");
                     dialog.dialog("option", "buttons", {
                         Cancelar:function () {
                             dialog.dialog("close");
-                        },
-                        "Forçar remoção":function () {
-                            jQuery.ajax({
-                                url:"<?=url::site('processes/remove')?>",
-                                type:'post',
-                                data:{'source':sid, 'destination':did, 'force':true},
-                                beforeSend:function () {
-                                    dialog.html("Removendo processo em modo forçado, aguarde...");
-                                    dialog.dialog("option", "buttons", {});
-                                },
-                                success:function (data) {
-                                    if (undefined != data.message[4]) {
-                                        var msg = '';
-                                        jQuery.each(data.message, function (idx, message) {
-                                            if (idx != 0) msg += message + '<br />';
-                                        });
-                                        dialog.html("<b>Não foi possível remover o processo:</b><br />" + msg);
-                                        dialog.dialog("option", "buttons", {
-                                            Cancelar:function () {
-                                                dialog.dialog("close");
-                                            }
-                                        });
-                                    } else {
-                                        dialog.html("O processo foi removido com sucesso!");
-                                        dialog.dialog("option", "buttons", {
-                                            OK:function () {
-                                                window.location.reload();
-                                            }
-                                        });
-
-                                    }
-                                }
-                            });
                         }
                     });
                 } else {
-                    dialog.html("O processo foi removido com sucesso!");
+                    dialog.html("O intervalo foi alterado com sucesso!");
                     dialog.dialog("option", "buttons", {
                         OK:function () {
                             window.location.reload();
@@ -357,18 +319,17 @@ var polling = {
         });
     },
     updateTips:function (t) {
-        tips
-            .text(t)
-            .addClass("ui-state-highlight");
+        $(".validateTips")
+                .text(t)
+                .addClass("ui-state-highlight");
         setTimeout(function () {
-            tips.removeClass("ui-state-highlight", 1500);
+            $(".validateTips").removeClass("ui-state-highlight", 1500);
         }, 500);
     },
     checkLength:function (o, n, min, max) {
         if (o.val().length > max || o.val().length < min) {
             o.addClass("ui-state-error");
-            self.updateTips("Length of " + n + " must be between " +
-                min + " and " + max + ".");
+            polling.updateTips("O campo " + n + " deve possuir um valor.");
             return false;
         } else {
             return true;
@@ -377,7 +338,7 @@ var polling = {
     checkRegexp:function (o, regexp, n) {
         if (!( regexp.test(o.val()) )) {
             o.addClass("ui-state-error");
-            self.updateTips(n);
+            polling.updateTips(n);
             return false;
         } else {
             return true;

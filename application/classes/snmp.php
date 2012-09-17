@@ -77,7 +77,7 @@ class Snmp
                 $typedValue = (string)$value;
                 break;
         }
-        finfo("SNMP GET para " . $this->address, "OID " . $oid, $response, $typedValue, $pos, $type, $value);
+        //finfo("SNMP GET para " . $this->address, "OID " . $oid, $response, $typedValue, $pos, $type, $value);
         return $typedValue;
     }
 
@@ -128,7 +128,7 @@ class Snmp
     public function isProfileNotLoaded($profileId)
     {
         $response = $this->getValue(NMMIB . ".1.0.14.$profileId");
-        finfo("Profile $profileId exists?", $response, !$this->isNotLoaded($response));
+        //finfo("Profile $profileId exists?", $response, !$this->isNotLoaded($response));
         return $this->isNotLoaded($response);
     }
 
@@ -193,8 +193,7 @@ class Snmp
             if (isset($oid['readonly']) && $oid['readonly']) continue;
 
             if (count($values) && isset($values[$key])) $value = $values[$key];
-            elseif (isset($oid['default'])) $value = $oid['default'];
-            else continue;
+            elseif (isset($oid['default'])) $value = $oid['default']; else continue;
 
             foreach ($subst as $k => $v) {
                 $oid['oid'] = str_replace($k, $v, $oid['oid']);

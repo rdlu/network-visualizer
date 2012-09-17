@@ -2,9 +2,10 @@
 /**
  * Arquivo com as rotas do aplicativo
  */
-
-
 Route::set('log', 'log(/<date>)', array('date' => '\d{4}/\d{2}/\d{2}',))
+    ->defaults(array('controller' => 'log', 'action' => 'view'));
+
+Route::set('log2', 'log')
     ->defaults(array('controller' => 'log', 'action' => 'view'));
 
 Route::set('processNew', 'processes/new(/<source>)', array('source' => '[0-9]+'))
@@ -19,37 +20,10 @@ Route::set('processSetup', 'processes/setup(/<source>)', array('source' => '[0-9
     'action' => 'setup'
 ));
 
-Route::set('default', '(<controller>(/<action>(/<id>)))')
-    ->defaults(array(
-    'controller' => 'welcome',
-    'action' => 'index',
-));
-
-
-Route::set('process', '(<controller>(/<action>(/<source>/<destination>)))')
-    ->defaults(array(
-    'controller' => 'process',
-    'action' => 'view',
-));
-
-
 Route::set('processIndex', 'processes/list(/<source>)', array('source' => '[a-z0-9.]+'))
     ->defaults(array(
     'controller' => 'processes',
     'action' => 'list'
-));
-
-
-Route::set('processSetupQuick', '(<controller>(/<action>/<first>/<second>/<profile>))')
-    ->defaults(array(
-    'controller' => 'process',
-    'action' => 'setup',
-));
-
-Route::set('reportsSpec', '(<controller>(/<action>/<source>/<destination>))')
-    ->defaults(array(
-    'controller' => 'reports',
-    'action' => 'json',
 ));
 
 
@@ -70,4 +44,8 @@ Route::set('collect',
     'action' => 'id'
 ));
 
-
+Route::set('default', '(<controller>(/<action>(/<id>)))')
+    ->defaults(array(
+    'controller' => 'welcome',
+    'action' => 'index',
+));

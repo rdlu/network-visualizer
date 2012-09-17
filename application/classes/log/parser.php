@@ -5,11 +5,13 @@ class Log_Parser
     {
         $items = file($file);
         $parsed = array();
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             if ($item[0] == '<' OR trim($item) == '')
                 continue;
-            $parsed[] = self::parse($item);
+            $parseditem = self::parse($item);
+            if (count($parseditem) == 0)
+                continue;
+            $parsed[] = $parseditem;
         }
         return $parsed;
     }

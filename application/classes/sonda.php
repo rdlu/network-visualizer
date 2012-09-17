@@ -173,7 +173,6 @@ class Sonda
         if (!$this->version['version']) {
 
             try {
-                $realip = Network::getAddress($this->sonda->ipaddress);
                 if ($this->sonda->isAndroid) {
                     $this->version = array(
                         'version' => 'DroidAgent',
@@ -183,8 +182,11 @@ class Sonda
                         'modemInfo' => '',
                         'osVersion' => 'Android'
                     );
-                } else
+                } else {
+                    $realip = Network::getAddress($this->sonda->ipaddress);
                     $this->version = Snmp::instance($realip)->group('linuxManager');
+                }
+
             } catch (Exception $err) {
                 foreach (Kohana::$config->load('snmp.linuxManager') as $k => $v) {
                     $this->version[$k] = null;

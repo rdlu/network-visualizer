@@ -50,6 +50,27 @@ class Pair
         return Pair::$instances[$sourceId][$destinationId];
     }
 
+    public static function instanceFromModel(Model_Entity $source, Model_Entity $destination, $options = array())
+    {
+
+        if (!isset(Pair::$instances[$source->id][$destination->id])) {
+            $newinstance = new Pair();
+            $newinstance->source = $source;
+            $newinstance->destination = $destination;
+            $newinstance->processes = ORM::factory('process')
+                ->where('destination_id', '=', $destination->id)
+                ->where('source_id', '=', $source->id)
+                ->find_all();
+
+            foreach ($options as $option) {
+                $newinstance->$option = $option;
+            }
+            Pair::$instances[$source->id][$destination->id] = $newinstance;
+        }
+
+        return Pair::$instances[$source->id][$destination->id];
+    }
+
     public static function instanceFromProcess($processId)
     {
         $process = ORM::factory('process', $processId);
