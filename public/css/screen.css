@@ -59,7 +59,7 @@ ul#mainMenu li {
     font-size: 14px;
 }
 
-ul#mainMenu li a {
+ul#mainMenu li a.mainMenu {
     text-transform: uppercase;
     font-weight: bold;
     color: #DDD;
