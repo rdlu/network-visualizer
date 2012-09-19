@@ -50,6 +50,12 @@ class Pair
         return Pair::$instances[$sourceId][$destinationId];
     }
 
+    /**
+     * @param Model_Entity $source
+     * @param Model_Entity $destination
+     * @param array $options
+     * @return Pair
+     */
     public static function instanceFromModel(Model_Entity $source, Model_Entity $destination, $options = array())
     {
 

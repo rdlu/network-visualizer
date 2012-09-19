@@ -16,7 +16,8 @@ class Controller_Entities extends Controller_Skeleton
         'byCity' => 'login',
         'topTenManagers' => 'login',
         'destinations' => 'login',
-        'checkRRD' => 'config'
+        'checkRRD' => 'config',
+        'setPolling' => 'config'
     );
 
     public function before()
@@ -304,15 +305,37 @@ class Controller_Entities extends Controller_Skeleton
 
     public function action_setPolling()
     {
-        $seconds = (int)$_POST['polling'];
-        $entity_id = (int)$this->request->param('id', 0);
+        if (Request::current()->is_ajax()) {
+            $this->auto_render = false;
 
-        if ($entity_id <= 0) throw new Exception("Sonda nao existente: id = " . $entity_id);
-        $entity = ORM::factory('entity', $entity_id);
+            $seconds = (int)$_POST['polling'];
+            $entity_id = (int)$this->request->param('id', 0);
 
-        $source = $entity->sources->find();
+            if ($entity_id <= 0) throw new Exception("Sonda nao existente: id = " . $entity_id);
+            /**
+             * @var Model_Entity
+             */
+            $entity = ORM::factory('entity', $entity_id);
+            $source = $entity->sources->find();
+            $pair = Pair::instanceFromModel($source, $entity);
+            $processes = $pair->getProcesses();
 
-        $pair = Pair::instanceFromModel($source, $entity);
+            if ($pair->setPolling($seconds)) {
+                $e['errors'] = null;
+                $e['class'] = 'success';
+                $e['message'] = "Novos parametros de intervalo de medição foram configurados com sucesso via SNMP. Gerente: $source->name ($source->ipaddress).";
+            } else {
+                Kohana::$log->add(Log::ERROR, "Erro no SNMP set Source para o ip $source->ipaddress (Agent Table, SetPolling)");
+                $e['errors'] = true;
+                $e['message'] = "Erros na transmissão dos dados via SNMP (Agent Setup, SetPolling) para o gerente $source->name";
+                $e['class'] = 'error';
+            }
+
+            $this->response->headers('Content-Type', 'application/json');
+            $this->response->body(json_encode($e));
+        } else {
+            throw new Request_Exception("Request Exception on setPolling");
+        }
     }
 
 } // End Welcome
