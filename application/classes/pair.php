@@ -429,6 +429,7 @@ class Pair
             $avalues['profile'] = $profile->id;
             $avalues['port'] = 12000 + $profile->id;
             $avalues['status'] = 1;
+            $avalues['isAndroid'] = $this->destination->isAndroid;
             $atable = $snmp->setGroup('agentTable', $avalues, array('pid' => $process->id));
             if (count($atable)) return false;
         }

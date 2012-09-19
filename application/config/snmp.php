@@ -630,6 +630,11 @@ return array(
             'oid' => NMMIB . '.0.0.10.pid',
             'default' => 1
         ),
+        'isAndroid' => array(
+            'type' => 'int',
+            'oid' => NMMIB . '.0.0.18.pid',
+            'default' => 0
+        ),
         'finalEntryStatus' => array(
             'type' => 'int',
             'oid' => NMMIB . '.0.0.9.pid',
