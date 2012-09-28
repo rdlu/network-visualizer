@@ -104,4 +104,85 @@ class Controller_Collect extends Controller
 
         $this->response->body($response);
     }
+
+    public function action_kpi()
+    {
+        //'collect/id/<destination>/kpi/<cellID>/<brand>/<model>/<connType>/<connTech>/<signal>/<errorRate>/<numberOfIPs>/<route>/<mtu>/<dnsLatency>/<lac>',
+        $id = $this->request->param('destination', 0);
+        $response = 'Received';
+        if ($id === 0) {
+            $id = $_POST['id'];
+        }
+
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $authorized_collectors = Kohana::$config->load('network.collectors');
+        //leve recurso de segurança
+        if (!in_array($ip, $authorized_collectors)) throw new CollectException("Unrecognized collector $ip ", 1337);
+
+        if ($id != 0) {
+            $process = ORM::factory('process', $id);
+
+            if (!$process->loaded()) {
+                $response = "Process $id does not exist.";
+            }
+            $destination = $process->destination;
+            $source = $process->source;
+            $profile = $process->profile;
+            $polling = ($destination->isAndroid) ? $destination->polling : $profile->polling;
+
+            //valores
+            $values = array(
+                'cell_id' => $this->request->param('cellID', null),
+                'brand' => $this->request->param('brand', null),
+                'model' => $this->request->param('model', null),
+                'conn_type' => $this->request->param('connType', null),
+                'conn_tech' => $this->request->param('connTech', null),
+                'signal' => $this->request->param('signal', null),
+                'error_rate' => $this->request->param('errorRate', null),
+                'number_of_ips' => $this->request->param('numberOfIPs', null),
+                //traceroute
+                'route' => $this->request->param('route', null),
+                'mtu' => $this->request->param('mtu', null),
+                'dns_latency' => $this->request->param('dnsLatency', null),
+                'lac' => $this->request->param('lac', null),
+                'timestamp' => $this->request->param('timestamp', null),
+                'polling' => $polling
+            );
+
+            $cache = Kohana_Cache::instance('memcache')->get("$source->id-$destination->id", array());
+
+            $toBeCached = array_merge($cache,
+                array("kpi" => $values));
+            Kohana_Cache::instance('memcache')->set("$source->id-$destination->id", $toBeCached, 86400);
+
+            //WARNING: A ordem importa
+            $toBeSQLed = array_merge($values, array(
+                'destination_name' => $destination->name,
+                'source_name' => $source->name
+            ));
+
+            Model_Kpi::factory($destination->id)->insert($toBeSQLed);
+
+
+            $destination->updated = date('U');
+            $source->updated = date('U');
+            $process->updated = date('U');
+            $destination->update();
+            $source->update();
+            $process->update();
+            $response = "KPI :: Updated S: {$source->ipaddress} D: {$destination->ipaddress}  with TS: " . $values['timestamp'];
+
+        } else {
+            throw new Kohana_Exception('Invalid ID in Collect/id', $_POST);
+        }
+
+        $this->response->body($response);
+
+    }
+
+    public function action_createDB()
+    {
+        Model_Kpi::factory(0)->createDB();
+        echo "KPI Database created";
+    }
 }

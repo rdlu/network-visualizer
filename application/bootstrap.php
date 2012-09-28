@@ -104,7 +104,7 @@ Kohana::modules(array(
     'sprig' => MODPATH . 'sprig', // User guide and API documentation
     'zend' => MODPATH . 'zend',
     'pheanstalk' => MODPATH . 'pheanstalk',
-    //'firelogger' => MODPATH . 'firelogger',
+//    'firelogger' => MODPATH . 'firelogger',
 ));
 
 /**
@@ -123,6 +123,17 @@ Cookie::$salt = 'Xg0kVdEh';
  */
 require_once APPPATH . 'routes.php';
 
+$uris = array(
+    'collect/id/274/kpis/7401/SonyEricsson/R800i/-/-/-101/Desconhecido/-/-/0/15/651/1348670516',
+    'collect/id/211/kpis/40126/ZTE/ZTEV860/-/HSDPA/-67/Desconhecido/-/-/0/451/42421/1348752729'
+);
+
+/*foreach($uris as $uri) {
+    $r = Route::get('kpis');
+    flog($r->matches($uri));
+    $r = Route::get('kpis2');
+    flog($r->matches($uri));
+}*/
 /*FirePHP_Profiler::instance()
 		->group('NetMetric MoM Profiler Results:', array('Collapsed' => 'true'))
 		->superglobals() // New Superglobals method to show them all...
